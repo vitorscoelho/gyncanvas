@@ -139,6 +139,18 @@ class Colarinho(
                     multiplicadorValor = multiplicadorDistancia
                 )
             )
+            cotas.add(
+                CotaAlinhada(
+                    ponto1 = Vetor2D.ZERO,
+                    ponto2 = Vetor2D(x = hxPilar + 2.0 * (hcx + folgaDeMontagem), y = y1),
+                    offset = 50.0,
+                    formatoNumero = dcCotas,
+                    offsetExtensionLine = offsetExtensionLine,
+                    offsetText = offsetText,
+                    arrowSize = arrowSize,
+                    multiplicadorValor = multiplicadorDistancia
+                )
+            )
             cotas.forEach { gynCanvas.addPrimitiva(it, propriedadeCotas) }
         }
         gynCanvas.addPrimitiva(contornoExternoColarinho, propriedadeContornoForma)

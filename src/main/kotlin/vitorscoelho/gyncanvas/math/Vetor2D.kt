@@ -44,6 +44,18 @@ class Vetor2D(
         )
     }
 
+    /**
+     * Retorna uma instância de um vetor com as coordenadas com os valores:
+     * * x = this.x + deltaX
+     * * y = this.y + deltaY
+     * @param deltaX a variação aplicada à abscissa
+     * @param deltaY a variação aplicada à ordenada
+     */
+    fun somar(deltaX: Double = 0.0, deltaY: Double = 0.0) = Vetor2D(x = x + deltaX, y = y + deltaY)
+
+    operator fun plus(outroVetor: Vetor2D) = somar(deltaX = outroVetor.x, deltaY = outroVetor.y)
+    operator fun minus(outroVetor: Vetor2D) = somar(deltaX = -outroVetor.x, deltaY = -outroVetor.y)
+
     companion object {
         val ZERO = Vetor2D(x = 0.0, y = 0.0)
 
