@@ -45,6 +45,7 @@ class GynCanvas {
         gc.transform = transformacoes.toAffine()
         propriedadesDePrimitivas.forEach { propriedade, listaPrimitivas ->
             propriedade.aplicar(gc, transformacoes)
+            gc.lineWidth = gc.lineWidth / transformacoes.escala //Para que a linha permaneça sempre na mesma espessura, independente do zoom
             listaPrimitivas.forEach { it.desenhar(gc, transformacoes) }
         }
     }

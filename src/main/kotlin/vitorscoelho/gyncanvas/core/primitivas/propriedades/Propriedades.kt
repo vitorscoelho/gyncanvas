@@ -32,7 +32,7 @@ class StrokeAttributes(
 ) : DrawAttributes {
     override fun aplicar(gc: GraphicsContext, transformacoes: Transformacoes) {
         gc.stroke = strokePaint
-        gc.lineWidth = lineWidth / transformacoes.escala
+        gc.lineWidth = lineWidth
         gc.lineCap = lineCap
         gc.miterLimit = miterLimit
         gc.lineDashOffset = dashOffset

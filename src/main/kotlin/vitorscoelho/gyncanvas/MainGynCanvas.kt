@@ -41,33 +41,34 @@ class MeuViewGynCanvas : View() {
         pontos = listOf(Vetor2D(200.0, 200.0), Vetor2D(600.0, 300.0), Vetor2D.ZERO),
         fechado = true
     )
-    val texto = FillText(texto = "Texto teste", posicao = Vetor2D(200.0, 300.0), angulo = 0.0,tamanhoFixo = true)
+    val texto = FillText(texto = "Texto teste", posicao = Vetor2D(200.0, 300.0), angulo = 0.0, tamanhoFixo = true)
     val textoRotacionado = FillText(
         texto = "Texto rotacionado",
         posicao = Vetor2D(200.0, 300.0),
-        angulo = 3.14/2.0
+        angulo = 3.14 / 2.0
     )
     val gynCanvas = GynCanvas().apply {
-        addPrimitiva(circulo, propriedadeStroke)
-        addPrimitiva(texto, propriedadeText)
-        addPrimitiva(textoRotacionado, propriedadeText)
+        //        addPrimitiva(circulo, propriedadeStroke)
+//        addPrimitiva(texto, propriedadeText)
+//        addPrimitiva(textoRotacionado, propriedadeText)
         addPrimitiva(linha, propriedadeStroke)
-        addPrimitiva(retangulo, propriedadeStroke)
-        addPrimitiva(polilinha, propriedadeStroke)
-        criarBloco(this)
+//        addPrimitiva(retangulo, propriedadeStroke)
+//        addPrimitiva(polilinha, propriedadeStroke)
+        criarAduela(this)
+//        criarBloco(this)
 
-        val passo = 50.0
-        (1..100_000).forEach { iteracao ->
-            val x = iteracao * passo
-            addPrimitiva(
-                primitiva = StrokeLine(
-                    ponto1 = Vetor2D(x, 0.0),
-                    ponto2 = Vetor2D(x, -800.0)
-                ),
-                propriedade = propriedadeStroke
-            )
-        }
-        println("Fim")
+//        val passo = 50.0
+//        (1..100_000).forEach { iteracao ->
+//            val x = iteracao * passo
+//            addPrimitiva(
+//                primitiva = StrokeLine(
+//                    ponto1 = Vetor2D(x, 0.0),
+//                    ponto2 = Vetor2D(x, -800.0)
+//                ),
+//                propriedade = propriedadeStroke
+//            )
+//        }
+//        println("Fim")
     }
     val transformacoes = gynCanvas.transformacoes
 
@@ -137,4 +138,25 @@ fun criarBloco(gynCanvas: GynCanvas) {
         hcy = 25.0
     )
     colarinho.adicionarDesenho(gynCanvas = gynCanvas)
+}
+
+fun criarAduela(gynCanvas: GynCanvas) {
+    val formaAduela = FormaAduela(
+        larguraLivre = 200.0,
+        alturaLivre = 300.0,
+        misulaHorizontalCobertura = 20.0,
+        misulaVerticalCobertura = 15.0,
+        misulaHorizontalFundo = 25.0,
+        misulaVerticalFundo = 10.0,
+        espessuraLajeCobertura = 25.0,
+        espessuraParedeLateral = 15.0,
+        espessuraLajeFundo = 20.0,
+        distanciaFuroIcamento = 50.0,
+        diametroFuroIcamento = 5.0,
+        comprimentoAduela = 100.0,
+        comprimentoEncaixe = 9.0,
+        espessuraMacho = 6.0,
+        espessuraChanfradoEncaixe = 2.0
+    )
+    formaAduela.adicionarDesenho(gynCanvas = gynCanvas)
 }

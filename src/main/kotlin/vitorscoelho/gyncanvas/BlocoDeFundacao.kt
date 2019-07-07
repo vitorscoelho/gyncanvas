@@ -48,6 +48,23 @@ class Colarinho(
             deltaX = hxPilar,
             deltaY = hyPilar
         )
+        val pilarPath = PathBuilder(closed = true, pontoInicial = Vetor2D(x = 20.0, y = -40.0))
+            .lineTo(x = 20.0, y = -13.0)
+            .lineTo(x = 10.0, y = -11.0)
+            .lineTo(x = 10.0, y = 11.0)
+            .lineTo(x = 20.0, y = 13.0)
+            .lineTo(x = 20.0, y = 40.0)
+            .lineTo(x = -20.0, y = 40.0)
+            .lineTo(x = -20.0, y = 13.0)
+            .lineTo(x = -10.0, y = 11.0)
+            .lineTo(x = -10.0, y = -11.0)
+            .lineTo(x = -20.0, y = -13.0)
+            .lineTo(x = -20.0, y = -40.0)
+//            .lineTo(x =, y =)
+//            .lineTo(x =, y =)
+//            .lineTo(x =, y =)
+//            .lineTo(x =, y =)
+            .build()
         run {
             val dcCotas = DecimalFormat("#.##")
             val propriedadeCotas = object : DrawAttributes {
@@ -66,16 +83,19 @@ class Colarinho(
             val arrowSize = 2.0
             val multiplicadorDistancia = 1.0 / 100.0
             val cotas = mutableListOf<Cota>()
+            val propriedadesCotas=PropriedadesCotas(
+                formatoNumero = dcCotas,
+                offsetExtensionLine = offsetExtensionLine,
+                offsetText = offsetText,
+                arrowSize = arrowSize,
+                multiplicadorValor = multiplicadorDistancia
+            )
             cotas.add(
                 CotaHorizontal(
                     ponto1 = Vetor2D(x = 0.0, y = y1),
                     ponto2 = Vetor2D(x = hcx, y = y1),
                     yDimensionLine = y1Dimension,
-                    formatoNumero = dcCotas,
-                    offsetExtensionLine = offsetExtensionLine,
-                    offsetText = offsetText,
-                    arrowSize = arrowSize,
-                    multiplicadorValor = multiplicadorDistancia
+                    propriedadesCotas = propriedadesCotas
                 )
             )
             cotas.add(
@@ -83,11 +103,7 @@ class Colarinho(
                     ponto1 = Vetor2D(x = hcx, y = y1),
                     ponto2 = Vetor2D(x = hcx + hxPilar + 2.0 * folgaDeMontagem, y = y1),
                     yDimensionLine = y1Dimension,
-                    formatoNumero = dcCotas,
-                    offsetExtensionLine = offsetExtensionLine,
-                    offsetText = offsetText,
-                    arrowSize = arrowSize,
-                    multiplicadorValor = multiplicadorDistancia
+                    propriedadesCotas = propriedadesCotas
                 )
             )
             cotas.add(
@@ -95,11 +111,7 @@ class Colarinho(
                     ponto1 = Vetor2D(x = hcx + hxPilar + 2.0 * folgaDeMontagem, y = y1),
                     ponto2 = Vetor2D(x = hxPilar + 2.0 * (hcx + folgaDeMontagem), y = y1),
                     yDimensionLine = y1Dimension,
-                    formatoNumero = dcCotas,
-                    offsetExtensionLine = offsetExtensionLine,
-                    offsetText = offsetText,
-                    arrowSize = arrowSize,
-                    multiplicadorValor = multiplicadorDistancia
+                    propriedadesCotas = propriedadesCotas
                 )
             )
             val x1Dimension = 0.0 - 15.0
@@ -108,11 +120,7 @@ class Colarinho(
                     ponto1 = Vetor2D(x = 0.0, y = 0.0),
                     ponto2 = Vetor2D(x = 0.0, y = hcy),
                     xDimensionLine = x1Dimension,
-                    formatoNumero = dcCotas,
-                    offsetExtensionLine = offsetExtensionLine,
-                    offsetText = offsetText,
-                    arrowSize = arrowSize,
-                    multiplicadorValor = multiplicadorDistancia
+                    propriedadesCotas = propriedadesCotas
                 )
             )
             cotas.add(
@@ -120,11 +128,7 @@ class Colarinho(
                     ponto1 = Vetor2D(x = 0.0, y = hcy),
                     ponto2 = Vetor2D(x = 0.0, y = hcy + hyPilar + 2.0 * folgaDeMontagem),
                     xDimensionLine = x1Dimension,
-                    formatoNumero = dcCotas,
-                    offsetExtensionLine = offsetExtensionLine,
-                    offsetText = offsetText,
-                    arrowSize = arrowSize,
-                    multiplicadorValor = multiplicadorDistancia
+                    propriedadesCotas = propriedadesCotas
                 )
             )
             cotas.add(
@@ -132,11 +136,7 @@ class Colarinho(
                     ponto1 = Vetor2D(x = 0.0, y = hcy + hyPilar + 2.0 * folgaDeMontagem),
                     ponto2 = Vetor2D(x = 0.0, y = hyPilar + 2.0 * (hcy + folgaDeMontagem)),
                     xDimensionLine = x1Dimension,
-                    formatoNumero = dcCotas,
-                    offsetExtensionLine = offsetExtensionLine,
-                    offsetText = offsetText,
-                    arrowSize = arrowSize,
-                    multiplicadorValor = multiplicadorDistancia
+                    propriedadesCotas = propriedadesCotas
                 )
             )
             cotas.add(
@@ -144,11 +144,7 @@ class Colarinho(
                     ponto1 = Vetor2D.ZERO,
                     ponto2 = Vetor2D(x = hxPilar + 2.0 * (hcx + folgaDeMontagem), y = y1),
                     offset = 50.0,
-                    formatoNumero = dcCotas,
-                    offsetExtensionLine = offsetExtensionLine,
-                    offsetText = offsetText,
-                    arrowSize = arrowSize,
-                    multiplicadorValor = multiplicadorDistancia
+                    propriedadesCotas = propriedadesCotas
                 )
             )
             cotas.forEach { gynCanvas.addPrimitiva(it, propriedadeCotas) }
@@ -156,5 +152,10 @@ class Colarinho(
         gynCanvas.addPrimitiva(contornoExternoColarinho, propriedadeContornoForma)
         gynCanvas.addPrimitiva(contornoInternoColarinho, propriedadeContornoForma)
         gynCanvas.addPrimitiva(pilar, propriedadePilar)
+        gynCanvas.addPrimitiva(pilarPath, object : DrawAttributes {
+            override fun aplicar(gc: GraphicsContext, transformacoes: Transformacoes) {
+                gc.stroke = Color.DARKORANGE
+            }
+        })
     }
 }

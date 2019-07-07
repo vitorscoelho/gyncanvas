@@ -16,12 +16,8 @@ class CotaHorizontal(
     ponto1: Vetor2D,
     ponto2: Vetor2D,
     yDimensionLine: Double,
-    offsetExtensionLine: Double,
-    offsetText: Double,
     texto: String = "<>",
-    formatoNumero: DecimalFormat,
-    arrowSize: Double,
-    multiplicadorValor: Double = 1.0
+    propriedadesCotas: PropriedadesCotas
 ) : Cota {
     private val dimensionLine = StrokeLine(
         ponto1 = Vetor2D(x = ponto1.x, y = yDimensionLine),
@@ -30,18 +26,22 @@ class CotaHorizontal(
     private val extensionLine1 = criarExtensionLine(
         definitionPoint = ponto1,
         yDimensionLine = yDimensionLine,
-        offsetExtensionLine = offsetExtensionLine
+        offsetExtensionLine = propriedadesCotas.offsetExtensionLine
     )
     private val extensionLine2 = criarExtensionLine(
         definitionPoint = ponto2,
         yDimensionLine = yDimensionLine,
-        offsetExtensionLine = offsetExtensionLine
+        offsetExtensionLine = propriedadesCotas.offsetExtensionLine
     )
     private val texto = FillText(
-        texto = textoCota(texto = texto, dc = formatoNumero, distancia = abs(ponto1.x - ponto2.x) * multiplicadorValor),
+        texto = textoCota(
+            texto = texto,
+            dc = propriedadesCotas.formatoNumero,
+            distancia = abs(ponto1.x - ponto2.x) * propriedadesCotas.multiplicadorValor
+        ),
         posicao = Vetor2D(
             x = (ponto1.x + ponto2.x) / 2.0,
-            y = yDimensionLine + offsetText
+            y = yDimensionLine + propriedadesCotas.offsetText
         ),
         angulo = 0.0
     )
@@ -79,12 +79,8 @@ class CotaVertical(
     ponto1: Vetor2D,
     ponto2: Vetor2D,
     xDimensionLine: Double,
-    offsetExtensionLine: Double,
-    offsetText: Double,
     texto: String = "<>",
-    formatoNumero: DecimalFormat,
-    arrowSize: Double,
-    multiplicadorValor: Double = 1.0
+    propriedadesCotas: PropriedadesCotas
 ) : Cota {
     private val dimensionLine = StrokeLine(
         ponto1 = Vetor2D(x = xDimensionLine, y = ponto1.y),
@@ -93,17 +89,21 @@ class CotaVertical(
     private val extensionLine1 = criarExtensionLine(
         definitionPoint = ponto1,
         xDimensionLine = xDimensionLine,
-        offsetExtensionLine = offsetExtensionLine
+        offsetExtensionLine = propriedadesCotas.offsetExtensionLine
     )
     private val extensionLine2 = criarExtensionLine(
         definitionPoint = ponto2,
         xDimensionLine = xDimensionLine,
-        offsetExtensionLine = offsetExtensionLine
+        offsetExtensionLine = propriedadesCotas.offsetExtensionLine
     )
     private val texto = FillText(
-        texto = textoCota(texto = texto, dc = formatoNumero, distancia = abs(ponto1.y - ponto2.y) * multiplicadorValor),
+        texto = textoCota(
+            texto = texto,
+            dc = propriedadesCotas.formatoNumero,
+            distancia = abs(ponto1.y - ponto2.y) * propriedadesCotas.multiplicadorValor
+        ),
         posicao = Vetor2D(
-            x = xDimensionLine - offsetText,
+            x = xDimensionLine - propriedadesCotas.offsetText,
             y = (ponto1.y + ponto2.y) / 2.0
         ),
         angulo = Math.PI / 2.0
@@ -141,12 +141,8 @@ class CotaAlinhada(
     ponto1: Vetor2D,
     ponto2: Vetor2D,
     offset: Double,
-    offsetExtensionLine: Double,
-    offsetText: Double,
     texto: String = "<>",
-    formatoNumero: DecimalFormat,
-    arrowSize: Double,
-    multiplicadorValor: Double = 1.0
+    propriedadesCotas: PropriedadesCotas
 ) : Cota {
     //Até a inclinação de 90° com o eixo X, o texto tem um comportamento. O offset é positivo a esquerda.
     //Entre 90º e 180º com o eixo X, o texto tem outro comportamento. O offset é positivo a direita.
@@ -159,37 +155,25 @@ class CotaAlinhada(
                 ponto1 = ponto1,
                 ponto2 = ponto2,
                 xDimensionLine = ponto1.x - offset,
-                offsetExtensionLine = offsetExtensionLine,
-                offsetText = offsetText,
                 texto = texto,
-                formatoNumero = formatoNumero,
-                arrowSize = arrowSize,
-                multiplicadorValor = multiplicadorValor
+                propriedadesCotas = propriedadesCotas
             )
         } else if (delta.y == 0.0) {
             cotaEmbarcada = CotaHorizontal(
                 ponto1 = ponto1,
                 ponto2 = ponto2,
                 yDimensionLine = ponto1.y + offset,
-                offsetExtensionLine = offsetExtensionLine,
-                offsetText = offsetText,
                 texto = texto,
-                formatoNumero = formatoNumero,
-                arrowSize = arrowSize,
-                multiplicadorValor = multiplicadorValor
+                propriedadesCotas = propriedadesCotas
             )
         } else {
             cotaEmbarcada = CotaInclinada(
                 ponto1 = ponto1,
                 ponto2 = ponto2,
                 offset = offset,
-                offsetExtensionLine = offsetExtensionLine,
-                offsetText = offsetText,
                 texto = texto,
-                formatoNumero = formatoNumero,
-                arrowSize = arrowSize,
-                multiplicadorValor = multiplicadorValor,
-                delta = delta
+                delta = delta,
+                propriedadesCotas = propriedadesCotas
             )
         }
     }
@@ -204,12 +188,8 @@ private class CotaInclinada(
     ponto2: Vetor2D,
     delta: Vetor2D,
     offset: Double,
-    offsetExtensionLine: Double,
-    offsetText: Double,
     texto: String = "<>",
-    formatoNumero: DecimalFormat,
-    arrowSize: Double,
-    multiplicadorValor: Double = 1.0
+    propriedadesCotas: PropriedadesCotas
 ) : Cota {
     private val dimensionLine: StrokeLine
     private val extensionLine1: StrokeLine
@@ -223,11 +203,15 @@ private class CotaInclinada(
         //Considerando que a cota é horizontal, para depois rotacionar e transladar estes pontos para formar a cota
         val cotaHorizontalPonto1 = Vetor2D.ZERO
         val cotaHorizontalPonto2 = cotaHorizontalPonto1.somar(deltaX = distancia)
-        val pontoTextoCotaHorizontal = Vetor2D(x = distancia / 2.0, y = offset + offsetText)
+        val pontoTextoCotaHorizontal = Vetor2D(x = distancia / 2.0, y = offset + propriedadesCotas.offsetText)
         val definitionPoint1CotaHorizontal = cotaHorizontalPonto1.somar(deltaY = offset)
         val definitionPoint2CotaHorizontal = cotaHorizontalPonto2.somar(deltaY = offset)
         val yInicialLinhaDeCota =
-            if (offset >= 0.0) min(offset, offsetExtensionLine) else max(offset, -offsetExtensionLine)
+            if (offset >= 0.0) {
+                min(offset, propriedadesCotas.offsetExtensionLine)
+            } else {
+                max(offset, -propriedadesCotas.offsetExtensionLine)
+            }
         val inicioLinhaDeCotaHorizontalPonto1 = cotaHorizontalPonto1.somar(deltaY = yInicialLinhaDeCota)
         val inicioLinhaDeCotaHorizontalPonto2 = cotaHorizontalPonto2.somar(deltaY = yInicialLinhaDeCota)
         val pontoDeGiroCotaReal = if (ponto1.x < ponto2.x) ponto1 else ponto2
@@ -257,7 +241,7 @@ private class CotaInclinada(
         this.texto = FillText(
             texto = textoCota(
                 texto = texto,
-                dc = formatoNumero,
+                dc = propriedadesCotas.formatoNumero,
                 distancia = distancia
             ),
             posicao = pontoTexto,
@@ -278,4 +262,149 @@ private val textoValorCota: String by lazy { "<>" }
 private fun textoCota(texto: String, dc: DecimalFormat, distancia: Double): String {
     val valorDistancia = dc.format(distancia)
     return texto.replaceFirst(textoValorCota, valorDistancia)
+}
+
+data class PropriedadesCotas(
+    val offsetExtensionLine: Double,
+    val offsetText: Double,
+    val formatoNumero: DecimalFormat,
+    val arrowSize: Double,
+    val multiplicadorValor: Double = 1.0
+)
+
+//class SequenciaCotaHorizontal(
+//    pontoInicial: Vetor2D,
+//    val yDimensionLine: Double,
+//    texto: String = "<>",
+//    val propriedadesCotas: PropriedadesCotas
+//) {
+//    private val pontos = mutableListOf(pontoInicial)
+//    private val textos = mutableListOf(texto)
+//
+//    fun add(ponto: Vetor2D, texto: String = "<>"): SequenciaCotaHorizontal {
+//        pontos += ponto
+//        textos += texto
+//        return this
+//    }
+//
+//    fun addDelta(deltaX: Double = 0.0, deltaY: Double = 0.0, texto: String = "<>"): SequenciaCotaHorizontal {
+//        return add(ponto = pontos.last().somar(deltaX = deltaX, deltaY = deltaY), texto = texto)
+//    }
+//
+//    fun add(x: Double, y: Double, texto: String = "<>"): SequenciaCotaHorizontal {
+//        return add(ponto = Vetor2D(x = x, y = y), texto = texto)
+//    }
+//
+//    fun toList(): List<CotaHorizontal> {
+//        require(pontos.size > 1) { "A sequência de cotas tem apenas um ponto, mas deve ser mais do que um." }
+//        val listaCotas = mutableListOf<CotaHorizontal>()
+//        (0 until pontos.lastIndex).forEach { indice ->
+//            listaCotas += CotaHorizontal(
+//                ponto1 = pontos[indice],
+//                ponto2 = pontos[indice + 1],
+//                yDimensionLine = yDimensionLine,
+//                texto = textos[indice],
+//                propriedadesCotas = propriedadesCotas
+//            )
+//        }
+//        return listaCotas
+//    }
+//}
+
+abstract class SequenciaCota<T : Cota>(
+    pontoInicial: Vetor2D,
+    texto: String = "<>",
+    val propriedadesCotas: PropriedadesCotas
+) {
+    private val pontos = mutableListOf(pontoInicial)
+    private val textos = mutableListOf(texto)
+
+    fun add(ponto: Vetor2D, texto: String = "<>"): SequenciaCota<T> {
+        pontos += ponto
+        textos += texto
+        return this
+    }
+
+    fun addDelta(deltaX: Double = 0.0, deltaY: Double = 0.0, texto: String = "<>"): SequenciaCota<T> {
+        return add(ponto = pontos.last().somar(deltaX = deltaX, deltaY = deltaY), texto = texto)
+    }
+
+    fun add(x: Double, y: Double, texto: String = "<>"): SequenciaCota<T> {
+        return add(ponto = Vetor2D(x = x, y = y), texto = texto)
+    }
+
+    fun toList(): List<T> {
+        require(pontos.size > 1) { "A sequência de cotas tem apenas um ponto, mas deveria ter mais do que um." }
+        val listaCotas = mutableListOf<T>()
+        (0 until pontos.lastIndex).forEach { indice ->
+            listaCotas += criarCota(
+                ponto1 = pontos[indice],
+                ponto2 = pontos[indice + 1],
+                texto = textos[indice]
+            )
+        }
+        return listaCotas
+    }
+
+    protected abstract fun criarCota(ponto1: Vetor2D, ponto2: Vetor2D, texto: String): T
+}
+
+class SequenciaCotaHorizontal(
+    pontoInicial: Vetor2D,
+    val yDimensionLine: Double,
+    texto: String = "<>",
+    propriedadesCotas: PropriedadesCotas
+) : SequenciaCota<CotaHorizontal>(
+    pontoInicial = pontoInicial,
+    texto = texto,
+    propriedadesCotas = propriedadesCotas
+) {
+    override fun criarCota(ponto1: Vetor2D, ponto2: Vetor2D, texto: String) =
+        CotaHorizontal(
+            ponto1 = ponto1,
+            ponto2 = ponto2,
+            yDimensionLine = yDimensionLine,
+            texto = texto,
+            propriedadesCotas = propriedadesCotas
+        )
+}
+
+class SequenciaCotaVertical(
+    pontoInicial: Vetor2D,
+    val xDimensionLine: Double,
+    texto: String = "<>",
+    propriedadesCotas: PropriedadesCotas
+) : SequenciaCota<CotaVertical>(
+    pontoInicial = pontoInicial,
+    texto = texto,
+    propriedadesCotas = propriedadesCotas
+) {
+    override fun criarCota(ponto1: Vetor2D, ponto2: Vetor2D, texto: String) =
+        CotaVertical(
+            ponto1 = ponto1,
+            ponto2 = ponto2,
+            xDimensionLine = xDimensionLine,
+            texto = texto,
+            propriedadesCotas = propriedadesCotas
+        )
+}
+
+class SequenciaCotaAlinhada(
+    pontoInicial: Vetor2D,
+    val offset: Double,
+    texto: String = "<>",
+    propriedadesCotas: PropriedadesCotas
+) : SequenciaCota<CotaAlinhada>(
+    pontoInicial = pontoInicial,
+    texto = texto,
+    propriedadesCotas = propriedadesCotas
+) {
+    override fun criarCota(ponto1: Vetor2D, ponto2: Vetor2D, texto: String) =
+        CotaAlinhada(
+            ponto1 = ponto1,
+            ponto2 = ponto2,
+            offset = offset,
+            texto = texto,
+            propriedadesCotas = propriedadesCotas
+        )
 }
