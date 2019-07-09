@@ -1,5 +1,6 @@
 package vitorscoelho.gyncanvas
 
+import com.beust.klaxon.Klaxon
 import javafx.scene.Cursor
 import javafx.scene.input.MouseButton
 import javafx.scene.paint.Color
@@ -10,6 +11,7 @@ import vitorscoelho.gyncanvas.core.primitivas.*
 import vitorscoelho.gyncanvas.core.primitivas.propriedades.FillAttributes
 import vitorscoelho.gyncanvas.core.primitivas.propriedades.StrokeAttributes
 import vitorscoelho.gyncanvas.core.primitivas.propriedades.FillTextAttributes
+import vitorscoelho.gyncanvas.dxf.entities.*
 import vitorscoelho.gyncanvas.math.Vetor2D
 
 fun main() {
@@ -54,7 +56,8 @@ class MeuViewGynCanvas : View() {
         addPrimitiva(linha, propriedadeStroke)
 //        addPrimitiva(retangulo, propriedadeStroke)
 //        addPrimitiva(polilinha, propriedadeStroke)
-        criarAduela(this)
+//        criarAduela(this)
+        json()
 //        criarBloco(this)
 
 //        val passo = 50.0
@@ -159,4 +162,50 @@ fun criarAduela(gynCanvas: GynCanvas) {
         espessuraChanfradoEncaixe = 2.0
     )
     formaAduela.adicionarDesenho(gynCanvas = gynCanvas)
+}
+
+fun json() {
+    val line = Line(
+        StartPoint = Point3d(x = 10.0, y = 15.0),
+        EndPoint = Point3d(x = 25.0, y = 45.0),
+        Layer = "LayerTeste"
+    )
+    val polyline = Polyline(
+        vertexes = mutableListOf(
+            PolylineVertex(
+                point = Point2d(x = -10.0, y = 12.0),
+                bulge = 0.0, startWidth = 1.0, endWidth = 1.0
+            ),
+            PolylineVertex(
+                point = Point2d(x = 10.0, y = 22.0),
+                bulge = 0.0, startWidth = 1.0, endWidth = 1.0
+            ),
+            PolylineVertex(
+                point = Point2d(x = 40.0, y = -15.0),
+                bulge = 0.0, startWidth = 1.0, endWidth = 1.0
+            )
+        ),
+        Closed = true
+    )
+    val circle = Circle(
+        Center = Point3d(x = 2.0, y = 5.0),
+        Radius = 12.0,
+        Layer = "0"
+    )
+    val mText = MText(
+        Location = Point3d(x = -5.0, y = -30.0),
+        Contents = "Um texto de teste",
+        Rotation = 12.0,
+        Layer = "LayerTeste"
+    )
+    val klaxon = Klaxon()
+
+    println("Line:")
+    println(klaxon.toJsonString(line))
+    println("Polyline:")
+    println(klaxon.toJsonString(polyline))
+    println("Circle:")
+    println(klaxon.toJsonString(circle))
+    println("MText:")
+    println(klaxon.toJsonString(mText))
 }
