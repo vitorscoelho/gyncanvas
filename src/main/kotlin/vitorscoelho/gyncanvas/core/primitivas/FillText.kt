@@ -12,6 +12,14 @@ class FillText(val texto: String, val posicao: Vetor2D, val angulo: Double, tama
     override fun desenhar(gc: GraphicsContext, transformacoes: Transformacoes) {
         tipoTexto.desenhar(fillText = this, gc = gc, transformacoes = transformacoes)
     }
+
+    override fun copiarComTransformacao(transformacoes: Transformacoes): FillText =
+        FillText(
+            texto = this.texto,
+            posicao = transformacoes.transformar(this.posicao),
+            angulo = this.angulo,
+            tamanhoFixo = (this.tipoTexto == TipoTexto.TEXTO_HORIZONTAL_TAMANHO_FIXO || this.tipoTexto == TipoTexto.TEXTO_ROTACIONADO_TAMANHO_FIXO)
+        )
 }
 
 private enum class TipoTexto {

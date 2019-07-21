@@ -3,17 +3,17 @@ package vitorscoelho.gyncanvas.dxf.entities
 import com.beust.klaxon.Json
 
 class Point2d(
-    var x: Double = 0.0,
-    var y: Double = 0.0
+    var x: Double,
+    var y: Double
 )
 
 class Point3d(
-    var x: Double = 0.0,
-    var y: Double = 0.0
+    var x: Double,
+    var y: Double
 )
 
 interface Entity {
-    var Layer: String?
+    var layer: String
 }
 /*
 Line
@@ -24,47 +24,40 @@ Dimension
  */
 
 class Line(
-    var StartPoint: Point3d? = null,
-    var EndPoint: Point3d? = null,
-    override var Layer: String? = null
+    var startPoint: Point3d,
+    var endPoint: Point3d,
+    override var layer: String
 ) : Entity
 
 /*
 int index, Point2d pt, double bulge, double startWidth, double endWidth
  */
 class Polyline(
-    var vertexes: MutableList<PolylineVertex> = mutableListOf(),
-    var Closed: Boolean? = null,
-    override var Layer: String? = null
+    var vertices: Array<Point2d>,
+    var bulges: DoubleArray,
+    var closed: Boolean,
+    override var layer: String
 ) : Entity
 
 class PolylineVertex(var point: Point2d, var bulge: Double, var startWidth: Double, val endWidth: Double)
 
 class Circle(
-    var Center: Point3d? = null,
-    var Radius: Double? = null,
-    override var Layer: String? = null
+    var center: Point3d,
+    var radius: Double,
+    override var layer: String
 ) : Entity {
     @Json(ignored = true)
-    var Diameter: Double?
-        get() {
-            return when (Radius) {
-                null -> null
-                else -> 2.0 * Radius!!
-            }
-        }
+    var diameter: Double
+        get() = 2.0 * radius
         set(value) {
-            Radius = when (value) {
-                null -> null
-                else -> Radius!! / 2.0
-            }
+            radius = value / 2.0
         }
 }
 
 class MText(
-    var Location: Point3d? = null,
-//    var Text: String? = null,
-    var Contents: String? = null,
-    var Rotation: Double? = null,
-    override var Layer: String? = null
+    var location: Point3d,
+//    var Text: String,
+    var contents: String,
+    var rotation: Double,
+    override var layer: String
 ) : Entity

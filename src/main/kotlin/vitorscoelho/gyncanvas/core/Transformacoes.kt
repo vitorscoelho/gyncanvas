@@ -78,4 +78,12 @@ class Transformacoes {
         nova.matrizJOML.set(this@Transformacoes.matrizJOML)
         return nova
     }
+
+    fun transformar(vetor: Vetor2D): Vetor2D = transformar(x = vetor.x, y = vetor.y)
+
+    fun transformar(x: Double, y: Double): Vetor2D {
+        val vetorJOM = Vector3d(x, y, 0.0)
+        this.matrizJOML.transformPosition(vetorJOM)
+        return Vetor2D(x = vetorJOM.x, y = vetorJOM.y)
+    }
 }

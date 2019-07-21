@@ -166,37 +166,29 @@ fun criarAduela(gynCanvas: GynCanvas) {
 
 fun json() {
     val line = Line(
-        StartPoint = Point3d(x = 10.0, y = 15.0),
-        EndPoint = Point3d(x = 25.0, y = 45.0),
-        Layer = "LayerTeste"
+        startPoint = Point3d(x = 10.0, y = 15.0),
+        endPoint = Point3d(x = 25.0, y = 45.0),
+        layer = "LayerTeste"
     )
     val polyline = Polyline(
-        vertexes = mutableListOf(
-            PolylineVertex(
-                point = Point2d(x = -10.0, y = 12.0),
-                bulge = 0.0, startWidth = 1.0, endWidth = 1.0
-            ),
-            PolylineVertex(
-                point = Point2d(x = 10.0, y = 22.0),
-                bulge = 0.0, startWidth = 1.0, endWidth = 1.0
-            ),
-            PolylineVertex(
-                point = Point2d(x = 40.0, y = -15.0),
-                bulge = 0.0, startWidth = 1.0, endWidth = 1.0
-            )
+        vertices = arrayOf(
+            Point2d(x = -10.0, y = 12.0),
+            Point2d(x = 10.0, y = 22.0),
+            Point2d(x = 40.0, y = -15.0)
         ),
-        Closed = true
+        bulges = doubleArrayOf(0.0, 1.0, 0.0),
+        closed = true
     )
     val circle = Circle(
-        Center = Point3d(x = 2.0, y = 5.0),
-        Radius = 12.0,
-        Layer = "0"
+        center = Point3d(x = 2.0, y = 5.0),
+        radius = 12.0,
+        layer = "0"
     )
     val mText = MText(
         Location = Point3d(x = -5.0, y = -30.0),
         Contents = "Um texto de teste",
         Rotation = 12.0,
-        Layer = "LayerTeste"
+        layer = "LayerTeste"
     )
     val klaxon = Klaxon()
 

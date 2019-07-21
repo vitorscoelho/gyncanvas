@@ -22,6 +22,8 @@ class Path(
         if (closed) gc.closePath()
         gc.stroke()
     }
+
+    override fun copiarComTransformacao(transformacoes: Transformacoes): Path=
 }
 
 class PathBuilder(private val closed: Boolean = false, pontoInicial: Vetor2D) {

@@ -17,4 +17,11 @@ class StrokeRect(pontoInsercao: Vetor2D, deltaX: Double, deltaY: Double) : Primi
     override fun desenhar(gc: GraphicsContext, transformacoes: Transformacoes) {
         gc.strokeRect(cantoEsquerdoInferior.x, -cantoEsquerdoInferior.y, largura, altura)
     }
+
+    override fun copiarComTransformacao(transformacoes: Transformacoes): StrokeRect =
+        StrokeRect(
+            pontoInsercao = transformacoes.transformar(this.cantoEsquerdoInferior),
+            deltaX = this.largura * transformacoes.escala,
+            deltaY = this.altura * transformacoes.escala
+        )
 }

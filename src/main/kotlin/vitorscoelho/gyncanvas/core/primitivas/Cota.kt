@@ -9,16 +9,24 @@ import kotlin.math.atan
 import kotlin.math.max
 import kotlin.math.min
 
-interface Cota : Primitiva
+interface Cota : Primitiva {
+    val ponto1: Vetor2D
+    val ponto2: Vetor2D
+    val texto: String
+    val propriedadesCotas: PropriedadesCotas
+}
 //TODO Cota não pode ser uma primitiva, mudar isto depois. Primitivas serão somente as opções que dá pra desenhar diretamente no GraphicsContext
 
 class CotaHorizontal(
-    ponto1: Vetor2D,
-    ponto2: Vetor2D,
+    override val ponto1: Vetor2D,
+    override val ponto2: Vetor2D,
     yDimensionLine: Double,
-    texto: String = "<>",
-    propriedadesCotas: PropriedadesCotas
+    override val texto: String = "<>",
+    override val propriedadesCotas: PropriedadesCotas
 ) : Cota {
+    val yDimensionLine: Double
+        get() = this.dimensionLine.ponto1.y
+
     private val dimensionLine = StrokeLine(
         ponto1 = Vetor2D(x = ponto1.x, y = yDimensionLine),
         ponto2 = Vetor2D(x = ponto2.x, y = yDimensionLine)
@@ -33,7 +41,7 @@ class CotaHorizontal(
         yDimensionLine = yDimensionLine,
         offsetExtensionLine = propriedadesCotas.offsetExtensionLine
     )
-    private val texto = FillText(
+    private val textoDesenho = FillText(
         texto = textoCota(
             texto = texto,
             dc = propriedadesCotas.formatoNumero,
@@ -50,7 +58,17 @@ class CotaHorizontal(
         dimensionLine.desenhar(gc = gc, transformacoes = transformacoes)
         extensionLine1.desenhar(gc = gc, transformacoes = transformacoes)
         extensionLine2.desenhar(gc = gc, transformacoes = transformacoes)
-        texto.desenhar(gc = gc, transformacoes = transformacoes)
+        textoDesenho.desenhar(gc = gc, transformacoes = transformacoes)
+    }
+
+    override fun copiarComTransformacao(transformacoes: Transformacoes): CotaHorizontal {
+        return CotaHorizontal(
+            ponto1 = transformacoes.transformar(this.ponto1),
+            ponto2 = transformacoes.transformar(this.ponto2),
+            yDimensionLine = transformacoes.transformar(this.dimensionLine.ponto1).y,
+            texto = this.texto,
+            propriedadesCotas = this.propriedadesCotas
+        )
     }
 
     companion object {
@@ -76,11 +94,11 @@ class CotaHorizontal(
 }
 
 class CotaVertical(
-    ponto1: Vetor2D,
-    ponto2: Vetor2D,
+    override val ponto1: Vetor2D,
+    override val ponto2: Vetor2D,
     xDimensionLine: Double,
-    texto: String = "<>",
-    propriedadesCotas: PropriedadesCotas
+    override val texto: String = "<>",
+    override val propriedadesCotas: PropriedadesCotas
 ) : Cota {
     private val dimensionLine = StrokeLine(
         ponto1 = Vetor2D(x = xDimensionLine, y = ponto1.y),
@@ -96,7 +114,7 @@ class CotaVertical(
         xDimensionLine = xDimensionLine,
         offsetExtensionLine = propriedadesCotas.offsetExtensionLine
     )
-    private val texto = FillText(
+    private val textoDesenho = FillText(
         texto = textoCota(
             texto = texto,
             dc = propriedadesCotas.formatoNumero,
@@ -113,7 +131,17 @@ class CotaVertical(
         dimensionLine.desenhar(gc = gc, transformacoes = transformacoes)
         extensionLine1.desenhar(gc = gc, transformacoes = transformacoes)
         extensionLine2.desenhar(gc = gc, transformacoes = transformacoes)
-        texto.desenhar(gc = gc, transformacoes = transformacoes)
+        textoDesenho.desenhar(gc = gc, transformacoes = transformacoes)
+    }
+
+    override fun copiarComTransformacao(transformacoes: Transformacoes): CotaVertical {
+        return CotaVertical(
+            ponto1 = transformacoes.transformar(this.ponto1),
+            ponto2 = transformacoes.transformar(this.ponto2),
+            xDimensionLine = transformacoes.transformar(this.dimensionLine.ponto1).x,
+            texto = this.texto,
+            propriedadesCotas = this.propriedadesCotas
+        )
     }
 
     companion object {
@@ -140,13 +168,25 @@ class CotaVertical(
 class CotaAlinhada(
     ponto1: Vetor2D,
     ponto2: Vetor2D,
-    offset: Double,
+    val offset: Double,
     texto: String = "<>",
     propriedadesCotas: PropriedadesCotas
 ) : Cota {
     //Até a inclinação de 90° com o eixo X, o texto tem um comportamento. O offset é positivo a esquerda.
     //Entre 90º e 180º com o eixo X, o texto tem outro comportamento. O offset é positivo a direita.
     private val cotaEmbarcada: Cota
+
+    override val ponto1: Vetor2D
+        get() = cotaEmbarcada.ponto1
+
+    override val ponto2: Vetor2D
+        get() = cotaEmbarcada.ponto2
+
+    override val texto: String
+        get() = cotaEmbarcada.texto
+
+    override val propriedadesCotas: PropriedadesCotas
+        get() = cotaEmbarcada.propriedadesCotas
 
     init {
         val delta = ponto2 - ponto1
@@ -181,20 +221,30 @@ class CotaAlinhada(
     override fun desenhar(gc: GraphicsContext, transformacoes: Transformacoes) {
         cotaEmbarcada.desenhar(gc = gc, transformacoes = transformacoes)
     }
+
+    override fun copiarComTransformacao(transformacoes: Transformacoes): CotaAlinhada {
+        return CotaAlinhada(
+            ponto1 = transformacoes.transformar(this.ponto1),
+            ponto2 = transformacoes.transformar(this.ponto2),
+            offset = this.offset * transformacoes.escala,
+            texto = this.texto,
+            propriedadesCotas = this.propriedadesCotas
+        )
+    }
 }
 
 private class CotaInclinada(
-    ponto1: Vetor2D,
-    ponto2: Vetor2D,
+    override val ponto1: Vetor2D,
+    override val ponto2: Vetor2D,
     delta: Vetor2D,
     offset: Double,
-    texto: String = "<>",
-    propriedadesCotas: PropriedadesCotas
-) : Cota {
+    override val texto: String = "<>",
+    override val propriedadesCotas: PropriedadesCotas
+):Cota {
     private val dimensionLine: StrokeLine
     private val extensionLine1: StrokeLine
     private val extensionLine2: StrokeLine
-    private val texto: FillText
+    private val textoDesenho: FillText
 
     init {
         require(delta.x != 0.0) { "Não foi possível criar uma cota inclinada, pois os pontos informados formam uma cota vertical (deltaX igual a zero)" }
@@ -238,7 +288,7 @@ private class CotaInclinada(
             ponto1 = inicioLinhaDeCotaPonto2,
             ponto2 = definitionPoint2
         )
-        this.texto = FillText(
+        this.textoDesenho = FillText(
             texto = textoCota(
                 texto = texto,
                 dc = propriedadesCotas.formatoNumero,
@@ -253,7 +303,12 @@ private class CotaInclinada(
         dimensionLine.desenhar(gc = gc, transformacoes = transformacoes)
         extensionLine1.desenhar(gc = gc, transformacoes = transformacoes)
         extensionLine2.desenhar(gc = gc, transformacoes = transformacoes)
-        texto.desenhar(gc = gc, transformacoes = transformacoes)
+        textoDesenho.desenhar(gc = gc, transformacoes = transformacoes)
+    }
+
+    override fun copiarComTransformacao(transformacoes: Transformacoes): CotaInclinada {
+        //Desnecessário implementar esta função, já que a classe é privada e só utilizada internamente na classe CotaAlinhada
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }
 

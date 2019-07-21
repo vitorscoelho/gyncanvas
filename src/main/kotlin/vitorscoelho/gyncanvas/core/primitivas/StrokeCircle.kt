@@ -12,4 +12,10 @@ class StrokeCircle(val centro: Vetor2D, val diametro: Double) : PrimitivaStroke 
             diametro, diametro
         )
     }
+
+    override fun copiarComTransformacao(transformacoes: Transformacoes): StrokeCircle =
+        StrokeCircle(
+            centro = transformacoes.transformar(this.centro),
+            diametro = this.diametro * transformacoes.escala
+        )
 }

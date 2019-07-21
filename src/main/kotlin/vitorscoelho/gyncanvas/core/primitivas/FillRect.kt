@@ -17,4 +17,11 @@ class FillRect(pontoInsercao: Vetor2D, deltaX: Double, deltaY: Double) : Primiti
     override fun desenhar(gc: GraphicsContext, transformacoes: Transformacoes) {
         gc.fillRect(cantoEsquerdoInferior.x, -cantoEsquerdoInferior.y, largura, altura)
     }
+
+    override fun copiarComTransformacao(transformacoes: Transformacoes): FillRect =
+        FillRect(
+            pontoInsercao = transformacoes.transformar(this.cantoEsquerdoInferior),
+            deltaX = this.largura * transformacoes.escala,
+            deltaY = this.altura * transformacoes.escala
+        )
 }

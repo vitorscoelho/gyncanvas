@@ -14,4 +14,11 @@ class StrokeLine(
             ponto2.x, -ponto2.y
         )
     }
+
+    override fun copiarComTransformacao(transformacoes: Transformacoes): StrokeLine =
+        StrokeLine(
+            ponto1 = transformacoes.transformar(this.ponto1),
+            ponto2 = transformacoes.transformar(this.ponto2)
+        )
+
 }
