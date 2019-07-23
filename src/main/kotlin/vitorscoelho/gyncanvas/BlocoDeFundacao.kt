@@ -48,7 +48,7 @@ class Colarinho(
             deltaX = hxPilar,
             deltaY = hyPilar
         )
-        val pilarPath = PathBuilder(closed = true, pontoInicial = Vetor2D(x = 20.0, y = -40.0))
+        val pilarPath = Path.initBuilder(fechado = true, pontoInicial = Vetor2D(x = 20.0, y = -40.0))
             .lineTo(x = 20.0, y = -13.0)
             .lineTo(x = 10.0, y = -11.0)
             .lineTo(x = 10.0, y = 11.0)
@@ -83,7 +83,7 @@ class Colarinho(
             val arrowSize = 2.0
             val multiplicadorDistancia = 1.0 / 100.0
             val cotas = mutableListOf<Cota>()
-            val propriedadesCotas=PropriedadesCotas(
+            val propriedadesCotas = PropriedadesCotas(
                 formatoNumero = dcCotas,
                 offsetExtensionLine = offsetExtensionLine,
                 offsetText = offsetText,

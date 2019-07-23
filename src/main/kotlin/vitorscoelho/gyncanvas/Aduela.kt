@@ -66,8 +66,8 @@ class FormaAduela(
 
     private fun corteTransversal() {
         val contornoExterno = StrokeRect(pontoInsercao = Vetor2D.ZERO, deltaX = larguraExterna, deltaY = alturaExterna)
-        val contornoInterno = PathBuilder(
-            closed = true,
+        val contornoInterno = Path.initBuilder(
+            fechado = true,
             pontoInicial = Vetor2D(
                 x = espessuraParedeLateral + misulaHorizontalFundo,
                 y = espessuraLajeFundo

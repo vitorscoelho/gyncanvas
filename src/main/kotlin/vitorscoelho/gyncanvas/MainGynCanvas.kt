@@ -49,11 +49,17 @@ class MeuViewGynCanvas : View() {
         posicao = Vetor2D(200.0, 300.0),
         angulo = 3.14 / 2.0
     )
+    val path = Path.initBuilder(fechado = true, pontoInicial = Vetor2D.ZERO)
+        .deltaLineTo(deltaX = 20.0, deltaY = 15.0)
+        .deltaLineTo(deltaX = -10.0, deltaY = 30.0)
+        .lineTo(x = -20.0, y = 45.0)
+        .build()
     val gynCanvas = GynCanvas().apply {
         //        addPrimitiva(circulo, propriedadeStroke)
 //        addPrimitiva(texto, propriedadeText)
 //        addPrimitiva(textoRotacionado, propriedadeText)
         addPrimitiva(linha, propriedadeStroke)
+        addPrimitiva(path, propriedadeStroke)
 //        addPrimitiva(retangulo, propriedadeStroke)
 //        addPrimitiva(polilinha, propriedadeStroke)
 //        criarAduela(this)
@@ -177,7 +183,8 @@ fun json() {
             Point2d(x = 40.0, y = -15.0)
         ),
         bulges = doubleArrayOf(0.0, 1.0, 0.0),
-        closed = true
+        closed = true,
+        layer = "0"
     )
     val circle = Circle(
         center = Point3d(x = 2.0, y = 5.0),
@@ -185,9 +192,9 @@ fun json() {
         layer = "0"
     )
     val mText = MText(
-        Location = Point3d(x = -5.0, y = -30.0),
-        Contents = "Um texto de teste",
-        Rotation = 12.0,
+        location = Point3d(x = -5.0, y = -30.0),
+        contents = "Um texto de teste",
+        rotation = 12.0,
         layer = "LayerTeste"
     )
     val klaxon = Klaxon()
