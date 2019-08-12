@@ -28,11 +28,12 @@ class StrokeAttributes(
     val lineCap: StrokeLineCap = StrokeLineCap.SQUARE,
     val miterLimit: Double = 10.0,
     //val dashes: DoubleArray? = null,
-    val dashOffset: Double = 0.0
+    val dashOffset: Double = 0.0,
+    val fixedWidth: Boolean = true
 ) : DrawAttributes {
     override fun aplicar(gc: GraphicsContext, transformacoes: Transformacoes) {
         gc.stroke = strokePaint
-        gc.lineWidth = lineWidth
+        gc.lineWidth = if (fixedWidth) lineWidth / transformacoes.escala else lineWidth
         gc.lineCap = lineCap
         gc.miterLimit = miterLimit
         gc.lineDashOffset = dashOffset

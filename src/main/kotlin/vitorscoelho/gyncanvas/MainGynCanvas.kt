@@ -54,17 +54,41 @@ class MeuViewGynCanvas : View() {
         .deltaLineTo(deltaX = -10.0, deltaY = 30.0)
         .lineTo(x = -20.0, y = 45.0)
         .build()
+    val path2 = Path.initBuilder(fechado = false, pontoInicial = Vetor2D.ZERO)
+        .lineTo(x = 20.0, y = 0.0)
+        .arcTo(xTangente1 = 25.0, yTangente1 = 0.0, xTangente2 = 25.0, yTangente2 = 5.0, raio = 5.0)
+        .deltaLineTo(deltaY = 30.0)
+        .build()
     val gynCanvas = GynCanvas().apply {
+        /*with(gc){
+            fillArc()
+            fillOval()
+            fillPolygon()
+            fillRect()
+            fillRoundRect()
+            fillText()
+            fillText(larguraMaxima)
+            strokeArc()
+            strokeLine()
+            strokeOval()
+            strokePolygon()
+            strokePolyline()
+            strokeRect()
+            strokeRoundRect()
+            strokeText()
+            strokeText(larguraMaxima)
+        }*/
         //        addPrimitiva(circulo, propriedadeStroke)
 //        addPrimitiva(texto, propriedadeText)
 //        addPrimitiva(textoRotacionado, propriedadeText)
-        addPrimitiva(linha, propriedadeStroke)
-        addPrimitiva(path, propriedadeStroke)
+//        addPrimitiva(linha, propriedadeStroke)
+//        addPrimitiva(path, propriedadeStroke)
+//        addPrimitiva(path2, propriedadeStroke)
 //        addPrimitiva(retangulo, propriedadeStroke)
 //        addPrimitiva(polilinha, propriedadeStroke)
 //        criarAduela(this)
-        json()
-//        criarBloco(this)
+//        json()
+        criarBloco(this)
 
 //        val passo = 50.0
 //        (1..100_000).forEach { iteracao ->
@@ -137,16 +161,24 @@ class MeuViewGynCanvas : View() {
 }
 
 fun criarBloco(gynCanvas: GynCanvas) {
-    val colarinho = Colarinho(
+    val blocoDeFundacao = BlocoDeFundacao(
         hxPilar = 80.0,
         hyPilar = 40.0,
-        cobrimentoInterno = 1.0,
-        cobrimentoExterno = 5.0,
         folgaDeMontagem = 7.5,
-        hcx = 45.0,
-        hcy = 25.0
+        hcx = 35.0,
+        hcy = 25.0,
+        embutimento = 130.0,
+        espessuraNivelamento = 5.0,
+        lxBloco = 320.0,
+        lyBloco = 105.0,
+        nivelPisoAcabado = 50034,
+        diametroEstacas = 60.0,
+        posicoesEstacas = listOf(
+            Vetor2D(x = -115.0, y = 0.0),
+            Vetor2D(x = 115.0, y = 0.0)
+        )
     )
-    colarinho.adicionarDesenho(gynCanvas = gynCanvas)
+    blocoDeFundacao.adicionarDesenho(gynCanvas = gynCanvas)
 }
 
 fun criarAduela(gynCanvas: GynCanvas) {
@@ -182,7 +214,7 @@ fun json() {
             Point2d(x = 10.0, y = 22.0),
             Point2d(x = 40.0, y = -15.0)
         ),
-        bulges = doubleArrayOf(0.0, 1.0, 0.0),
+        bulges = arrayOf(0.0, 1.0, 0.0),
         closed = true,
         layer = "0"
     )
