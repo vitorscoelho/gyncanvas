@@ -4,7 +4,7 @@ import javafx.scene.canvas.GraphicsContext
 import vitorscoelho.gyncanvas.core.Transformacoes
 import vitorscoelho.gyncanvas.math.Vetor2D
 
-class StrokeCircle(val centro: Vetor2D, val diametro: Double) : PrimitivaStroke {
+class StrokedCircle(val centro: Vetor2D, val diametro: Double) : PrimitivaStroke {
     override fun desenhar(gc: GraphicsContext, transformacoes: Transformacoes) {
         val raio = diametro / 2.0
         gc.strokeOval(
@@ -13,8 +13,8 @@ class StrokeCircle(val centro: Vetor2D, val diametro: Double) : PrimitivaStroke 
         )
     }
 
-    override fun copiarComTransformacao(transformacoes: Transformacoes): StrokeCircle =
-        StrokeCircle(
+    override fun copiarComTransformacao(transformacoes: Transformacoes): StrokedCircle =
+        StrokedCircle(
             centro = transformacoes.transformar(this.centro),
             diametro = this.diametro * transformacoes.escala
         )

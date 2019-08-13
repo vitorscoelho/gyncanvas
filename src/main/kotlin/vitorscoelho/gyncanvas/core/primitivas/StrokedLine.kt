@@ -4,7 +4,7 @@ import javafx.scene.canvas.GraphicsContext
 import vitorscoelho.gyncanvas.core.Transformacoes
 import vitorscoelho.gyncanvas.math.Vetor2D
 
-class StrokeLine(
+class StrokedLine(
     val ponto1: Vetor2D,
     val ponto2: Vetor2D
 ) : PrimitivaStroke {
@@ -15,8 +15,8 @@ class StrokeLine(
         )
     }
 
-    override fun copiarComTransformacao(transformacoes: Transformacoes): StrokeLine =
-        StrokeLine(
+    override fun copiarComTransformacao(transformacoes: Transformacoes): StrokedLine =
+        StrokedLine(
             ponto1 = transformacoes.transformar(this.ponto1),
             ponto2 = transformacoes.transformar(this.ponto2)
         )

@@ -27,7 +27,7 @@ class CotaHorizontal(
     val yDimensionLine: Double
         get() = this.dimensionLine.ponto1.y
 
-    private val dimensionLine = StrokeLine(
+    private val dimensionLine = StrokedLine(
         ponto1 = Vetor2D(x = ponto1.x, y = yDimensionLine),
         ponto2 = Vetor2D(x = ponto2.x, y = yDimensionLine)
     )
@@ -41,7 +41,7 @@ class CotaHorizontal(
         yDimensionLine = yDimensionLine,
         offsetExtensionLine = propriedadesCotas.offsetExtensionLine
     )
-    private val textoDesenho = FillText(
+    private val textoDesenho = FilledText(
         texto = textoCota(
             texto = texto,
             dc = propriedadesCotas.formatoNumero,
@@ -78,14 +78,14 @@ class CotaHorizontal(
             definitionPoint: Vetor2D,
             yDimensionLine: Double,
             offsetExtensionLine: Double
-        ): StrokeLine {
+        ): StrokedLine {
             //val deltaY = yDimensionLine - definitionPoint.y
             val yDefinition = if (yDimensionLine > definitionPoint.y) {
                 min(definitionPoint.y + offsetExtensionLine, yDimensionLine)
             } else {
                 max(definitionPoint.y - offsetExtensionLine, yDimensionLine)
             }
-            return StrokeLine(
+            return StrokedLine(
                 ponto1 = Vetor2D(x = definitionPoint.x, y = yDefinition),
                 ponto2 = Vetor2D(x = definitionPoint.x, y = yDimensionLine)
             )
@@ -100,7 +100,10 @@ class CotaVertical(
     override val texto: String = "<>",
     override val propriedadesCotas: PropriedadesCotas
 ) : Cota {
-    private val dimensionLine = StrokeLine(
+    val xDimensionLine: Double
+        get() = dimensionLine.ponto1.x
+
+    private val dimensionLine = StrokedLine(
         ponto1 = Vetor2D(x = xDimensionLine, y = ponto1.y),
         ponto2 = Vetor2D(x = xDimensionLine, y = ponto2.y)
     )
@@ -114,7 +117,7 @@ class CotaVertical(
         xDimensionLine = xDimensionLine,
         offsetExtensionLine = propriedadesCotas.offsetExtensionLine
     )
-    private val textoDesenho = FillText(
+    private val textoDesenho = FilledText(
         texto = textoCota(
             texto = texto,
             dc = propriedadesCotas.formatoNumero,
@@ -151,13 +154,13 @@ class CotaVertical(
             definitionPoint: Vetor2D,
             xDimensionLine: Double,
             offsetExtensionLine: Double
-        ): StrokeLine {
+        ): StrokedLine {
             val xDefinition = if (xDimensionLine > definitionPoint.x) {
                 min(definitionPoint.x + offsetExtensionLine, xDimensionLine)
             } else {
                 max(definitionPoint.x - offsetExtensionLine, xDimensionLine)
             }
-            return StrokeLine(
+            return StrokedLine(
                 ponto1 = Vetor2D(x = xDefinition, y = definitionPoint.y),
                 ponto2 = Vetor2D(x = xDimensionLine, y = definitionPoint.y)
             )
@@ -240,11 +243,11 @@ private class CotaInclinada(
     offset: Double,
     override val texto: String = "<>",
     override val propriedadesCotas: PropriedadesCotas
-):Cota {
-    private val dimensionLine: StrokeLine
-    private val extensionLine1: StrokeLine
-    private val extensionLine2: StrokeLine
-    private val textoDesenho: FillText
+) : Cota {
+    private val dimensionLine: StrokedLine
+    private val extensionLine1: StrokedLine
+    private val extensionLine2: StrokedLine
+    private val textoDesenho: FilledText
 
     init {
         require(delta.x != 0.0) { "Não foi possível criar uma cota inclinada, pois os pontos informados formam uma cota vertical (deltaX igual a zero)" }
@@ -276,19 +279,19 @@ private class CotaInclinada(
             inicioLinhaDeCotaHorizontalPonto2.rotate(angulo = anguloRotacao) + pontoDeGiroCotaReal
         val pontoTexto = pontoTextoCotaHorizontal.rotate(angulo = anguloRotacao) + pontoDeGiroCotaReal
 
-        dimensionLine = StrokeLine(
+        dimensionLine = StrokedLine(
             ponto1 = definitionPoint1,
             ponto2 = definitionPoint2
         )
-        extensionLine1 = StrokeLine(
+        extensionLine1 = StrokedLine(
             ponto1 = inicioLinhaDeCotaPonto1,
             ponto2 = definitionPoint1
         )
-        extensionLine2 = StrokeLine(
+        extensionLine2 = StrokedLine(
             ponto1 = inicioLinhaDeCotaPonto2,
             ponto2 = definitionPoint2
         )
-        this.textoDesenho = FillText(
+        this.textoDesenho = FilledText(
             texto = textoCota(
                 texto = texto,
                 dc = propriedadesCotas.formatoNumero,

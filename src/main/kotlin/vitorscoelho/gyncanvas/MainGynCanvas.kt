@@ -1,6 +1,6 @@
 package vitorscoelho.gyncanvas
 
-import com.beust.klaxon.Klaxon
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import javafx.scene.Cursor
 import javafx.scene.input.MouseButton
 import javafx.scene.paint.Color
@@ -11,7 +11,8 @@ import vitorscoelho.gyncanvas.core.primitivas.*
 import vitorscoelho.gyncanvas.core.primitivas.propriedades.FillAttributes
 import vitorscoelho.gyncanvas.core.primitivas.propriedades.StrokeAttributes
 import vitorscoelho.gyncanvas.core.primitivas.propriedades.FillTextAttributes
-import vitorscoelho.gyncanvas.dxf.entities.*
+import vitorscoelho.gyncanvas.json.JsonDrawing
+import vitorscoelho.gyncanvas.json.toJsonEntity
 import vitorscoelho.gyncanvas.math.Vetor2D
 
 fun main() {
@@ -29,22 +30,22 @@ class MeuViewGynCanvas : View() {
         textAlign = TextAlignment.LEFT,
         fillAtributtes = FillAttributes(fillPaint = Color.YELLOW)
     )
-    val linha = StrokeLine(
+    val linha = StrokedLine(
         ponto1 = Vetor2D(0.0, 0.0),
         ponto2 = Vetor2D(200.0, 300.0)
     )
-    val circulo = StrokeCircle(centro = Vetor2D(200.0, 300.0), diametro = 200.0)
-    val retangulo = StrokeRect(
+    val circulo = StrokedCircle(centro = Vetor2D(200.0, 300.0), diametro = 200.0)
+    val retangulo = StrokedRect(
         pontoInsercao = Vetor2D.ZERO,
         deltaX = 200.0,
         deltaY = -100.0
     )
-    val polilinha = StrokePolyline(
+    val polilinha = StrokedPolyline(
         pontos = listOf(Vetor2D(200.0, 200.0), Vetor2D(600.0, 300.0), Vetor2D.ZERO),
         fechado = true
     )
-    val texto = FillText(texto = "Texto teste", posicao = Vetor2D(200.0, 300.0), angulo = 0.0, tamanhoFixo = true)
-    val textoRotacionado = FillText(
+    val texto = FilledText(texto = "Texto teste", posicao = Vetor2D(200.0, 300.0), angulo = 0.0, tamanhoFixo = true)
+    val textoRotacionado = FilledText(
         texto = "Texto rotacionado",
         posicao = Vetor2D(200.0, 300.0),
         angulo = 3.14 / 2.0
@@ -179,6 +180,15 @@ fun criarBloco(gynCanvas: GynCanvas) {
         )
     )
     blocoDeFundacao.adicionarDesenho(gynCanvas = gynCanvas)
+    val listaJson = blocoDeFundacao.mapPrimitivas { primitiva, atributo -> primitiva.toJsonEntity() }
+    val jsonDrawing = JsonDrawing(
+        tablesSection = emptyList(),
+        entitiesSection = listaJson
+    )
+    //println(Gson().toJson(jsonDrawing))
+    //println(Klaxon().toJsonString(jsonDrawing))
+    val jacksonMapper = jacksonObjectMapper()
+    println(jacksonMapper.writeValueAsString(jsonDrawing))
 }
 
 fun criarAduela(gynCanvas: GynCanvas) {
@@ -200,43 +210,4 @@ fun criarAduela(gynCanvas: GynCanvas) {
         espessuraChanfradoEncaixe = 2.0
     )
     formaAduela.adicionarDesenho(gynCanvas = gynCanvas)
-}
-
-fun json() {
-    val line = Line(
-        startPoint = Point3d(x = 10.0, y = 15.0),
-        endPoint = Point3d(x = 25.0, y = 45.0),
-        layer = "LayerTeste"
-    )
-    val polyline = Polyline(
-        vertices = arrayOf(
-            Point2d(x = -10.0, y = 12.0),
-            Point2d(x = 10.0, y = 22.0),
-            Point2d(x = 40.0, y = -15.0)
-        ),
-        bulges = arrayOf(0.0, 1.0, 0.0),
-        closed = true,
-        layer = "0"
-    )
-    val circle = Circle(
-        center = Point3d(x = 2.0, y = 5.0),
-        radius = 12.0,
-        layer = "0"
-    )
-    val mText = MText(
-        location = Point3d(x = -5.0, y = -30.0),
-        contents = "Um texto de teste",
-        rotation = 12.0,
-        layer = "LayerTeste"
-    )
-    val klaxon = Klaxon()
-
-    println("Line:")
-    println(klaxon.toJsonString(line))
-    println("Polyline:")
-    println(klaxon.toJsonString(polyline))
-    println("Circle:")
-    println(klaxon.toJsonString(circle))
-    println("MText:")
-    println(klaxon.toJsonString(mText))
 }

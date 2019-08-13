@@ -70,11 +70,6 @@ class BlocoDeFundacao(
     /**Distância entre cotas, em cm*/
     private val distanciaCota = 18.0
 
-    private val listaDesenho = mutableListOf<DesenhoAdicionavel>()
-    private fun add(atributo: DrawAttributes, vararg primitiva: Primitiva) {
-        primitiva.forEach { listaDesenho.add(DesenhoAdicionavel(it, atributo)) }
-    }
-
     private val propriedadeContornoForma = StrokeAttributes(strokePaint = Color.RED)
     private val propriedadeContornoEstaca = StrokeAttributes(strokePaint = Color.MEDIUMPURPLE)
     private val propriedadeEixo = StrokeAttributes(strokePaint = Color.GREEN)
@@ -95,53 +90,52 @@ class BlocoDeFundacao(
         arrowSize = 2.0
     )
 
-    private fun contornoBloco() {
-        val contorno = StrokeRect(pontoInsercao = Vetor2D.ZERO, deltaX = lxBloco, deltaY = lyBloco)
-        add(propriedadeContornoForma, contorno)
+    private fun contornoBloco(): List<DesenhoAdicionavel> {
+        val contorno = StrokedRect(pontoInsercao = Vetor2D.ZERO, deltaX = lxBloco, deltaY = lyBloco)
+        return listOf(DesenhoAdicionavel(contorno, propriedadeContornoForma))
     }
 
-    private fun contornoColarinho() {
-        val contornoExterno = StrokeRect(
+    private fun contornoColarinho(): List<DesenhoAdicionavel> {
+        val contornoExterno = StrokedRect(
             pontoInsercao = Vetor2D(x = lxBloco / 2.0 - hcxExt / 2.0, y = lyBloco / 2.0 - hcyExt / 2.0),
             deltaX = hcxExt, deltaY = hcyExt
         )
-        val contornoInterno = StrokeRect(
+        val contornoInterno = StrokedRect(
             pontoInsercao = Vetor2D(x = lxBloco / 2.0 - hcxInt / 2.0, y = lyBloco / 2.0 - hcyInt / 2.0),
             deltaX = hcxInt, deltaY = hcyInt
         )
-        add(propriedadeContornoForma, contornoExterno, contornoInterno)
+        return listOf(contornoInterno, contornoExterno).map { DesenhoAdicionavel(it, propriedadeContornoForma) }
     }
 
-    private fun estacas() {
-        posicoesEstacas.forEach { posicao ->
+    private fun estacas(): List<DesenhoAdicionavel> {
+        return posicoesEstacas.map { posicao ->
             val xRealCentro = lxBloco / 2.0 + posicao.x
             val yRealCentro = lyBloco / 2.0 + posicao.y
-            val contornoEstaca = StrokeCircle(
+            val contornoEstaca = StrokedCircle(
                 centro = Vetor2D(x = xRealCentro, y = yRealCentro),
                 diametro = 60.0
             )
-            add(propriedadeContornoEstaca, contornoEstaca)
+            DesenhoAdicionavel(contornoEstaca, propriedadeContornoEstaca)
         }
     }
 
-    private fun linhasDeEixo() {
-        abscissasEixosVerticais.forEach { x ->
-            val eixoVertical = StrokeLine(
+    private fun linhasDeEixo(): List<DesenhoAdicionavel> {
+        val eixosVerticais = abscissasEixosVerticais.map { x ->
+            StrokedLine(
                 ponto1 = Vetor2D(x = x, y = 0.0),
                 ponto2 = Vetor2D(x = x, y = lyBloco)
             )
-            add(propriedadeEixo, eixoVertical)
         }
-        ordenadasEixosHorizontais.forEach { y ->
-            val eixoHorizontal = StrokeLine(
+        val eixosHorizontais = ordenadasEixosHorizontais.map { y ->
+            StrokedLine(
                 ponto1 = Vetor2D(x = 0.0, y = y),
                 ponto2 = Vetor2D(x = lxBloco, y = y)
             )
-            add(propriedadeEixo, eixoHorizontal)
         }
+        return (eixosVerticais + eixosHorizontais).map { DesenhoAdicionavel(it, propriedadeEixo) }
     }
 
-    private fun cotasVerticaisDosEixos() {
+    private fun cotasVerticaisDosEixos(): List<DesenhoAdicionavel> {
         val xPonto = 0.0
         val sequencia = SequenciaCotaVertical(
             pontoInicial = Vetor2D.ZERO,
@@ -150,10 +144,10 @@ class BlocoDeFundacao(
         )
         ordenadasEixosHorizontais.forEach { y -> sequencia.add(x = xPonto, y = y) }
         sequencia.add(x = xPonto, y = lyBloco)
-        sequencia.toList().forEach { cota -> add(propriedadeCota, cota) }
+        return sequencia.toList().map { DesenhoAdicionavel(it, propriedadeCota) }
     }
 
-    private fun cotasHorizontaisDosEixos() {
+    private fun cotasHorizontaisDosEixos(): List<DesenhoAdicionavel> {
         val yPonto = 0.0
         val sequencia = SequenciaCotaHorizontal(
             pontoInicial = Vetor2D.ZERO,
@@ -162,30 +156,30 @@ class BlocoDeFundacao(
         )
         abscissasEixosVerticais.forEach { x -> sequencia.add(x = x, y = yPonto) }
         sequencia.add(x = lxBloco, y = yPonto)
-        sequencia.toList().forEach { cota -> add(propriedadeCota, cota) }
+        return sequencia.toList().map { DesenhoAdicionavel(it, propriedadeCota) }
     }
 
-    private fun cotaVerticalComprimentoDoBloco() {
+    private fun cotaVerticalComprimentoDoBloco(): List<DesenhoAdicionavel> {
         val cota = CotaVertical(
             ponto1 = Vetor2D.ZERO,
             ponto2 = Vetor2D(x = 0.0, y = lyBloco),
             xDimensionLine = -2.0 * distanciaCota,
             propriedadesCotas = formatoCota
         )
-        add(propriedadeCota, cota)
+        return listOf(DesenhoAdicionavel(cota, propriedadeCota))
     }
 
-    private fun cotaHorizontalComprimentoDoBloco() {
+    private fun cotaHorizontalComprimentoDoBloco(): List<DesenhoAdicionavel> {
         val cota = CotaHorizontal(
             ponto1 = Vetor2D.ZERO,
             ponto2 = Vetor2D(x = lxBloco, y = 0.0),
             yDimensionLine = -2.0 * distanciaCota,
             propriedadesCotas = formatoCota
         )
-        add(propriedadeCota, cota)
+        return listOf(DesenhoAdicionavel(cota, propriedadeCota))
     }
 
-    private fun cotasVerticaisDasDimensoesDoColarinho() {
+    private fun cotasVerticaisDasDimensoesDoColarinho(): List<DesenhoAdicionavel> {
         val yInferior = lyBloco / 2.0 - hcyExt / 2.0
         val xPonto = lxBloco
         val sequenciaInterna = SequenciaCotaVertical(
@@ -196,8 +190,8 @@ class BlocoDeFundacao(
             .addDelta(deltaY = hcy)
             .addDelta(deltaY = hcyInt)
             .addDelta(deltaY = hcy)
-        sequenciaInterna.toList().forEach { cota -> add(propriedadeCota, cota) }
-        if (hcyExt == lyBloco) return
+        val cotasMedidasInternas = sequenciaInterna.toList().toList()
+        if (hcyExt == lyBloco) return emptyList()
         val sequenciaExterna = SequenciaCotaVertical(
             pontoInicial = Vetor2D(x = xPonto, y = 0.0),
             xDimensionLine = lxBloco + 2.0 * distanciaCota,
@@ -206,10 +200,11 @@ class BlocoDeFundacao(
             .add(x = xPonto, y = yInferior)
             .addDelta(deltaY = hcyExt)
             .add(x = xPonto, y = lyBloco)
-        sequenciaExterna.toList().forEach { cota -> add(propriedadeCota, cota) }
+        val cotasMedidasExternas = sequenciaExterna.toList().toList()
+        return (cotasMedidasInternas + cotasMedidasExternas).map { DesenhoAdicionavel(it, propriedadeCota) }
     }
 
-    private fun cotasHorizontaisDasDimensoesDoColarinho() {
+    private fun cotasHorizontaisDasDimensoesDoColarinho(): List<DesenhoAdicionavel> {
         val xEsquerda = lxBloco / 2.0 - hcxExt / 2.0
         val yPonto = lyBloco
         val sequenciaInterna = SequenciaCotaHorizontal(
@@ -220,8 +215,8 @@ class BlocoDeFundacao(
             .addDelta(deltaX = hcx)
             .addDelta(deltaX = hcxInt)
             .addDelta(deltaX = hcx)
-        sequenciaInterna.toList().forEach { cota -> add(propriedadeCota, cota) }
-        if (hcxExt == lxBloco) return
+        val cotasMedidasInternas = sequenciaInterna.toList().toList()
+        if (hcxExt == lxBloco) return emptyList()
         val sequenciaExterna = SequenciaCotaHorizontal(
             pontoInicial = Vetor2D(x = 0.0, y = yPonto),
             yDimensionLine = lyBloco + 2.0 * distanciaCota,
@@ -230,153 +225,33 @@ class BlocoDeFundacao(
             .add(x = xEsquerda, y = yPonto)
             .addDelta(deltaX = hcxExt)
             .add(x = lxBloco, y = yPonto)
-        sequenciaExterna.toList().forEach { cota -> add(propriedadeCota, cota) }
+        val cotasMedidasExternas = sequenciaExterna.toList().toList()
+        return (cotasMedidasInternas + cotasMedidasExternas).map { DesenhoAdicionavel(it, propriedadeCota) }
     }
 
     private class DesenhoAdicionavel(val primitiva: Primitiva, val atributo: DrawAttributes)
 
+    private fun listarDesenhos(): List<DesenhoAdicionavel> =
+        contornoBloco() +
+                contornoColarinho() +
+                estacas() +
+                linhasDeEixo() +
+                cotasVerticaisDosEixos() +
+                cotasHorizontaisDosEixos() +
+                cotaVerticalComprimentoDoBloco() +
+                cotaHorizontalComprimentoDoBloco() +
+                cotasVerticaisDasDimensoesDoColarinho() +
+                cotasHorizontaisDasDimensoesDoColarinho()
+
+    fun forEachPrimitiva(acao: (primitiva: Primitiva, atributo: DrawAttributes) -> Unit) {
+        listarDesenhos().forEach { acao.invoke(it.primitiva, it.atributo) }
+    }
+
+    fun <R> mapPrimitivas(transform: (primitiva: Primitiva, atributo: DrawAttributes) -> R): List<R> {
+        return listarDesenhos().map { transform(it.primitiva, it.atributo) }
+    }
+
     fun adicionarDesenho(gynCanvas: GynCanvas) {
-        contornoBloco()
-        contornoColarinho()
-        estacas()
-        linhasDeEixo()
-        cotasVerticaisDosEixos()
-        cotasHorizontaisDosEixos()
-        cotaVerticalComprimentoDoBloco()
-        cotaHorizontalComprimentoDoBloco()
-        cotasVerticaisDasDimensoesDoColarinho()
-        cotasHorizontaisDasDimensoesDoColarinho()
-        listaDesenho.forEach { gynCanvas.addPrimitiva(it.primitiva, it.atributo) }
-        /*val pontoOrigem = Vetor2D.ZERO
-        val contornoExternoColarinho = StrokeRect(
-            pontoInsercao = pontoOrigem,
-            deltaX = hxPilar + 2.0 * (hcx + folgaDeMontagem),
-            deltaY = hyPilar + 2.0 * (hcy + folgaDeMontagem)
-        )
-        val contornoInternoColarinho = StrokeRect(
-            pontoInsercao = Vetor2D(
-                x = hcx,
-                y = hcy
-            ),
-            deltaX = hxPilar + 2.0 * folgaDeMontagem,
-            deltaY = hyPilar + 2.0 * folgaDeMontagem
-        )
-        val pilar = FillRect(
-            pontoInsercao = Vetor2D(
-                x = hcx + folgaDeMontagem,
-                y = hcy + folgaDeMontagem
-            ),
-            deltaX = hxPilar,
-            deltaY = hyPilar
-        )
-        val pilarPath = Path.initBuilder(fechado = true, pontoInicial = Vetor2D(x = 20.0, y = -40.0))
-            .lineTo(x = 20.0, y = -13.0)
-            .lineTo(x = 10.0, y = -11.0)
-            .lineTo(x = 10.0, y = 11.0)
-            .lineTo(x = 20.0, y = 13.0)
-            .lineTo(x = 20.0, y = 40.0)
-            .lineTo(x = -20.0, y = 40.0)
-            .lineTo(x = -20.0, y = 13.0)
-            .lineTo(x = -10.0, y = 11.0)
-            .lineTo(x = -10.0, y = -11.0)
-            .lineTo(x = -20.0, y = -13.0)
-            .lineTo(x = -20.0, y = -40.0)
-//            .lineTo(x =, y =)
-//            .lineTo(x =, y =)
-//            .lineTo(x =, y =)
-//            .lineTo(x =, y =)
-            .build()
-        run {
-            val dcCotas = DecimalFormat("#.##")
-            val propriedadeCotas = object : DrawAttributes {
-                override fun aplicar(gc: GraphicsContext, transformacoes: Transformacoes) {
-                    gc.fill = Color.GREEN
-                    gc.stroke = Color.BLUEVIOLET
-                    gc.textAlign = TextAlignment.CENTER
-                    gc.textBaseline = VPos.BOTTOM
-                    gc.font = Font(gc.font.name, 12.0)
-                }
-            }
-            val y1 = hyPilar + 2.0 * (hcy + folgaDeMontagem)
-            val y1Dimension = y1 + 15.0
-            val offsetExtensionLine = 5.0
-            val offsetText = 0.0
-            val arrowSize = 2.0
-            val multiplicadorDistancia = 1.0 / 100.0
-            val cotas = mutableListOf<Cota>()
-            val propriedadesCotas = PropriedadesCotas(
-                formatoNumero = dcCotas,
-                offsetExtensionLine = offsetExtensionLine,
-                offsetText = offsetText,
-                arrowSize = arrowSize,
-                multiplicadorValor = multiplicadorDistancia
-            )
-            cotas.add(
-                CotaHorizontal(
-                    ponto1 = Vetor2D(x = 0.0, y = y1),
-                    ponto2 = Vetor2D(x = hcx, y = y1),
-                    yDimensionLine = y1Dimension,
-                    propriedadesCotas = propriedadesCotas
-                )
-            )
-            cotas.add(
-                CotaHorizontal(
-                    ponto1 = Vetor2D(x = hcx, y = y1),
-                    ponto2 = Vetor2D(x = hcx + hxPilar + 2.0 * folgaDeMontagem, y = y1),
-                    yDimensionLine = y1Dimension,
-                    propriedadesCotas = propriedadesCotas
-                )
-            )
-            cotas.add(
-                CotaHorizontal(
-                    ponto1 = Vetor2D(x = hcx + hxPilar + 2.0 * folgaDeMontagem, y = y1),
-                    ponto2 = Vetor2D(x = hxPilar + 2.0 * (hcx + folgaDeMontagem), y = y1),
-                    yDimensionLine = y1Dimension,
-                    propriedadesCotas = propriedadesCotas
-                )
-            )
-            val x1Dimension = 0.0 - 15.0
-            cotas.add(
-                CotaVertical(
-                    ponto1 = Vetor2D(x = 0.0, y = 0.0),
-                    ponto2 = Vetor2D(x = 0.0, y = hcy),
-                    xDimensionLine = x1Dimension,
-                    propriedadesCotas = propriedadesCotas
-                )
-            )
-            cotas.add(
-                CotaVertical(
-                    ponto1 = Vetor2D(x = 0.0, y = hcy),
-                    ponto2 = Vetor2D(x = 0.0, y = hcy + hyPilar + 2.0 * folgaDeMontagem),
-                    xDimensionLine = x1Dimension,
-                    propriedadesCotas = propriedadesCotas
-                )
-            )
-            cotas.add(
-                CotaVertical(
-                    ponto1 = Vetor2D(x = 0.0, y = hcy + hyPilar + 2.0 * folgaDeMontagem),
-                    ponto2 = Vetor2D(x = 0.0, y = hyPilar + 2.0 * (hcy + folgaDeMontagem)),
-                    xDimensionLine = x1Dimension,
-                    propriedadesCotas = propriedadesCotas
-                )
-            )
-            cotas.add(
-                CotaAlinhada(
-                    ponto1 = Vetor2D.ZERO,
-                    ponto2 = Vetor2D(x = hxPilar + 2.0 * (hcx + folgaDeMontagem), y = y1),
-                    offset = 50.0,
-                    propriedadesCotas = propriedadesCotas
-                )
-            )
-            cotas.forEach { gynCanvas.addPrimitiva(it, propriedadeCotas) }
-        }
-        gynCanvas.addPrimitiva(contornoExternoColarinho, propriedadeContornoForma)
-        gynCanvas.addPrimitiva(contornoInternoColarinho, propriedadeContornoForma)
-        gynCanvas.addPrimitiva(pilar, propriedadePilar)
-        gynCanvas.addPrimitiva(pilarPath, object : DrawAttributes {
-            override fun aplicar(gc: GraphicsContext, transformacoes: Transformacoes) {
-                gc.stroke = Color.DARKORANGE
-            }
-        })*/
+        listarDesenhos().forEach { gynCanvas.addPrimitiva(it.primitiva, it.atributo) }
     }
 }

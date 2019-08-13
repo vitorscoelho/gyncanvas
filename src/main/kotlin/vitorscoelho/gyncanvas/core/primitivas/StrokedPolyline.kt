@@ -4,10 +4,12 @@ import javafx.scene.canvas.GraphicsContext
 import vitorscoelho.gyncanvas.core.Transformacoes
 import vitorscoelho.gyncanvas.math.Vetor2D
 
-class StrokePolyline(pontos: List<Vetor2D>, private val fechado: Boolean) : Primitiva {
+class StrokedPolyline(pontos: List<Vetor2D>, val fechado: Boolean) : Primitiva {
     private val x = DoubleArray(pontos.size) { indice -> pontos[indice].x }
     private val y = DoubleArray(pontos.size) { indice -> -pontos[indice].y }
-    private val nPontos: Int = pontos.size
+    val nPontos: Int = pontos.size
+
+    fun pontos(): List<Vetor2D> = (0 until nPontos).map { indice -> Vetor2D(x = x[indice], y = y[indice]) }
 
     override fun desenhar(gc: GraphicsContext, transformacoes: Transformacoes) {
         if (fechado) {
@@ -17,8 +19,8 @@ class StrokePolyline(pontos: List<Vetor2D>, private val fechado: Boolean) : Prim
         }
     }
 
-    override fun copiarComTransformacao(transformacoes: Transformacoes): StrokePolyline =
-        StrokePolyline(
+    override fun copiarComTransformacao(transformacoes: Transformacoes): StrokedPolyline =
+        StrokedPolyline(
             pontos = (0 until nPontos).map { indice ->
                 val pontoTransformado = transformacoes.transformar(x = x[indice], y = y[indice])
                 Vetor2D(x = pontoTransformado.x, y = pontoTransformado.y)

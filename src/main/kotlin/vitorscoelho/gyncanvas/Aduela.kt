@@ -65,7 +65,7 @@ class FormaAduela(
     }
 
     private fun corteTransversal() {
-        val contornoExterno = StrokeRect(pontoInsercao = Vetor2D.ZERO, deltaX = larguraExterna, deltaY = alturaExterna)
+        val contornoExterno = StrokedRect(pontoInsercao = Vetor2D.ZERO, deltaX = larguraExterna, deltaY = alturaExterna)
         val contornoInterno = Path.initBuilder(
             fechado = true,
             pontoInicial = Vetor2D(
@@ -100,11 +100,11 @@ class FormaAduela(
     private fun linhasFuroCorteTransversal(yInf: Double, ySup: Double) {
         doubleArrayOf(distanciaFuroIcamento, larguraExterna - distanciaFuroIcamento).forEach { xFuro ->
             val raioFuro = diametroFuroIcamento / 2.0
-            val linhaEsquerda = StrokeLine(
+            val linhaEsquerda = StrokedLine(
                 ponto1 = Vetor2D(x = xFuro - raioFuro, y = yInf),
                 ponto2 = Vetor2D(x = xFuro - raioFuro, y = ySup)
             )
-            val linhaDireita = StrokeLine(
+            val linhaDireita = StrokedLine(
                 ponto1 = Vetor2D(x = xFuro + raioFuro, y = yInf),
                 ponto2 = Vetor2D(x = xFuro + raioFuro, y = ySup)
             )

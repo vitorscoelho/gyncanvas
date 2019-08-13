@@ -8,6 +8,7 @@ class Path private constructor(
     private val fechado: Boolean,
     private val passos: List<Passo>
 ) : Primitiva {
+
     override fun desenhar(gc: GraphicsContext, transformacoes: Transformacoes) {
         gc.beginPath()
         passos.forEach { it.desenhar(gc, transformacoes) }

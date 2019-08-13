@@ -1,20 +1,19 @@
 package vitorscoelho.gyncanvas.core.primitivas
 
 import javafx.scene.canvas.GraphicsContext
-import javafx.scene.transform.Affine
 import vitorscoelho.gyncanvas.core.Transformacoes
 import vitorscoelho.gyncanvas.math.Vetor2D
 
-class FillText(val texto: String, val posicao: Vetor2D, val angulo: Double, tamanhoFixo: Boolean = false) :
+class FilledText(val texto: String, val posicao: Vetor2D, val angulo: Double, tamanhoFixo: Boolean = false) :
     PrimitivaText {
     private val tipoTexto: TipoTexto = TipoTexto.getTipoTexto(angulo = angulo, tamanhoFixo = tamanhoFixo)
 
     override fun desenhar(gc: GraphicsContext, transformacoes: Transformacoes) {
-        tipoTexto.desenhar(fillText = this, gc = gc, transformacoes = transformacoes)
+        tipoTexto.desenhar(filledText = this, gc = gc, transformacoes = transformacoes)
     }
 
-    override fun copiarComTransformacao(transformacoes: Transformacoes): FillText =
-        FillText(
+    override fun copiarComTransformacao(transformacoes: Transformacoes): FilledText =
+        FilledText(
             texto = this.texto,
             posicao = transformacoes.transformar(this.posicao),
             angulo = this.angulo,
@@ -24,46 +23,46 @@ class FillText(val texto: String, val posicao: Vetor2D, val angulo: Double, tama
 
 private enum class TipoTexto {
     TEXTO_HORIZONTAL {
-        override fun desenhar(fillText: FillText, gc: GraphicsContext, transformacoes: Transformacoes) {
-            gc.fillText(fillText.texto, fillText.posicao.x, -fillText.posicao.y/*,larguraMaxima*/)
+        override fun desenhar(filledText: FilledText, gc: GraphicsContext, transformacoes: Transformacoes) {
+            gc.fillText(filledText.texto, filledText.posicao.x, -filledText.posicao.y/*,larguraMaxima*/)
         }
     },
     TEXTO_ROTACIONADO {
-        override fun desenhar(fillText: FillText, gc: GraphicsContext, transformacoes: Transformacoes) {
+        override fun desenhar(filledText: FilledText, gc: GraphicsContext, transformacoes: Transformacoes) {
             val affineOriginal = gc.transform
             gc.transform = transformacoes.copy()
-                .transladar(translacaoX = fillText.posicao.x, translacaoY = -fillText.posicao.y)
-                .rotacionar(angulo = -fillText.angulo)
+                .transladar(translacaoX = filledText.posicao.x, translacaoY = -filledText.posicao.y)
+                .rotacionar(angulo = -filledText.angulo)
                 .toAffine()
-            gc.fillText(fillText.texto, 0.0, 0.0/*,larguraMaxima*/)
+            gc.fillText(filledText.texto, 0.0, 0.0/*,larguraMaxima*/)
             gc.transform = affineOriginal
         }
     },
     TEXTO_HORIZONTAL_TAMANHO_FIXO {
-        override fun desenhar(fillText: FillText, gc: GraphicsContext, transformacoes: Transformacoes) {
+        override fun desenhar(filledText: FilledText, gc: GraphicsContext, transformacoes: Transformacoes) {
             val affineOriginal = gc.transform
             gc.transform = transformacoes.copy()
-                .transladar(translacaoX = fillText.posicao.x, translacaoY = -fillText.posicao.y)
+                .transladar(translacaoX = filledText.posicao.x, translacaoY = -filledText.posicao.y)
                 .escalar(escala = 1.0 / transformacoes.escala, xPivo = 0.0, yPivo = 0.0)
                 .toAffine()
-            gc.fillText(fillText.texto, 0.0, 0.0/*,larguraMaxima*/)
+            gc.fillText(filledText.texto, 0.0, 0.0/*,larguraMaxima*/)
             gc.transform = affineOriginal
         }
     },
     TEXTO_ROTACIONADO_TAMANHO_FIXO {
-        override fun desenhar(fillText: FillText, gc: GraphicsContext, transformacoes: Transformacoes) {
+        override fun desenhar(filledText: FilledText, gc: GraphicsContext, transformacoes: Transformacoes) {
             val affineOriginal = gc.transform
             gc.transform = transformacoes.copy()
-                .transladar(translacaoX = fillText.posicao.x, translacaoY = -fillText.posicao.y)
-                .rotacionar(angulo = -fillText.angulo)
+                .transladar(translacaoX = filledText.posicao.x, translacaoY = -filledText.posicao.y)
+                .rotacionar(angulo = -filledText.angulo)
                 .escalar(escala = 1.0 / transformacoes.escala, xPivo = 0.0, yPivo = 0.0)
                 .toAffine()
-            gc.fillText(fillText.texto, 0.0, 0.0/*,larguraMaxima*/)
+            gc.fillText(filledText.texto, 0.0, 0.0/*,larguraMaxima*/)
             gc.transform = affineOriginal
         }
     };
 
-    abstract fun desenhar(fillText: FillText, gc: GraphicsContext, transformacoes: Transformacoes)
+    abstract fun desenhar(filledText: FilledText, gc: GraphicsContext, transformacoes: Transformacoes)
 
     companion object {
         fun getTipoTexto(angulo: Double, tamanhoFixo: Boolean): TipoTexto {

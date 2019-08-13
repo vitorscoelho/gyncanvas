@@ -5,8 +5,8 @@ import vitorscoelho.gyncanvas.core.Transformacoes
 import vitorscoelho.gyncanvas.math.Vetor2D
 import kotlin.math.absoluteValue
 
-class StrokeRect(pontoInsercao: Vetor2D, deltaX: Double, deltaY: Double) : Primitiva {
-    private val cantoEsquerdoInferior: Vetor2D = run {
+class StrokedRect(pontoInsercao: Vetor2D, deltaX: Double, deltaY: Double) : Primitiva {
+    val cantoEsquerdoSuperior: Vetor2D = run {
         val x = if (deltaX >= 0.0) pontoInsercao.x else pontoInsercao.x + deltaX
         val y = if (deltaY <= 0.0) pontoInsercao.y else pontoInsercao.y + deltaY
         Vetor2D(x = x, y = y)
@@ -15,12 +15,12 @@ class StrokeRect(pontoInsercao: Vetor2D, deltaX: Double, deltaY: Double) : Primi
     val altura = deltaY.absoluteValue
 
     override fun desenhar(gc: GraphicsContext, transformacoes: Transformacoes) {
-        gc.strokeRect(cantoEsquerdoInferior.x, -cantoEsquerdoInferior.y, largura, altura)
+        gc.strokeRect(cantoEsquerdoSuperior.x, -cantoEsquerdoSuperior.y, largura, altura)
     }
 
-    override fun copiarComTransformacao(transformacoes: Transformacoes): StrokeRect =
-        StrokeRect(
-            pontoInsercao = transformacoes.transformar(this.cantoEsquerdoInferior),
+    override fun copiarComTransformacao(transformacoes: Transformacoes): StrokedRect =
+        StrokedRect(
+            pontoInsercao = transformacoes.transformar(this.cantoEsquerdoSuperior),
             deltaX = this.largura * transformacoes.escala,
             deltaY = this.altura * transformacoes.escala
         )
