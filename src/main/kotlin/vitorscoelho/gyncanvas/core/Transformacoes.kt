@@ -2,8 +2,6 @@ package vitorscoelho.gyncanvas.core
 
 import javafx.scene.transform.Affine
 import org.joml.Matrix4d
-import org.joml.Quaterniond
-import org.joml.Vector2d
 import org.joml.Vector3d
 import vitorscoelho.gyncanvas.math.Vetor2D
 
@@ -43,6 +41,11 @@ class Transformacoes {
 //        matrizJOML.rotate(3.14, 0.0, 0.0, 1.0)
 //        matrizJOML.rotate(quaterniond)
         matrizJOML.rotateZ(angulo)
+        return this
+    }
+
+    fun espelhar(eixoX: Double, eixoY: Double, pontoX: Double, pontoY: Double): Transformacoes {
+        matrizJOML.reflect(eixoY, eixoX, 0.0, pontoX, pontoY, 0.0)
         return this
     }
 

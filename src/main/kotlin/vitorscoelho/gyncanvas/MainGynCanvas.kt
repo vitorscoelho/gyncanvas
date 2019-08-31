@@ -171,7 +171,7 @@ fun criarBloco(gynCanvas: GynCanvas) {
         embutimento = 130.0,
         espessuraNivelamento = 5.0,
         lxBloco = 320.0,
-        lyBloco = 105.0,
+        lyBloco = 205.0,
         nivelPisoAcabado = 50034,
         diametroEstacas = 60.0,
         posicoesEstacas = listOf(
@@ -180,15 +180,13 @@ fun criarBloco(gynCanvas: GynCanvas) {
         )
     )
     blocoDeFundacao.adicionarDesenho(gynCanvas = gynCanvas)
-    val listaJson = blocoDeFundacao.mapPrimitivas { primitiva, atributo -> primitiva.toJsonEntity() }
-    val jsonDrawing = JsonDrawing(
-        tablesSection = emptyList(),
-        entitiesSection = listaJson
-    )
-    //println(Gson().toJson(jsonDrawing))
-    //println(Klaxon().toJsonString(jsonDrawing))
-    val jacksonMapper = jacksonObjectMapper()
-    println(jacksonMapper.writeValueAsString(jsonDrawing))
+//    val listaJson = blocoDeFundacao.mapPrimitivas { primitiva, atributo -> primitiva.toJsonEntity() }
+//    val jsonDrawing = JsonDrawing(
+//        tablesSection = emptyList(),
+//        entitiesSection = listaJson
+//    )
+//    val jacksonMapper = jacksonObjectMapper()
+//    println(jacksonMapper.writeValueAsString(jsonDrawing))
 }
 
 fun criarAduela(gynCanvas: GynCanvas) {

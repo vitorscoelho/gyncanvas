@@ -6,6 +6,7 @@ import vitorscoelho.gyncanvas.math.Vetor2D
 
 class Path private constructor(
     private val fechado: Boolean,
+    private val preenchido: Boolean,
     private val passos: List<Passo>
 ) : Primitiva {
 
@@ -13,20 +14,21 @@ class Path private constructor(
         gc.beginPath()
         passos.forEach { it.desenhar(gc, transformacoes) }
         if (fechado) gc.closePath()
-        gc.stroke()
+        if (preenchido) gc.fill() else gc.stroke()
     }
 
     override fun copiarComTransformacao(transformacoes: Transformacoes): Path =
         Path(
             fechado = fechado,
+            preenchido = preenchido,
             passos = passos.map { it.copiarComTransformacao(transformacoes) }
         )
 
     companion object {
-        fun initBuilder(fechado: Boolean = false, pontoInicial: Vetor2D): Builder =
-            Builder(fechado = fechado, pontoInicial = pontoInicial)
+        fun initBuilder(fechado: Boolean = false, preenchido: Boolean = false, pontoInicial: Vetor2D): Builder =
+            Builder(fechado = fechado, preenchido = preenchido, pontoInicial = pontoInicial)
 
-        class Builder(private val fechado: Boolean = false, pontoInicial: Vetor2D) {
+        class Builder(private val fechado: Boolean = false, private val preenchido: Boolean, pontoInicial: Vetor2D) {
             private val passos = mutableListOf<Passo>()
             private var pontoFinalAtual: Vetor2D = pontoInicial
 
@@ -109,7 +111,7 @@ class Path private constructor(
                     raio = raio
                 )
 
-            fun build(): Path = Path(fechado = fechado, passos = passos)
+            fun build(): Path = Path(fechado = fechado, preenchido = preenchido, passos = passos)
         }
     }
 }

@@ -10,6 +10,7 @@ import vitorscoelho.gyncanvas.core.Transformacoes
 import vitorscoelho.gyncanvas.core.primitivas.*
 import vitorscoelho.gyncanvas.core.primitivas.propriedades.DrawAttributes
 import vitorscoelho.gyncanvas.core.primitivas.propriedades.FillAttributes
+import vitorscoelho.gyncanvas.core.primitivas.propriedades.FillTextAttributes
 import vitorscoelho.gyncanvas.core.primitivas.propriedades.StrokeAttributes
 import vitorscoelho.gyncanvas.math.Vetor2D
 import java.text.DecimalFormat
@@ -70,6 +71,8 @@ class BlocoDeFundacao(
     /**Distância entre cotas, em cm*/
     private val distanciaCota = 18.0
 
+    private val propriedadeContornoPilar = StrokeAttributes(strokePaint = Color.DEEPSKYBLUE, lineWidth = 5.0)
+    private val propriedadeHachura = FillAttributes(fillPaint = Color.MEDIUMPURPLE)
     private val propriedadeContornoForma = StrokeAttributes(strokePaint = Color.RED)
     private val propriedadeContornoEstaca = StrokeAttributes(strokePaint = Color.MEDIUMPURPLE)
     private val propriedadeEixo = StrokeAttributes(strokePaint = Color.GREEN)
@@ -83,12 +86,36 @@ class BlocoDeFundacao(
             gc.font = Font(gc.font.name, 12.0)
         }
     }
+    private val propriedadeSeta = StrokeAttributes(strokePaint = Color.SADDLEBROWN)
+    private val propriedadeLinhaCorte = StrokeAttributes(strokePaint = Color.MEDIUMPURPLE)
+    private val propriedadeTextoCorte = FillTextAttributes(
+        fillAtributtes = FillAttributes(fillPaint = Color.SADDLEBROWN),
+        textAlign = TextAlignment.LEFT,
+        textBaselinte = VPos.TOP
+    )
     private val formatoCota = PropriedadesCotas(
         formatoNumero = DecimalFormat("#.##"),
         offsetExtensionLine = 5.0,
         offsetText = 0.0,
         arrowSize = 2.0
     )
+
+    private fun pilar(): List<DesenhoAdicionavel> {
+        val pontoInicial = Vetor2D(x = lxBloco / 2.0 - hxPilar / 2.0, y = lyBloco / 2.0 - hyPilar / 2.0)
+        val hachura = Path.initBuilder(
+            fechado = true,
+            preenchido = true,
+            pontoInicial = pontoInicial
+        ).deltaLineTo(deltaX = hxPilar).deltaLineTo(deltaY = hyPilar).deltaLineTo(deltaX = -hxPilar).build()
+        val contorno = StrokedRect(
+            pontoInsercao = pontoInicial,
+            deltaX = hxPilar, deltaY = hyPilar
+        )
+        return listOf(
+            DesenhoAdicionavel(hachura, propriedadeHachura),
+            DesenhoAdicionavel(contorno, propriedadeContornoPilar)
+        )
+    }
 
     private fun contornoBloco(): List<DesenhoAdicionavel> {
         val contorno = StrokedRect(pontoInsercao = Vetor2D.ZERO, deltaX = lxBloco, deltaY = lyBloco)
@@ -229,10 +256,41 @@ class BlocoDeFundacao(
         return (cotasMedidasInternas + cotasMedidasExternas).map { DesenhoAdicionavel(it, propriedadeCota) }
     }
 
+    private fun indicacaoCorte(): List<DesenhoAdicionavel> {
+        val setaBase =
+            Path.initBuilder(fechado = false, pontoInicial = Vetor2D.ZERO).deltaLineTo(deltaX = -distanciaCota)
+                .deltaLineTo(deltaY = -15.0).deltaLineTo(deltaX = 6.0)
+                .deltaLineTo(deltaX = -6.0, deltaY = -17.5).deltaLineTo(deltaX = -6.0, deltaY = 17.5)
+                .deltaLineTo(deltaX = 6.0).build()
+        val deltaXSetaEsquerda = -3.0 * distanciaCota
+        val deltaYSetaCorteA = lyBloco / 2.0 - 5.0
+        val setaEsquerda = setaBase.copiarComTransformacao(
+            transformacoes = Transformacoes().transladar(
+                translacaoX = deltaXSetaEsquerda,
+                translacaoY = deltaYSetaCorteA
+            )
+        )
+        val deltaXSetaDireita = lxBloco + (if (hcyExt == lyBloco) 2.0 * distanciaCota else 3.0 * distanciaCota)
+        val setaDireita = setaBase.copiarComTransformacao(
+            transformacoes = Transformacoes()
+                .espelhar(eixoX = 0.0, eixoY = 1.0, pontoX = 0.0, pontoY = 0.0)
+                .transladar(translacaoX = -deltaXSetaDireita, translacaoY = deltaYSetaCorteA)
+        )
+        val linhaHorizontal = StrokedLine(
+            ponto1 = Vetor2D(x = deltaXSetaEsquerda, y = deltaYSetaCorteA),
+            ponto2 = Vetor2D(x = deltaXSetaDireita, y = deltaYSetaCorteA)
+        )
+        val textoCorteA = FilledText(texto = "A", posicao = Vetor2D.ZERO, angulo = 0.0)
+        return listOf(setaEsquerda, setaDireita).map { DesenhoAdicionavel(it, propriedadeSeta) } +
+                listOf(linhaHorizontal).map { DesenhoAdicionavel(it, propriedadeLinhaCorte) } +
+                listOf(textoCorteA).map { DesenhoAdicionavel(it, propriedadeTextoCorte) }
+    }
+
     private class DesenhoAdicionavel(val primitiva: Primitiva, val atributo: DrawAttributes)
 
     private fun listarDesenhos(): List<DesenhoAdicionavel> =
-        contornoBloco() +
+        pilar() +
+                contornoBloco() +
                 contornoColarinho() +
                 estacas() +
                 linhasDeEixo() +
@@ -241,7 +299,8 @@ class BlocoDeFundacao(
                 cotaVerticalComprimentoDoBloco() +
                 cotaHorizontalComprimentoDoBloco() +
                 cotasVerticaisDasDimensoesDoColarinho() +
-                cotasHorizontaisDasDimensoesDoColarinho()
+                cotasHorizontaisDasDimensoesDoColarinho() +
+                indicacaoCorte()
 
     fun forEachPrimitiva(acao: (primitiva: Primitiva, atributo: DrawAttributes) -> Unit) {
         listarDesenhos().forEach { acao.invoke(it.primitiva, it.atributo) }
