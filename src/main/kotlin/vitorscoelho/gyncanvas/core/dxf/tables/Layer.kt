@@ -1,6 +1,8 @@
 package vitorscoelho.gyncanvas.core.dxf.tables
 
-//class Layer(
-//
-//) : Table() {
-//}
+import vitorscoelho.gyncanvas.core.dxf.Color
+
+class Layer(
+    override val name: String,
+    val color: Color
+) : Table

@@ -1,5 +1,5 @@
 package vitorscoelho.gyncanvas.core.dxf.tables
 
-abstract class Table(
+interface Table {
     val name: String
-)
+}

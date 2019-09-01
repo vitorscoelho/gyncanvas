@@ -89,7 +89,7 @@ class MeuViewGynCanvas : View() {
 //        addPrimitiva(polilinha, propriedadeStroke)
 //        criarAduela(this)
 //        json()
-        criarBloco(this)
+//        criarBloco(this)
 
 //        val passo = 50.0
 //        (1..100_000).forEach { iteracao ->
@@ -159,34 +159,6 @@ class MeuViewGynCanvas : View() {
             gynCanvas.desenhar()
         }
     }
-}
-
-fun criarBloco(gynCanvas: GynCanvas) {
-    val blocoDeFundacao = BlocoDeFundacao(
-        hxPilar = 80.0,
-        hyPilar = 40.0,
-        folgaDeMontagem = 7.5,
-        hcx = 35.0,
-        hcy = 25.0,
-        embutimento = 130.0,
-        espessuraNivelamento = 5.0,
-        lxBloco = 320.0,
-        lyBloco = 205.0,
-        nivelPisoAcabado = 50034,
-        diametroEstacas = 60.0,
-        posicoesEstacas = listOf(
-            Vetor2D(x = -115.0, y = 0.0),
-            Vetor2D(x = 115.0, y = 0.0)
-        )
-    )
-    blocoDeFundacao.adicionarDesenho(gynCanvas = gynCanvas)
-//    val listaJson = blocoDeFundacao.mapPrimitivas { primitiva, atributo -> primitiva.toJsonEntity() }
-//    val jsonDrawing = JsonDrawing(
-//        tablesSection = emptyList(),
-//        entitiesSection = listaJson
-//    )
-//    val jacksonMapper = jacksonObjectMapper()
-//    println(jacksonMapper.writeValueAsString(jsonDrawing))
 }
 
 fun criarAduela(gynCanvas: GynCanvas) {
