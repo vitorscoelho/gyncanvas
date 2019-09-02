@@ -1,7 +1,11 @@
 package vitorscoelho.gyncanvas.core.dxf
 
+import javafx.geometry.VPos
 import javafx.scene.canvas.Canvas
+import javafx.scene.text.Font
+import javafx.scene.text.TextAlignment
 import javafx.scene.transform.Affine
+import vitorscoelho.gyncanvas.core.dxf.entities.AttachmentPoint
 import vitorscoelho.gyncanvas.core.dxf.transformation.MutableTransformationMatrix
 import vitorscoelho.gyncanvas.core.dxf.transformation.TransformationMatrix
 
@@ -9,9 +13,14 @@ abstract class Drawer {
     abstract var fill: Color
     abstract var stroke: Color
     abstract var lineWidht: Double
+    abstract var textJustify: AttachmentPoint
+    abstract var fontName: String
+    abstract var fontSize: Double
+    abstract fun setFont(fontName: String, fontSize: Double)
     abstract fun fillBackground()
     abstract fun strokeLine(x1: Double, y1: Double, x2: Double, y2: Double)
     abstract fun strokeCircle(xCenter: Double, yCenter: Double, diameter: Double)
+    abstract fun fillText(text: String, x: Double, y: Double)
     abstract fun beginPath()
     abstract fun closePath()
     abstract fun fill()
@@ -57,6 +66,58 @@ class FXDrawer(val canvas: Canvas) : Drawer() {
         }
         get() = gc.lineWidth
 
+    private val fontsInCache = hashMapOf<Pair<String, Double>, Font>()
+    private fun getFXFont(fontName: String, fontSize: Double): Font {
+        val pair = Pair(fontName, fontSize)
+        return fontsInCache.getOrPut(
+            key = pair,
+            defaultValue = { Font.font(fontName, fontSize) }
+        )
+    }
+
+    override var fontName: String = gc.font.name
+    override var fontSize: Double = gc.font.size
+
+    override fun setFont(fontName: String, fontSize: Double) {
+        this.fontName = fontName
+        this.fontSize = fontSize
+        gc.font = getFXFont(fontName = fontName, fontSize = fontSize)
+    }
+
+    private val mapTextJustifyAutocadToJFX = mapOf(
+        AttachmentPoint.BOTTOM_LEFT to { gc.textBaseline = VPos.BOTTOM;gc.textAlign = TextAlignment.LEFT },
+        AttachmentPoint.BOTTOM_CENTER to { gc.textBaseline = VPos.BOTTOM;gc.textAlign = TextAlignment.CENTER },
+        AttachmentPoint.BOTTOM_RIGHT to { gc.textBaseline = VPos.BOTTOM;gc.textAlign = TextAlignment.RIGHT },
+        AttachmentPoint.MIDDLE_LEFT to { gc.textBaseline = VPos.CENTER;gc.textAlign = TextAlignment.LEFT },
+        AttachmentPoint.MIDDLE_CENTER to { gc.textBaseline = VPos.CENTER;gc.textAlign = TextAlignment.CENTER },
+        AttachmentPoint.MIDDLE_RIGHT to { gc.textBaseline = VPos.CENTER;gc.textAlign = TextAlignment.RIGHT },
+        AttachmentPoint.TOP_LEFT to { gc.textBaseline = VPos.TOP;gc.textAlign = TextAlignment.LEFT },
+        AttachmentPoint.TOP_CENTER to { gc.textBaseline = VPos.TOP;gc.textAlign = TextAlignment.CENTER },
+        AttachmentPoint.TOP_RIGHT to { gc.textBaseline = VPos.TOP;gc.textAlign = TextAlignment.RIGHT }
+    )
+    private val mapTextJustifyJFXToAutocad = mapOf<VPos, Map<TextAlignment, AttachmentPoint>>(
+        VPos.BOTTOM to mapOf(
+            TextAlignment.LEFT to AttachmentPoint.BOTTOM_LEFT,
+            TextAlignment.CENTER to AttachmentPoint.BOTTOM_CENTER,
+            TextAlignment.RIGHT to AttachmentPoint.BOTTOM_RIGHT
+        ),
+        VPos.CENTER to mapOf(
+            TextAlignment.LEFT to AttachmentPoint.MIDDLE_LEFT,
+            TextAlignment.CENTER to AttachmentPoint.MIDDLE_CENTER,
+            TextAlignment.RIGHT to AttachmentPoint.MIDDLE_RIGHT
+        ),
+        VPos.TOP to mapOf(
+            TextAlignment.LEFT to AttachmentPoint.TOP_LEFT,
+            TextAlignment.CENTER to AttachmentPoint.TOP_CENTER,
+            TextAlignment.RIGHT to AttachmentPoint.TOP_RIGHT
+        )
+    )
+    override var textJustify: AttachmentPoint
+        set(value) {
+            mapTextJustifyAutocadToJFX[value]!!.invoke()
+        }
+        get() = mapTextJustifyJFXToAutocad[gc.textBaseline]!![gc.textAlign]!!
+
     override fun fillBackground() =
         gc.fillRect(0.0, 0.0, this.canvas.width, this.canvas.height)
 
@@ -70,6 +131,10 @@ class FXDrawer(val canvas: Canvas) : Drawer() {
             xCenter - radius, -yCenter - radius,
             diameter, diameter
         )
+    }
+
+    override fun fillText(text: String, x: Double, y: Double) {
+        gc.fillText(text, x, -y)
     }
 
     override fun beginPath() = gc.beginPath()

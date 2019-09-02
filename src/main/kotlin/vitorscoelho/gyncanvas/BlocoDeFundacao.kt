@@ -7,6 +7,7 @@ import javafx.scene.text.TextAlignment
 import vitorscoelho.gyncanvas.core.dxf.Color
 import vitorscoelho.gyncanvas.core.dxf.entities.*
 import vitorscoelho.gyncanvas.core.dxf.tables.Layer
+import vitorscoelho.gyncanvas.core.dxf.tables.TextStyle
 import vitorscoelho.gyncanvas.math.Vetor2D
 import java.text.DecimalFormat
 
@@ -75,6 +76,15 @@ class BlocoDeFundacao(
     private val layerSetaCorte = Layer(name = "Seta corte", color = Color.INDEX_43)
     private val layerLinhaCorte = Layer(name = "Linha corte", color = Color.INDEX_190)
     private val layerTexto = Layer(name = "Texto", color = Color.INDEX_43)
+    private val propPilarContorno = EntityProperties(layer = layerPilarContorno)
+    private val propLinhaClara = EntityProperties(layer = layerLinhaClara)
+    private val propFormaContorno = EntityProperties(layer = layerFormaContorno)
+    private val propProjecao = EntityProperties(layer = layerProjecao)
+    private val propEixo = EntityProperties(layer = layerEixo)
+    private val propCota = EntityProperties(layer = layerCota)
+    private val propSetaCorte = EntityProperties(layer = layerSetaCorte)
+    private val propLinhaCorte = EntityProperties(layer = layerLinhaCorte)
+    private val propTexto = EntityProperties(layer = layerTexto)
 
 //    private val propriedadeTextoCorte = FillTextAttributes(
 //        fillAtributtes = FillAttributes(fillPaint = Color.SADDLEBROWN),
@@ -102,19 +112,29 @@ class BlocoDeFundacao(
     private fun pilar(): List<Entity> {
         val pontoInicial = Vetor2D(x = lxBloco / 2.0 - hxPilar / 2.0, y = lyBloco / 2.0 - hyPilar / 2.0)
         val contorno = LwPolyline.rectangle(
-            layer = layerPilarContorno, startPoint = pontoInicial,
+            properties = propPilarContorno, startPoint = pontoInicial,
             deltaX = hxPilar, deltaY = hyPilar
         )
         val hachura = Hatch.fromLwPolyline(
-            layer = layerLinhaClara,
+            properties = propLinhaClara,
             lwPolyline = contorno
         )
-        return listOf(hachura, contorno)
+        println(Font.getDefault())
+        val mText = MText(
+            textProperties = TextProperties(
+                entityProperties = EntityProperties(layer = layerEixo),
+                style = TextStyle(name = "Estilo 1", fontFileName = "Droid Sans Fallback"),
+                size = 12.0
+            ),
+            position = Vetor2D(x = 20.0, y = -30.0),
+            content = "OI"
+        )
+        return listOf(hachura, contorno, mText)
     }
 
     private fun contornoBloco(): List<Entity> {
         val contorno = LwPolyline.rectangle(
-            layer = layerFormaContorno,
+            properties = propFormaContorno,
             startPoint = Vetor2D.ZERO,
             deltaX = lxBloco,
             deltaY = lyBloco
@@ -124,12 +144,12 @@ class BlocoDeFundacao(
 
     private fun contornoColarinho(): List<Entity> {
         val contornoExterno = LwPolyline.rectangle(
-            layer = layerFormaContorno,
+            properties = propFormaContorno,
             startPoint = Vetor2D(x = lxBloco / 2.0 - hcxExt / 2.0, y = lyBloco / 2.0 - hcyExt / 2.0),
             deltaX = hcxExt, deltaY = hcyExt
         )
         val contornoInterno = LwPolyline.rectangle(
-            layer = layerFormaContorno,
+            properties = propFormaContorno,
             startPoint = Vetor2D(x = lxBloco / 2.0 - hcxInt / 2.0, y = lyBloco / 2.0 - hcyInt / 2.0),
             deltaX = hcxInt, deltaY = hcyInt
         )
@@ -141,7 +161,7 @@ class BlocoDeFundacao(
             val xRealCentro = lxBloco / 2.0 + posicao.x
             val yRealCentro = lyBloco / 2.0 + posicao.y
             val contornoEstaca = Circle(
-                layer = layerProjecao,
+                properties = propProjecao,
                 centerPoint = Vetor2D(x = xRealCentro, y = yRealCentro),
                 diameter = 60.0
             )
@@ -152,14 +172,14 @@ class BlocoDeFundacao(
     private fun linhasDeEixo(): List<Entity> {
         val eixosVerticais = abscissasEixosVerticais.map { x ->
             Line(
-                layer = layerEixo,
+                properties = propEixo,
                 startPoint = Vetor2D(x = x, y = 0.0),
                 endPoint = Vetor2D(x = x, y = lyBloco)
             )
         }
         val eixosHorizontais = ordenadasEixosHorizontais.map { y ->
             Line(
-                layer = layerEixo,
+                properties = propEixo,
                 startPoint = Vetor2D(x = 0.0, y = y),
                 endPoint = Vetor2D(x = lxBloco, y = y)
             )

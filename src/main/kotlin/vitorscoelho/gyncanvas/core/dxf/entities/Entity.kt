@@ -5,8 +5,11 @@ import vitorscoelho.gyncanvas.core.dxf.Drawer
 import vitorscoelho.gyncanvas.core.dxf.tables.Layer
 
 interface Entity {
+    val properties: EntityProperties
     val layer: Layer
+        get() = properties.layer
     val color: Color
+        get() = properties.color
 
     fun draw(drawer: Drawer)
 
@@ -24,3 +27,8 @@ interface Entity {
         }
     }
 }
+
+class EntityProperties(
+    val layer: Layer,
+    val color: Color = Color.BY_LAYER
+)

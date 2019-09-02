@@ -6,8 +6,7 @@ import vitorscoelho.gyncanvas.core.dxf.tables.Layer
 import vitorscoelho.gyncanvas.math.Vetor2D
 
 class Line(
-    override val layer: Layer,
-    override val color: Color = Color.BY_LAYER,
+    override val properties: EntityProperties,
     val startPoint: Vetor2D,
     val endPoint: Vetor2D
 ) : Entity {

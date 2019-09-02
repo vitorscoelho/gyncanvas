@@ -3,6 +3,7 @@ package vitorscoelho.gyncanvas.core.dxf.transformation
 import org.joml.Matrix4d
 import org.joml.Vector3d
 import vitorscoelho.gyncanvas.math.Vetor2D
+import kotlin.math.sqrt
 
 interface TransformationMatrix {
     val mxx: Double
@@ -38,7 +39,44 @@ interface TransformationMatrix {
     }
 }
 
+class ImmutableTransformationMatrix(
+    override val mxx: Double,
+    override val mxy: Double,
+    override val mxz: Double,
+    override val tx: Double,
+    override val myx: Double,
+    override val myy: Double,
+    override val myz: Double,
+    override val ty: Double,
+    override val mzx: Double,
+    override val mzy: Double,
+    override val mzz: Double,
+    override val tz: Double
+) : TransformationMatrix {
+    constructor(otherMatrix: TransformationMatrix) : this(
+        mxx = otherMatrix.mxx,
+        mxy = otherMatrix.mxy,
+        mxz = otherMatrix.mxz,
+        tx = otherMatrix.tx,
+        myx = otherMatrix.myx,
+        myy = otherMatrix.myy,
+        myz = otherMatrix.myz,
+        ty = otherMatrix.ty,
+        mzx = otherMatrix.mzx,
+        mzy = otherMatrix.mzy,
+        mzz = otherMatrix.mzz,
+        tz = otherMatrix.tz
+    )
+
+    override val scale: Double by lazy { sqrt(mxz * mxz + myz * myz + mzz * mzz) }
+}
+
 class MutableTransformationMatrix : TransformationMatrix {
+    constructor() {}
+    constructor(otherMatrix: TransformationMatrix) {
+        this.set(otherMatrix)
+    }
+
     private val jomlMatrix = Matrix4d()
     private val jomlScaleVector = Vector3d()
 

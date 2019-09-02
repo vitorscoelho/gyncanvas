@@ -1,8 +1,7 @@
 package vitorscoelho.gyncanvas.core.dxf.entities.path
 
-import vitorscoelho.gyncanvas.core.dxf.Color
+import vitorscoelho.gyncanvas.core.dxf.entities.EntityProperties
 import vitorscoelho.gyncanvas.core.dxf.entities.LwPolyline
-import vitorscoelho.gyncanvas.core.dxf.tables.Layer
 import vitorscoelho.gyncanvas.math.Vetor2D
 
 interface LwPolylineBuilderStep1 {
@@ -34,9 +33,9 @@ interface LwPolylineBuilderStep2 {
     fun closeAndBuild(): LwPolyline
 }
 
-class LwPolylineBuilder private constructor(
-    val layer: Layer, val color: Color
-) : LwPolylineBuilderStep1, LwPolylineBuilderStep2 {
+class LwPolylineBuilder private constructor(val properties: EntityProperties) :
+    LwPolylineBuilderStep1,
+    LwPolylineBuilderStep2 {
     private val pathSteps = mutableListOf<PathStep>()
     private var pontoFinalAtual: Vetor2D = Vetor2D.ZERO
 
@@ -92,15 +91,15 @@ class LwPolylineBuilder private constructor(
         )
 
     override fun build(): LwPolyline =
-        LwPolyline(layer = layer, color = color, closed = false, pathSteps = pathSteps)
+        LwPolyline(properties = properties, closed = false, pathSteps = pathSteps)
 
 
     override fun closeAndBuild(): LwPolyline =
-        LwPolyline(layer = layer, color = color, closed = true, pathSteps = pathSteps)
+        LwPolyline(properties = properties, closed = true, pathSteps = pathSteps)
 
     companion object {
-        internal fun init(layer: Layer, color: Color): LwPolylineBuilderStep1 {
-            return LwPolylineBuilder(layer = layer, color = color)
+        internal fun init(properties: EntityProperties): LwPolylineBuilderStep1 {
+            return LwPolylineBuilder(properties = properties)
         }
     }
 }
