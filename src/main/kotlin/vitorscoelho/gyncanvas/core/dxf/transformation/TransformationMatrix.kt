@@ -5,36 +5,36 @@ import org.joml.Vector3d
 import vitorscoelho.gyncanvas.math.Vetor2D
 import kotlin.math.sqrt
 
-interface TransformationMatrix {
-    val mxx: Double
-    val mxy: Double
-    val mxz: Double
-    val tx: Double
-    val myx: Double
-    val myy: Double
-    val myz: Double
-    val ty: Double
-    val mzx: Double
-    val mzy: Double
-    val mzz: Double
-    val tz: Double
-    val scale: Double
+sealed class TransformationMatrix {
+    abstract val mxx: Double
+    abstract val mxy: Double
+    abstract val mxz: Double
+    abstract val tx: Double
+    abstract val myx: Double
+    abstract val myy: Double
+    abstract val myz: Double
+    abstract val ty: Double
+    abstract val mzx: Double
+    abstract val mzy: Double
+    abstract val mzz: Double
+    abstract val tz: Double
+    abstract val scale: Double
+
+    fun transform(vector: Vetor2D): Vetor2D = transform(x = vector.x, y = vector.y)
+
+    fun transform(x: Double, y: Double) =
+        Vetor2D(
+            x = mxx * x + mxy * y + tx,
+            y = myx * x + myy * y + ty
+        )
 
     companion object {
-        val IDENTITY = object : TransformationMatrix {
-            override val mxx: Double = 1.0
-            override val mxy: Double = 0.0
-            override val mxz: Double = 0.0
-            override val tx: Double = 0.0
-            override val myx: Double = 0.0
-            override val myy: Double = 1.0
-            override val myz: Double = 0.0
-            override val ty: Double = 0.0
-            override val mzx: Double = 0.0
-            override val mzy: Double = 0.0
-            override val mzz: Double = 1.0
-            override val tz: Double = 0.0
-            override val scale = 1.0
+        val IDENTITY: TransformationMatrix by lazy {
+            ImmutableTransformationMatrix(
+                mxx = 1.0, mxy = 0.0, mxz = 0.0, tx = 0.0,
+                myx = 0.0, myy = 1.0, myz = 0.0, ty = 0.0,
+                mzx = 0.0, mzy = 0.0, mzz = 1.0, tz = 0.0
+            )
         }
     }
 }
@@ -52,7 +52,7 @@ class ImmutableTransformationMatrix(
     override val mzy: Double,
     override val mzz: Double,
     override val tz: Double
-) : TransformationMatrix {
+) : TransformationMatrix() {
     constructor(otherMatrix: TransformationMatrix) : this(
         mxx = otherMatrix.mxx,
         mxy = otherMatrix.mxy,

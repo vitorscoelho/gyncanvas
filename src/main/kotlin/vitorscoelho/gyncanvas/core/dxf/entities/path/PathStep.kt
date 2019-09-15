@@ -1,18 +1,24 @@
 package vitorscoelho.gyncanvas.core.dxf.entities.path
 
 import vitorscoelho.gyncanvas.core.dxf.Drawer
+import vitorscoelho.gyncanvas.core.dxf.transformation.TransformationMatrix
 import vitorscoelho.gyncanvas.math.Vetor2D
 
 sealed class PathStep {
     abstract fun draw(drawer: Drawer)
+    abstract fun transform(tranformationMatrix: TransformationMatrix): PathStep
 }
 
 class MoveTo(val point: Vetor2D) : PathStep() {
     override fun draw(drawer: Drawer) = drawer.moveTo(x = point.x, y = point.y)
+    override fun transform(tranformationMatrix: TransformationMatrix): MoveTo =
+        MoveTo(point = point.transform(tranformationMatrix))
 }
 
 class LineTo(val point: Vetor2D) : PathStep() {
     override fun draw(drawer: Drawer) = drawer.lineTo(x = point.x, y = point.y)
+    override fun transform(tranformationMatrix: TransformationMatrix): LineTo =
+        LineTo(point = point.transform(tranformationMatrix))
 }
 
 class ArcTo(val tangentPoint1: Vetor2D, val tangentPoint2: Vetor2D, val radius: Double) : PathStep() {
@@ -23,4 +29,11 @@ class ArcTo(val tangentPoint1: Vetor2D, val tangentPoint2: Vetor2D, val radius: 
         yTangent2 = tangentPoint2.y,
         radius = radius
     )
+
+    override fun transform(tranformationMatrix: TransformationMatrix): ArcTo =
+        ArcTo(
+            tangentPoint1 = tangentPoint1.transform(tranformationMatrix),
+            tangentPoint2 = tangentPoint2.transform(tranformationMatrix),
+            radius = radius * tranformationMatrix.scale
+        )
 }

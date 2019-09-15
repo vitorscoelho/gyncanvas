@@ -4,6 +4,7 @@ import javafx.scene.Node
 import javafx.scene.canvas.Canvas
 import javafx.scene.layout.Pane
 import tornadofx.fitToParentSize
+import vitorscoelho.gyncanvas.core.dxf.entities.CompositeEntity
 import vitorscoelho.gyncanvas.core.dxf.entities.Entity
 import vitorscoelho.gyncanvas.core.dxf.transformation.TransformationMatrix
 
@@ -45,8 +46,15 @@ class FXDrawingArea : DrawingArea {
         drawer.fillBackground()
         drawer.copyToTransform(transformationMatrix)
         entities.forEach { entity ->
-            entity.applyProperties(drawer = drawer)
-            entity.draw(drawer = drawer)
+            if (entity is CompositeEntity) {
+                entity.entities.forEach { innerEntity ->
+                    innerEntity.applyProperties(drawer = drawer)
+                    innerEntity.draw(drawer = drawer)
+                }
+            } else {
+                entity.applyProperties(drawer = drawer)
+                entity.draw(drawer = drawer)
+            }
         }
     }
 

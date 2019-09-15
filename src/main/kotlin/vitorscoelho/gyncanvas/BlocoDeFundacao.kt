@@ -119,17 +119,7 @@ class BlocoDeFundacao(
             properties = propLinhaClara,
             lwPolyline = contorno
         )
-        println(Font.getDefault())
-        val mText = MText(
-            textProperties = TextProperties(
-                entityProperties = EntityProperties(layer = layerEixo),
-                style = TextStyle(name = "Estilo 1", fontFileName = "Droid Sans Fallback"),
-                size = 12.0
-            ),
-            position = Vetor2D(x = 20.0, y = -30.0),
-            content = "OI"
-        )
-        return listOf(hachura, contorno, mText)
+        return listOf(hachura, contorno)
     }
 
     private fun contornoBloco(): List<Entity> {

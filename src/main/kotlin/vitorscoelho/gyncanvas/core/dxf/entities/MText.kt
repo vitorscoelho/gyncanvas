@@ -1,34 +1,30 @@
 package vitorscoelho.gyncanvas.core.dxf.entities
 
-import vitorscoelho.gyncanvas.core.dxf.Color
 import vitorscoelho.gyncanvas.core.dxf.Drawer
-import vitorscoelho.gyncanvas.core.dxf.tables.Layer
 import vitorscoelho.gyncanvas.core.dxf.tables.TextStyle
 import vitorscoelho.gyncanvas.core.dxf.transformation.ImmutableTransformationMatrix
 import vitorscoelho.gyncanvas.core.dxf.transformation.MutableTransformationMatrix
+import vitorscoelho.gyncanvas.core.dxf.transformation.TransformationMatrix
 import vitorscoelho.gyncanvas.math.Vetor2D
 
-class MText(
-    val textProperties: TextProperties,
+data class MText(
+    override val properties: EntityProperties,
+    val style: TextStyle,
+    val size: Double,
     val justify: AttachmentPoint = AttachmentPoint.BOTTOM_LEFT,
     val rotation: Double = 0.0,
     val position: Vetor2D,
     val content: String
 ) : Entity {
-    override val properties: EntityProperties
-        get() = textProperties.entityProperties
     private val tipoTexto: TipoTexto = TipoTexto.getTextType(
         rotation = rotation,
         fixedSize = false
     )//TODO Criar outro tipo de entidade que permite um texto com tamanho fixo
 
-    override fun draw(drawer: Drawer) {
-        tipoTexto.draw(mText = this, drawer = drawer)
-    }
-
     override fun applyProperties(drawer: Drawer) {
-        super.applyProperties(drawer = drawer)
-        drawer.setFont(fontName = textProperties.style.fontFileName, fontSize = textProperties.size)
+        applyLineWidth(drawer = drawer)
+        applyColor(drawer = drawer, layer = layer, color = color)
+        drawer.setFont(fontName = style.fontFileName, fontSize = size)
         drawer.textJustify = justify
         /*
         override fun aplicar(gc: GraphicsContext, transformacoes: Transformacoes) {
@@ -40,6 +36,27 @@ class MText(
     }
          */
     }
+
+    override fun draw(drawer: Drawer) {
+        tipoTexto.draw(mText = this, drawer = drawer)
+    }
+
+    override fun transform(transformationMatrix: TransformationMatrix): MText =
+        copy(
+            size = size * transformationMatrix.scale,
+            //justify = TODO fazer uma maneira de identificar o reflect
+            //rotation = TODO
+            position = position.transform(transformationMatrix)
+        )
+    /*
+    override val properties: EntityProperties,
+    val style: TextStyle,
+    val size: Double,
+    val justify: AttachmentPoint = AttachmentPoint.BOTTOM_LEFT,
+    val rotation: Double = 0.0,
+    val position: Vetor2D,
+    val content: String
+     */
 }
 
 private enum class TipoTexto {
@@ -109,9 +126,3 @@ enum class AttachmentPoint(val value: Byte) {
     TOP_LEFT(value = 1), TOP_CENTER(value = 2), TOP_RIGHT(value = 3), MIDDLE_LEFT(value = 4), MIDDLE_CENTER(value = 5),
     MIDDLE_RIGHT(value = 6), BOTTOM_LEFT(value = 7), BOTTOM_CENTER(value = 8), BOTTOM_RIGHT(value = 9)
 }
-
-class TextProperties(
-    val entityProperties: EntityProperties,
-    val style: TextStyle,
-    val size: Double
-)

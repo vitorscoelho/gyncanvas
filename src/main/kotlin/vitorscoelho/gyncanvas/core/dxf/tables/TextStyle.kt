@@ -2,6 +2,7 @@ package vitorscoelho.gyncanvas.core.dxf.tables
 
 class TextStyle(
     override val name: String,
+    val fontName: String,
     val fontFileName: String
 ) : Table {
 }

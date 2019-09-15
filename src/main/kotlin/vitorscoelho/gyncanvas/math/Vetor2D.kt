@@ -2,6 +2,7 @@ package vitorscoelho.gyncanvas.math
 
 import org.joml.Vector2d
 import vitorscoelho.gyncanvas.core.Transformacoes
+import vitorscoelho.gyncanvas.core.dxf.transformation.TransformationMatrix
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.math.sqrt
@@ -57,7 +58,10 @@ class Vetor2D(
     operator fun plus(outroVetor: Vetor2D) = somar(deltaX = outroVetor.x, deltaY = outroVetor.y)
     operator fun minus(outroVetor: Vetor2D) = somar(deltaX = -outroVetor.x, deltaY = -outroVetor.y)
 
-    fun copiar(transformacoes: Transformacoes):Vetor2D{
+    fun transform(transformationMatrix: TransformationMatrix) =
+        transformationMatrix.transform(vector = this)
+
+    fun copiar(transformacoes: Transformacoes): Vetor2D {
         throw NotImplementedError()
     }
 
