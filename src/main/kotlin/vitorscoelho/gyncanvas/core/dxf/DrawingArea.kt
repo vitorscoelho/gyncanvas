@@ -45,17 +45,7 @@ class FXDrawingArea : DrawingArea {
         drawer.fill = backgroundColor
         drawer.fillBackground()
         drawer.copyToTransform(transformationMatrix)
-        entities.forEach { entity ->
-            if (entity is CompositeEntity) {
-                entity.entities.forEach { innerEntity ->
-                    innerEntity.applyProperties(drawer = drawer)
-                    innerEntity.draw(drawer = drawer)
-                }
-            } else {
-                entity.applyProperties(drawer = drawer)
-                entity.draw(drawer = drawer)
-            }
-        }
+        entities.forEach { entity -> entity.draw(drawer = drawer) }
     }
 
     private fun resetTransform() {

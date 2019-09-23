@@ -1,6 +1,8 @@
 package vitorscoelho.gyncanvas.core.dxf.entities
 
+import vitorscoelho.gyncanvas.core.dxf.Color
 import vitorscoelho.gyncanvas.core.dxf.Drawer
+import vitorscoelho.gyncanvas.core.dxf.tables.Layer
 import vitorscoelho.gyncanvas.core.dxf.tables.TextStyle
 import vitorscoelho.gyncanvas.core.dxf.transformation.ImmutableTransformationMatrix
 import vitorscoelho.gyncanvas.core.dxf.transformation.MutableTransformationMatrix
@@ -8,7 +10,8 @@ import vitorscoelho.gyncanvas.core.dxf.transformation.TransformationMatrix
 import vitorscoelho.gyncanvas.math.Vetor2D
 
 data class MText(
-    override val properties: EntityProperties,
+    override val layer: Layer,
+    override val color: Color = Color.BY_LAYER,
     val style: TextStyle,
     val size: Double,
     val justify: AttachmentPoint = AttachmentPoint.BOTTOM_LEFT,
@@ -21,23 +24,11 @@ data class MText(
         fixedSize = false
     )//TODO Criar outro tipo de entidade que permite um texto com tamanho fixo
 
-    override fun applyProperties(drawer: Drawer) {
+    override fun draw(drawer: Drawer) {
         applyLineWidth(drawer = drawer)
         applyColor(drawer = drawer, layer = layer, color = color)
         drawer.setFont(fontName = style.fontFileName, fontSize = size)
         drawer.textJustify = justify
-        /*
-        override fun aplicar(gc: GraphicsContext, transformacoes: Transformacoes) {
-        fillAtributtes.aplicar(gc = gc, transformacoes = transformacoes)
-        gc.font = font
-        gc.textAlign = textAlign
-        gc.textBaseline = textBaselinte
-        gc.fontSmoothingType = fontSmoothing
-    }
-         */
-    }
-
-    override fun draw(drawer: Drawer) {
         tipoTexto.draw(mText = this, drawer = drawer)
     }
 
@@ -48,6 +39,15 @@ data class MText(
             //rotation = TODO
             position = position.transform(transformationMatrix)
         )
+    /*
+        override fun aplicar(gc: GraphicsContext, transformacoes: Transformacoes) {
+        fillAtributtes.aplicar(gc = gc, transformacoes = transformacoes)
+        gc.font = font
+        gc.textAlign = textAlign
+        gc.textBaseline = textBaselinte
+        gc.fontSmoothingType = fontSmoothing
+    }
+         */
     /*
     override val properties: EntityProperties,
     val style: TextStyle,

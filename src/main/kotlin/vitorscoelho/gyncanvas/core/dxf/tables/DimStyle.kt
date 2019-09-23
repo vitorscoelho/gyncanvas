@@ -2,6 +2,8 @@ package vitorscoelho.gyncanvas.core.dxf.tables
 
 import vitorscoelho.gyncanvas.core.dxf.Color
 import vitorscoelho.gyncanvas.core.dxf.blocks.Block
+import java.text.DecimalFormat
+import java.text.DecimalFormatSymbols
 
 class DimStyle(
     override val name: String,
@@ -11,7 +13,7 @@ class DimStyle(
     val dimensionLinesColor: Color = Color.BY_BLOCK,//DIMCLRD - 176
 //    val dimensionLinesLType: LType = LType.BY_BLOCK,//DIMLTYPE
 //    val dimensionLinesLineWeight: LineWeight = LineWeight.BY_BLOCK,//DIMLWD
-    val dimensionLinesBaselineSpacing: Double = 0.38,//DIMDLI
+//    val dimensionLinesBaselineSpacing: Double = 0.38,//DIMDLI
     val dimensionLinesSupressDimLine1: Boolean = false,//DIMSD1 - 281
     val dimensionLinesSupressDimLine2: Boolean = false,//DIMSD1 - 282
 
@@ -29,9 +31,9 @@ class DimStyle(
 
     //SYMBOLS AND ARROWS PROP
     //Propriedade: Arrowheads
-    val firstArrowHead: Block,//DIMBLK1
-    val secondArrowHead: Block,//DIMBLK2
-    val leaderArrowHead: Block,//DIMLDRBLK
+    val firstArrowHead: Block = Block.NONE,//DIMBLK1
+    val secondArrowHead: Block = Block.NONE,//DIMBLK2
+    val leaderArrowHead: Block = Block.NONE,//DIMLDRBLK
     val arrowSize: Double = 0.18,//DIMASZ
 
     //Propriedade: Center marks
@@ -62,7 +64,7 @@ class DimStyle(
     //Propriedade: FitOptions
 //    val fitType: FitType = FitType.EITHER_TEXT_OR_ARROWS,//DIMATFIT - 289 Altera posição do texto se ele não couber dentro das extension line
 //    val alwaysKeepTextBetweenExtLine: Boolean = false,//DIMTIX - 174 O texto sempre vai ficar no centro das extension line
-    val supressArrowsIfDontFit: Boolean = false,//DIMSOXD - 175 As setas são suprimidas se não couberem nas extension line
+//    val supressArrowsIfDontFit: Boolean = false,//DIMSOXD - 175 As setas são suprimidas se não couberem nas extension line
     //Propriedade: TextPlacement
 //    val textPlacementType: TextPlacementType = TextPlacementType.BESIDE_THE_DIM_LINE,//DIMTMOVE - 279
     //Propriedade: ScaleForDimensionFeatures
@@ -79,7 +81,7 @@ class DimStyle(
     //DIMFRAC - NÃO SEI. NÃO ACHEI
     val decimalSeparator: DecimalSeparator = DecimalSeparator.PERIOD,//DIMDSEP - 278
     val unitRound: Double = 0.0,//DIMRND - 45
-    //val prefix:String,//DIMPOST - 3 NÃO SEI
+    val prefix: String = "",//DIMPOST - 3 NÃO SEI
     val suffix: String = "",//DIMPOST - 3
     val scaleFactor: Double = 1.0,//DIMLFAC - 144
 //    val linearDimensionZeroSupress: LinearDimensionZeroSupress = LinearDimensionZeroSupress.NaoSuprimir,//DIMZIN - 78
@@ -88,7 +90,20 @@ class DimStyle(
 //    val angularDimensionUnitFormat: AngularDimensionUnitFormat = AngularDimensionUnitFormat.DECIMAL_DEGREES,//DIMAUNIT - 275
     val angularDimensionPrecision: Int = 0//DIMADEC - 179
 //    val angularDimensionZeroSupress: AngularDimensionZeroSupress = AngularDimensionZeroSupress.NaoSuprimir//DIMAZIN - 79
-):Table {
+) : Table {
+    private val decimalFormat: DecimalFormat
+
+    init {
+        val decimalFormatSymbols = DecimalFormatSymbols()
+        decimalFormatSymbols.decimalSeparator = decimalSeparator.character
+        val decimalFormatPattern = ""
+        decimalFormat = DecimalFormat(decimalFormatPattern)
+        decimalFormat.decimalFormatSymbols = decimalFormatSymbols
+    }
+
+    fun numberFormat(value: Double): String {
+        return prefix + decimalFormat.format(value) + suffix
+    }
 }
 
 enum class DecimalSeparator(val character: Char) {

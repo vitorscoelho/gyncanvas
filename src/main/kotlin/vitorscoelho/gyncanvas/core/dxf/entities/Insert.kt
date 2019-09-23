@@ -1,12 +1,15 @@
 package vitorscoelho.gyncanvas.core.dxf.entities
 
+import vitorscoelho.gyncanvas.core.dxf.Color
 import vitorscoelho.gyncanvas.core.dxf.blocks.Block
+import vitorscoelho.gyncanvas.core.dxf.tables.Layer
 import vitorscoelho.gyncanvas.core.dxf.transformation.MutableTransformationMatrix
 import vitorscoelho.gyncanvas.core.dxf.transformation.TransformationMatrix
 import vitorscoelho.gyncanvas.math.Vetor2D
 
 data class Insert(
-    override val properties: EntityProperties,
+    override val layer: Layer,
+    override val color: Color = Color.BY_LAYER,
     val block: Block,
     val insertionPoint: Vetor2D,
     private val scaleFactor: Double = 1.0,

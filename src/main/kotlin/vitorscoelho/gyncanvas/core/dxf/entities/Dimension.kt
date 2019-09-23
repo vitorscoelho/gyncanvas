@@ -1,7 +1,127 @@
 package vitorscoelho.gyncanvas.core.dxf.entities
 
+import vitorscoelho.gyncanvas.core.dxf.Color
+import vitorscoelho.gyncanvas.core.dxf.tables.DimStyle
+import vitorscoelho.gyncanvas.core.dxf.tables.Layer
+import vitorscoelho.gyncanvas.core.dxf.transformation.TransformationMatrix
+import vitorscoelho.gyncanvas.math.Vetor2D
+import kotlin.math.abs
+
 interface Dimension : CompositeEntity {
+    val dimStyle: DimStyle
     val measurement: Double
+}
+
+data class HorizontalDimension(
+    override val layer: Layer,
+    override val color: Color = Color.BY_LAYER,
+    override val dimStyle: DimStyle,
+    val xPoint1: Vetor2D,
+    val xPoint2: Vetor2D,
+    val yDimensionLine: Double,
+    val text: String = "<>"
+) : Dimension {
+    override val entities: List<Entity>
+    override val measurement: Double = abs(xPoint1.x - xPoint2.x) * dimStyle.scaleFactor
+    val definitionPoint = Vetor2D(x = xPoint2.x, y = yDimensionLine)
+
+    init {
+        val entititiesList = mutableListOf<Entity>()
+        if (!dimStyle.extensionLinesSupressExtLine1) {
+            val extensionLine1 = createExtensionLine(xPoint = xPoint1)
+            entititiesList += extensionLine1
+        }
+        if (!dimStyle.extensionLinesSupressExtLine2) {
+            val extensionLine2 = createExtensionLine(xPoint = xPoint2)
+            entititiesList += extensionLine2
+        }
+        if (!dimStyle.dimensionLinesSupressDimLine1 && !dimStyle.dimensionLinesSupressDimLine2) {
+            val dimensionLine = createDimensionLine()
+            entititiesList += dimensionLine
+        }
+        val angleFirstArrowHead: Double
+        val angleSecondArrowHead: Double
+        if (xPoint1.x < xPoint2.x) {
+            angleFirstArrowHead = 180.0
+            angleSecondArrowHead = 0.0
+        } else {
+            angleFirstArrowHead = 0.0
+            angleSecondArrowHead = 180.0
+        }
+        if (!dimStyle.dimensionLinesSupressDimLine1) {
+            val firstArrowHead = Insert(
+                layer = layer,
+                color = dimStyle.dimensionLinesColor,
+                block = dimStyle.firstArrowHead,
+                insertionPoint = Vetor2D(x = xPoint1.x, y = yDimensionLine),
+                scaleFactor = dimStyle.arrowSize * dimStyle.overallScale,
+                rotationAngle = angleFirstArrowHead
+            )
+            entititiesList += firstArrowHead
+        }
+        if (!dimStyle.dimensionLinesSupressDimLine2) {
+            val secondArrowHead = Insert(
+                layer = layer,
+                color = dimStyle.dimensionLinesColor,
+                block = dimStyle.secondArrowHead,
+                insertionPoint = definitionPoint,
+                scaleFactor = dimStyle.arrowSize * dimStyle.overallScale,
+                rotationAngle = angleSecondArrowHead
+            )
+            entititiesList += secondArrowHead
+        }
+        val mText = MText(
+            layer = layer, color = dimStyle.textColor, style = dimStyle.textStyle,
+            size = dimStyle.textHeight * dimStyle.overallScale, justify = AttachmentPoint.BOTTOM_CENTER,
+            position = Vetor2D(
+                x = (xPoint1.x + xPoint2.x) / 2.0,
+                y = yDimensionLine + dimStyle.offsetFromDimLine * dimStyle.overallScale
+            ),
+            content = text
+        )
+        entititiesList += mText
+        this.entities = entititiesList
+    }
+
+    private fun createExtensionLine(xPoint: Vetor2D): Line {
+        val yPoint1: Double
+        val yPoint2: Double
+        if (yDimensionLine > xPoint.y) {
+            yPoint1 = xPoint.y + dimStyle.extensionLinesOffsetFromOrigin * dimStyle.overallScale
+            yPoint2 = yDimensionLine + dimStyle.extensionLinesExtendBeyondDimLines * dimStyle.overallScale
+        } else {
+            yPoint1 = xPoint.y - dimStyle.extensionLinesOffsetFromOrigin * dimStyle.overallScale
+            yPoint2 = yDimensionLine - dimStyle.extensionLinesExtendBeyondDimLines * dimStyle.overallScale
+        }
+        val point1 = Vetor2D(x = xPoint.x, y = yPoint1)
+        val point2 = Vetor2D(x = xPoint.x, y = yPoint2)
+        return Line(
+            layer = layer, color = dimStyle.extensionLinesColor,
+            startPoint = point1, endPoint = point2
+        )
+    }
+
+    private fun createDimensionLine(): Line {
+        val mediumPoint = Vetor2D(x = (xPoint1.x + xPoint2.x) / 2.0, y = yDimensionLine)
+        val point1 = if (dimStyle.dimensionLinesSupressDimLine1) {
+            mediumPoint
+        } else {
+            Vetor2D(x = xPoint1.x, y = yDimensionLine)
+        }
+        val point2 = if (dimStyle.dimensionLinesSupressDimLine2) {
+            mediumPoint
+        } else {
+            Vetor2D(x = xPoint2.x, y = yDimensionLine)
+        }
+        return Line(
+            layer = layer, color = dimStyle.dimensionLinesColor,
+            startPoint = point1, endPoint = point2
+        )
+    }
+
+    override fun transform(transformationMatrix: TransformationMatrix): Entity {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 }
 
 /*

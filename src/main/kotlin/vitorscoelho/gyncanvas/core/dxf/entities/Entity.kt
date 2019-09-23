@@ -6,15 +6,10 @@ import vitorscoelho.gyncanvas.core.dxf.tables.Layer
 import vitorscoelho.gyncanvas.core.dxf.transformation.TransformationMatrix
 
 interface Entity {
-    val properties: EntityProperties
     val layer: Layer
-        get() = properties.layer
     val color: Color
-        get() = properties.color
 
     fun draw(drawer: Drawer)
-
-    fun applyProperties(drawer: Drawer)
 
     fun transform(transformationMatrix: TransformationMatrix): Entity
 }
@@ -35,8 +30,3 @@ internal fun applyColor(drawer: Drawer, layer: Layer, color: Color) {
         }
     }
 }
-
-class EntityProperties(
-    val layer: Layer,
-    val color: Color = Color.BY_LAYER
-)
