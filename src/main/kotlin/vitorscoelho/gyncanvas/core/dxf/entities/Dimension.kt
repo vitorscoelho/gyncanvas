@@ -7,6 +7,8 @@ import vitorscoelho.gyncanvas.core.dxf.transformation.TransformationMatrix
 import vitorscoelho.gyncanvas.math.Vetor2D
 import kotlin.math.abs
 
+private val measurementText: String by lazy { "<>" }
+
 interface Dimension : CompositeEntity {
     val dimStyle: DimStyle
     val measurement: Double
@@ -77,7 +79,7 @@ data class HorizontalDimension(
                 x = (xPoint1.x + xPoint2.x) / 2.0,
                 y = yDimensionLine + dimStyle.offsetFromDimLine * dimStyle.overallScale
             ),
-            content = text
+            content = text.replaceFirst(measurementText, dimStyle.linearDimensionFormat(measurement))
         )
         entititiesList += mText
         this.entities = entititiesList
@@ -431,11 +433,11 @@ private class CotaInclinada(
     }
 }
 
-private val textoValorCota: String by lazy { "<>" }
+private val measurementText: String by lazy { "<>" }
 
 private fun textoCota(texto: String, dc: DecimalFormat, distancia: Double): String {
     val valorDistancia = dc.format(distancia)
-    return texto.replaceFirst(textoValorCota, valorDistancia)
+    return texto.replaceFirst(measurementText, valorDistancia)
 }
 
 data class PropriedadesCotas(

@@ -61,7 +61,7 @@ class MeuViewDrawingArea : View() {
                     yOrigin = coordenadasMundoClique.y
                 )
                 println("Rolou positivo")
-            } else {
+            } else if (event.deltaY < 0) {
                 transformacoes.scale(
                     factor = 1.0 / fatorDeEscala,
                     xOrigin = coordenadasMundoClique.x,

@@ -3,10 +3,10 @@ package vitorscoelho.gyncanvas.utils
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-class FormatadorTest {
+class NumberFormatterTest {
     @Test
     fun formatar1() {
-        val f = Formatter(
+        val f = NumberFormatter(
             suppressLeadingZeros = true, suppressTrailingZeros = true, precision = 2, roundoff = 0.25,
             decimalSeparator = '.', prefix = "valor= ", suffix = "cm"
         )
@@ -33,7 +33,7 @@ class FormatadorTest {
 
     @Test
     fun formatar2() {
-        val f = Formatter(
+        val f = NumberFormatter(
             suppressLeadingZeros = false, suppressTrailingZeros = false, precision = 3, roundoff = 0.1,
             decimalSeparator = '.', prefix = "valor= ", suffix = "cm"
         )
@@ -60,7 +60,7 @@ class FormatadorTest {
 
     @Test
     fun formatar3() {
-        val f = Formatter(
+        val f = NumberFormatter(
             suppressLeadingZeros = true, suppressTrailingZeros = true, precision = 2, roundoff = 0.0,
             decimalSeparator = '.', prefix = "valor= ", suffix = "cm"
         )

@@ -2,8 +2,7 @@ package vitorscoelho.gyncanvas.core.dxf.tables
 
 import vitorscoelho.gyncanvas.core.dxf.Color
 import vitorscoelho.gyncanvas.core.dxf.blocks.Block
-import java.text.DecimalFormat
-import java.text.DecimalFormatSymbols
+import vitorscoelho.gyncanvas.utils.NumberFormatter
 
 class DimStyle(
     override val name: String,
@@ -79,35 +78,28 @@ class DimStyle(
 //    val linearDimensionUnitFormat: LinearDimensionUnitFormat = LinearDimensionUnitFormat.Decimal,//DIMLUNIT - 277
     val linearDimensionPrecision: Int = 2,//DIMDEC - 271
     //DIMFRAC - NÃO SEI. NÃO ACHEI
-    val decimalSeparator: DecimalSeparator = DecimalSeparator.PERIOD,//DIMDSEP - 278
+    val decimalSeparator: Char = '.',//DIMDSEP - 278
     val unitRound: Double = 0.0,//DIMRND - 45
     val prefix: String = "",//DIMPOST - 3 NÃO SEI
     val suffix: String = "",//DIMPOST - 3
     val scaleFactor: Double = 1.0,//DIMLFAC - 144
-//    val linearDimensionZeroSupress: LinearDimensionZeroSupress = LinearDimensionZeroSupress.NaoSuprimir,//DIMZIN - 78
-
+//    val linearDimensionZeroSupress;
+    val linearDimensionSuppressLeadingZeros: Boolean = false,
+    val linearDimensionSuppressTrailingZeros: Boolean = true,
     //Propriedade: AngularDimensions
 //    val angularDimensionUnitFormat: AngularDimensionUnitFormat = AngularDimensionUnitFormat.DECIMAL_DEGREES,//DIMAUNIT - 275
     val angularDimensionPrecision: Int = 0//DIMADEC - 179
 //    val angularDimensionZeroSupress: AngularDimensionZeroSupress = AngularDimensionZeroSupress.NaoSuprimir//DIMAZIN - 79
 ) : Table {
-    private val decimalFormat: DecimalFormat
+    private val linearDimensionFormatter = NumberFormatter(
+        suppressLeadingZeros = linearDimensionSuppressLeadingZeros,
+        suppressTrailingZeros = linearDimensionSuppressTrailingZeros,
+        precision = linearDimensionPrecision,
+        decimalSeparator = decimalSeparator,
+        prefix = prefix,
+        suffix = suffix,
+        roundoff = unitRound
+    )
 
-    init {
-        val decimalFormatSymbols = DecimalFormatSymbols()
-        decimalFormatSymbols.decimalSeparator = decimalSeparator.character
-        val decimalFormatPattern = ""
-        decimalFormat = DecimalFormat(decimalFormatPattern)
-        decimalFormat.decimalFormatSymbols = decimalFormatSymbols
-    }
-
-    fun numberFormat(value: Double): String {
-        return prefix + decimalFormat.format(value) + suffix
-    }
-}
-
-enum class DecimalSeparator(val character: Char) {
-    COMMA(character = ','),
-    PERIOD(character = '.'),
-    SPACE(character = ' ')
+    fun linearDimensionFormat(valor: Double): String = linearDimensionFormatter.format(valor = valor * this.scaleFactor)
 }

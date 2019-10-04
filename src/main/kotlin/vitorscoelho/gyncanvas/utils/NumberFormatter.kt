@@ -6,7 +6,7 @@ import java.lang.Math.round
 import kotlin.math.absoluteValue
 import kotlin.math.sign
 
-class Formatter(
+class NumberFormatter(
     suppressLeadingZeros: Boolean,
     suppressTrailingZeros: Boolean,
     precision: Int,

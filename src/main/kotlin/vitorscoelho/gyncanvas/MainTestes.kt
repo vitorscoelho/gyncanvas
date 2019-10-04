@@ -8,7 +8,7 @@ fun main() {
     val supress = true //Suprime os zeros a direita da vírgula
     val precision = 1
     val prefix = "prefix "
-    val sufix = " sufix"
+    val sufix = " suffix"
 
     val caracterDepoisDaVirgula = if (supress) "0".repeat(precision) else "#".repeat(precision)
     val caracterAntesDaVirgula = if (leading) "0" else "#"
