@@ -21,4 +21,8 @@ fun main() {
     decimalFormat.decimalFormatSymbols = decimalFormatSymbols
     println(decimalFormat.format(123456789.123456789))
     println(decimalFormat.format(.123456789))
+
+    val teste: Double? = 3.0
+    val teste2: Double = teste ?: 2.0
+    print(teste2)
 }

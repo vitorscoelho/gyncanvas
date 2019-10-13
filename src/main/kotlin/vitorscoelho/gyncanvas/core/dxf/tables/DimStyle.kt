@@ -9,88 +9,49 @@ class DimStyle(
 
     //LINES PROP
     //Propriedade: Dimensions lines
-    val dimensionLinesColor: Color = Color.BY_BLOCK,//DIMCLRD - 176
-//    val dimensionLinesLType: LType = LType.BY_BLOCK,//DIMLTYPE
-//    val dimensionLinesLineWeight: LineWeight = LineWeight.BY_BLOCK,//DIMLWD
-//    val dimensionLinesBaselineSpacing: Double = 0.38,//DIMDLI
-    val dimensionLinesSupressDimLine1: Boolean = false,//DIMSD1 - 281
-    val dimensionLinesSupressDimLine2: Boolean = false,//DIMSD1 - 282
+    override val dimensionLinesColor: Color = Color.BY_BLOCK,//DIMCLRD - 176
+    override val dimensionLinesSupressDimLine1: Boolean = false,//DIMSD1 - 281
+    override val dimensionLinesSupressDimLine2: Boolean = false,//DIMSD1 - 282
 
     //Propriedade: Extension lines
-    val extensionLinesColor: Color = Color.BY_BLOCK,//DIMCLRE - 177
-//    val extensionLinesLTypeExtLine1: LType = LType.BY_BLOCK,//DIMLTEX1
-//    val extensionLinesLTypeExtLine2: LType = LType.BY_BLOCK,//DIMLTEX2
-//    val extensionLinesLineWeight: LineWeight = LineWeight.BY_BLOCK,//DIMLWE - 372
-    val extensionLinesSupressExtLine1: Boolean = false,//DIMSE1 - 75
-    val extensionLinesSupressExtLine2: Boolean = false,//DIMSE2 - 76
-    val extensionLinesExtendBeyondDimLines: Double = 0.18,//DIMEXE - 44
-    val extensionLinesOffsetFromOrigin: Double = 0.0625,//DIMEXO - 42
-    //val fixedLengthExtensionLines:Double//DIMFXLON. PARECE QUE NÃO EXISTE PARA DXF2000
-
+    override val extensionLinesColor: Color = Color.BY_BLOCK,//DIMCLRE - 177
+    override val extensionLinesSupressExtLine1: Boolean = false,//DIMSE1 - 75
+    override val extensionLinesSupressExtLine2: Boolean = false,//DIMSE2 - 76
+    override val extensionLinesExtendBeyondDimLines: Double = 0.18,//DIMEXE - 44
+    override val extensionLinesOffsetFromOrigin: Double = 0.0625,//DIMEXO - 42
 
     //SYMBOLS AND ARROWS PROP
     //Propriedade: Arrowheads
-    val firstArrowHead: Block = Block.NONE,//DIMBLK1
-    val secondArrowHead: Block = Block.NONE,//DIMBLK2
-    val leaderArrowHead: Block = Block.NONE,//DIMLDRBLK
-    val arrowSize: Double = 0.18,//DIMASZ
-
-    //Propriedade: Center marks
-//    val centerMarkType: CenterMarkType = CenterMarkType.MARK,//DIMCEN - 141
-//    val centerMarkSize: Double=0.09,//DIMCEN - 141
-
-    //Propriedade: Dimension Break
-//    val breakSize: Double=0.125//NÃO ACHEI NA REFERÊNCIA DO AUTOCAD2000
-
+    override val firstArrowHead: Block = Block.NONE,//DIMBLK1
+    override val secondArrowHead: Block = Block.NONE,//DIMBLK2
+    override val leaderArrowHead: Block = Block.NONE,//DIMLDRBLK
+    override val arrowSize: Double = 0.18,//DIMASZ
 
     //TEXT PROP
     //Propriedade: TextAppearance
-    val textStyle: TextStyle,//DIMTXSTY - 340
-    val textColor: Color = Color.BY_BLOCK,//DIMCLRT - 178
-    //private fillColor:Color,//DIMTFILL e DIMTFILLCLR. NÃO ENCONTREI NAS REFERÊNCIAS
-    val textHeight: Double = 0.18,//DIMTXT - 140
-//    val textInBox: Boolean = false,//DIMGAP - 147
+    override val textStyle: TextStyle,//DIMTXSTY - 340
+    override val textColor: Color = Color.BY_BLOCK,//DIMCLRT - 178
+    override val textHeight: Double = 0.18,//DIMTXT - 140
     //Propriedade: TextPlacement
-//    val  textPlacementVertical: TextPlacementVertical = TextPlacementVertical.ABOVE,//DIMTAD - 77
-//    val  textPlacementHorizontal: TextPlacementHorizontal = TextPlacementHorizontal.CENTERED,//DIMJUST - 280
-    //private  textViewDirection:TextViewDirection,//DIMTXTDIRECTION NÃO ENCONTREI NA REFERÊNCIA DA AUTODESK
-    val offsetFromDimLine: Double = 0.09,//DIMGAP - 147 (O VALOR FICA NEGATIVO SE A VARIAVEL textoEmCaixa DA CLASSE TextAppearance for true) //CORRIGIR ISTO
-    //Propriedade: TextAlignment
-//    val textAlignment: TextAlignment = TextAlignment.ALIGNED_WITH_DIMENSION_LINE
-
+    override val textOffsetFromDimLine: Double = 0.09,//DIMGAP - 147 (O VALOR FICA NEGATIVO SE A VARIAVEL textoEmCaixa DA CLASSE TextAppearance for true) //CORRIGIR ISTO
 
     //FIT PROP
-    //Propriedade: FitOptions
-//    val fitType: FitType = FitType.EITHER_TEXT_OR_ARROWS,//DIMATFIT - 289 Altera posição do texto se ele não couber dentro das extension line
-//    val alwaysKeepTextBetweenExtLine: Boolean = false,//DIMTIX - 174 O texto sempre vai ficar no centro das extension line
-//    val supressArrowsIfDontFit: Boolean = false,//DIMSOXD - 175 As setas são suprimidas se não couberem nas extension line
-    //Propriedade: TextPlacement
-//    val textPlacementType: TextPlacementType = TextPlacementType.BESIDE_THE_DIM_LINE,//DIMTMOVE - 279
     //Propriedade: ScaleForDimensionFeatures
-    val overallScale: Double = 1.0,//DIMSCALE - 40
-    //Propriedade: FineTuning
-//    val placeTextManually: Boolean = false,//DIMUPT - 288
-//    val drawDimLineBetweenExtLines: Boolean = false//DIMTOFL - 172
-
+    override val overallScale: Double = 1.0,//DIMSCALE - 40
 
     //PRIMARY UNITS PROP
     //Propriedade: LinearDimensions
-//    val linearDimensionUnitFormat: LinearDimensionUnitFormat = LinearDimensionUnitFormat.Decimal,//DIMLUNIT - 277
-    val linearDimensionPrecision: Int = 2,//DIMDEC - 271
-    //DIMFRAC - NÃO SEI. NÃO ACHEI
-    val decimalSeparator: Char = '.',//DIMDSEP - 278
-    val unitRound: Double = 0.0,//DIMRND - 45
-    val prefix: String = "",//DIMPOST - 3 NÃO SEI
-    val suffix: String = "",//DIMPOST - 3
-    val scaleFactor: Double = 1.0,//DIMLFAC - 144
-//    val linearDimensionZeroSupress;
-    val linearDimensionSuppressLeadingZeros: Boolean = false,
-    val linearDimensionSuppressTrailingZeros: Boolean = true,
+    override val linearDimensionPrecision: Int = 2,//DIMDEC - 271
+    override val decimalSeparator: Char = '.',//DIMDSEP - 278
+    override val unitRound: Double = 0.0,//DIMRND - 45
+    override val prefix: String = "",//DIMPOST - 3 NÃO SEI
+    override val suffix: String = "",//DIMPOST - 3
+    override val scaleFactor: Double = 1.0,//DIMLFAC - 144
+    override val linearDimensionSuppressLeadingZeros: Boolean = false,
+    override val linearDimensionSuppressTrailingZeros: Boolean = true,
     //Propriedade: AngularDimensions
-//    val angularDimensionUnitFormat: AngularDimensionUnitFormat = AngularDimensionUnitFormat.DECIMAL_DEGREES,//DIMAUNIT - 275
-    val angularDimensionPrecision: Int = 0//DIMADEC - 179
-//    val angularDimensionZeroSupress: AngularDimensionZeroSupress = AngularDimensionZeroSupress.NaoSuprimir//DIMAZIN - 79
-) : Table {
+    override val angularDimensionPrecision: Int = 0//DIMADEC - 179
+) : Table,DimStyleProperties {
     private val linearDimensionFormatter = NumberFormatter(
         suppressLeadingZeros = linearDimensionSuppressLeadingZeros,
         suppressTrailingZeros = linearDimensionSuppressTrailingZeros,

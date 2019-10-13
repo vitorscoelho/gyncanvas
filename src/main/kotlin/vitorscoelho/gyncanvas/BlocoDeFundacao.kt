@@ -9,6 +9,7 @@ import vitorscoelho.gyncanvas.core.dxf.entities.*
 import vitorscoelho.gyncanvas.core.dxf.tables.DimStyle
 import vitorscoelho.gyncanvas.core.dxf.tables.Layer
 import vitorscoelho.gyncanvas.core.dxf.tables.TextStyle
+import vitorscoelho.gyncanvas.core.primitivas.CotaVertical
 import vitorscoelho.gyncanvas.math.Vetor2D
 import java.text.DecimalFormat
 
@@ -180,19 +181,25 @@ class BlocoDeFundacao(
         return eixosVerticais + eixosHorizontais
     }
 
-    //    private fun cotasVerticaisDosEixos(): List<DesenhoAdicionavel> {
-//        val xPonto = 0.0
-//        val sequencia = SequenciaCotaVertical(
-//            pontoInicial = Vetor2D.ZERO,
-//            xDimensionLine = -distanciaCota,
-//            propriedadesCotas = formatoCota
-//        )
-//        ordenadasEixosHorizontais.forEach { y -> sequencia.add(x = xPonto, y = y) }
-//        sequencia.add(x = xPonto, y = lyBloco)
-//        return sequencia.toList().map { DesenhoAdicionavel(it, propriedadeCota) }
-//    }
-//
-//    private fun cotasHorizontaisDosEixos(): List<DesenhoAdicionavel> {
+    private fun cotasVerticaisDosEixos(): List<Entity> {
+        val xPonto = 0.0
+        val sequencia = RotatedDimension.verticalSequence(
+            layer = layerCota, dimStyle = dimStyle, xDimensionLine = -distanciaCota
+        ).firstPoint(Vetor2D.ZERO)
+        ordenadasEixosHorizontais.forEach { y -> sequencia.next(x = xPonto, y = y) }
+        sequencia.next(x = xPonto, y = lyBloco)
+        return sequencia.toList()
+        /*val sequencia = SequenciaCotaVertical(
+            pontoInicial = Vetor2D.ZERO,
+            xDimensionLine = -distanciaCota,
+            propriedadesCotas = formatoCota
+        )
+        ordenadasEixosHorizontais.forEach { y -> sequencia.add(x = xPonto, y = y) }
+        sequencia.add(x = xPonto, y = lyBloco)
+        return sequencia.toList().map { DesenhoAdicionavel(it, propriedadeCota) }*/
+    }
+
+    private fun cotasHorizontaisDosEixos(): List<Entity> {
 //        val yPonto = 0.0
 //        val sequencia = SequenciaCotaHorizontal(
 //            pontoInicial = Vetor2D.ZERO,
@@ -202,20 +209,26 @@ class BlocoDeFundacao(
 //        abscissasEixosVerticais.forEach { x -> sequencia.add(x = x, y = yPonto) }
 //        sequencia.add(x = lxBloco, y = yPonto)
 //        return sequencia.toList().map { DesenhoAdicionavel(it, propriedadeCota) }
-//    }
-//
-//    private fun cotaVerticalComprimentoDoBloco(): List<DesenhoAdicionavel> {
-//        val cota = CotaVertical(
-//            ponto1 = Vetor2D.ZERO,
-//            ponto2 = Vetor2D(x = 0.0, y = lyBloco),
-//            xDimensionLine = -2.0 * distanciaCota,
-//            propriedadesCotas = formatoCota
-//        )
-//        return listOf(DesenhoAdicionavel(cota, propriedadeCota))
-//    }
-//
+        val yPonto = 0.0
+        val sequencia = RotatedDimension.horizontalSequence(
+            layer = layerCota, dimStyle = dimStyle, yDimensionLine = -distanciaCota
+        ).firstPoint(Vetor2D.ZERO)
+        abscissasEixosVerticais.forEach { x -> sequencia.next(x = x, y = yPonto) }
+        sequencia.next(x = lxBloco, y = yPonto)
+        return sequencia.toList()
+    }
+
+    private fun cotaVerticalComprimentoDoBloco(): List<Entity> {
+        val cota = RotatedDimension.vertical(
+            layer = layerCota, dimStyle = dimStyle,
+            xPoint1 = Vetor2D.ZERO, xPoint2 = Vetor2D(x = 0.0, y = lyBloco),
+            xDimensionLine = -2.0 * distanciaCota
+        )
+        return listOf(cota)
+    }
+
     private fun cotaHorizontalComprimentoDoBloco(): List<Entity> {
-        val cota = HorizontalDimension(
+        val cota = RotatedDimension.horizontal(
             layer = layerCota, dimStyle = dimStyle,
             xPoint1 = Vetor2D.ZERO, xPoint2 = Vetor2D(x = lxBloco, y = 0.0),
             yDimensionLine = -2.0 * distanciaCota
@@ -309,10 +322,10 @@ class BlocoDeFundacao(
                 contornoColarinho() +
                 estacas() +
                 linhasDeEixo() +
-//                cotasVerticaisDosEixos() +
+                cotasVerticaisDosEixos()
 //                cotasHorizontaisDosEixos() +
 //                cotaVerticalComprimentoDoBloco() +
-                cotaHorizontalComprimentoDoBloco() //+
+//                cotaHorizontalComprimentoDoBloco() //+
 //                cotasVerticaisDasDimensoesDoColarinho() +
 //                cotasHorizontaisDasDimensoesDoColarinho() +
 //                indicacaoCorte()

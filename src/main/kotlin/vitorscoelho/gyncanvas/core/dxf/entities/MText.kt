@@ -70,10 +70,10 @@ private enum class TipoTexto {
             val matrizOriginal = ImmutableTransformationMatrix(otherMatrix = drawer.transform)
             drawer.copyToTransform(
                 transformationMatrix = MutableTransformationMatrix(otherMatrix = matrizOriginal)
-                    .translate(xOffset = mText.position.x, yOffset = mText.position.y)
+                    .translate(xOffset = mText.position.x, yOffset = -mText.position.y)
                     .rotate(angle = -mText.rotation)
             )
-            drawer.fillText(text = mText.content, x = mText.position.x, y = mText.position.y)
+            drawer.fillText(text = mText.content, x = 0.0, y = 0.0)
             drawer.copyToTransform(transformationMatrix = matrizOriginal)
         }
     },
