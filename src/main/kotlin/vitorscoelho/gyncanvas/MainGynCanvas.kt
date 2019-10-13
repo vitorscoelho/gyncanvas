@@ -1,6 +1,5 @@
 package vitorscoelho.gyncanvas
 
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import javafx.scene.Cursor
 import javafx.scene.input.MouseButton
 import javafx.scene.paint.Color
@@ -11,9 +10,7 @@ import vitorscoelho.gyncanvas.core.primitivas.*
 import vitorscoelho.gyncanvas.core.primitivas.propriedades.FillAttributes
 import vitorscoelho.gyncanvas.core.primitivas.propriedades.StrokeAttributes
 import vitorscoelho.gyncanvas.core.primitivas.propriedades.FillTextAttributes
-import vitorscoelho.gyncanvas.json.JsonDrawing
-import vitorscoelho.gyncanvas.json.toJsonEntity
-import vitorscoelho.gyncanvas.math.Vetor2D
+import vitorscoelho.gyncanvas.math.Vector2D
 
 fun main() {
     launch<MeuAppGynCanvas>()
@@ -31,31 +28,33 @@ class MeuViewGynCanvas : View() {
         fillAtributtes = FillAttributes(fillPaint = Color.YELLOW)
     )
     val linha = StrokedLine(
-        ponto1 = Vetor2D(0.0, 0.0),
-        ponto2 = Vetor2D(200.0, 300.0)
+        ponto1 = Vector2D(0.0, 0.0),
+        ponto2 = Vector2D(200.0, 300.0)
     )
-    val circulo = StrokedCircle(centro = Vetor2D(200.0, 300.0), diametro = 200.0)
+    val circulo = StrokedCircle(centro = Vector2D(200.0, 300.0), diametro = 200.0)
     val retangulo = StrokedRect(
-        pontoInsercao = Vetor2D.ZERO,
+        pontoInsercao = Vector2D.ZERO,
         deltaX = 200.0,
         deltaY = -100.0
     )
     val polilinha = StrokedPolyline(
-        pontos = listOf(Vetor2D(200.0, 200.0), Vetor2D(600.0, 300.0), Vetor2D.ZERO),
+        pontos = listOf(
+            Vector2D(200.0, 200.0),
+            Vector2D(600.0, 300.0), Vector2D.ZERO),
         fechado = true
     )
-    val texto = FilledText(texto = "Texto teste", posicao = Vetor2D(200.0, 300.0), angulo = 0.0, tamanhoFixo = true)
+    val texto = FilledText(texto = "Texto teste", posicao = Vector2D(200.0, 300.0), angulo = 0.0, tamanhoFixo = true)
     val textoRotacionado = FilledText(
         texto = "Texto rotacionado",
-        posicao = Vetor2D(200.0, 300.0),
+        posicao = Vector2D(200.0, 300.0),
         angulo = 3.14 / 2.0
     )
-    val path = Path.initBuilder(fechado = true, pontoInicial = Vetor2D.ZERO)
+    val path = Path.initBuilder(fechado = true, pontoInicial = Vector2D.ZERO)
         .deltaLineTo(deltaX = 20.0, deltaY = 15.0)
         .deltaLineTo(deltaX = -10.0, deltaY = 30.0)
         .lineTo(x = -20.0, y = 45.0)
         .build()
-    val path2 = Path.initBuilder(fechado = false, pontoInicial = Vetor2D.ZERO)
+    val path2 = Path.initBuilder(fechado = false, pontoInicial = Vector2D.ZERO)
         .lineTo(x = 20.0, y = 0.0)
         .arcTo(xTangente1 = 25.0, yTangente1 = 0.0, xTangente2 = 25.0, yTangente2 = 5.0, raio = 5.0)
         .deltaLineTo(deltaY = 30.0)

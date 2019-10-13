@@ -2,9 +2,9 @@ package vitorscoelho.gyncanvas.core.primitivas
 
 import javafx.scene.canvas.GraphicsContext
 import vitorscoelho.gyncanvas.core.Transformacoes
-import vitorscoelho.gyncanvas.math.Vetor2D
+import vitorscoelho.gyncanvas.math.Vector2D
 
-class FilledText(val texto: String, val posicao: Vetor2D, val angulo: Double, tamanhoFixo: Boolean = false) :
+class FilledText(val texto: String, val posicao: Vector2D, val angulo: Double, tamanhoFixo: Boolean = false) :
     PrimitivaText {
     private val tipoTexto: TipoTexto = TipoTexto.getTipoTexto(angulo = angulo, tamanhoFixo = tamanhoFixo)
 

@@ -38,7 +38,7 @@ internal class Vetor2DMutavel(x: Double = 0.0, y: Double = 0.0) {
         return this
     }
 
-    fun toVetorImutavel(): Vetor2D {
-        return Vetor2D(x = this.x, y = this.y)
+    fun toVetorImutavel(): Vector2D {
+        return Vector2D(x = this.x, y = this.y)
     }
 }

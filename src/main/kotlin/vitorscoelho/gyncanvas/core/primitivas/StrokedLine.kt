@@ -2,11 +2,11 @@ package vitorscoelho.gyncanvas.core.primitivas
 
 import javafx.scene.canvas.GraphicsContext
 import vitorscoelho.gyncanvas.core.Transformacoes
-import vitorscoelho.gyncanvas.math.Vetor2D
+import vitorscoelho.gyncanvas.math.Vector2D
 
 class StrokedLine(
-    val ponto1: Vetor2D,
-    val ponto2: Vetor2D
+    val ponto1: Vector2D,
+    val ponto2: Vector2D
 ) : PrimitivaStroke {
     override fun desenhar(gc: GraphicsContext, transformacoes: Transformacoes) {
         gc.strokeLine(

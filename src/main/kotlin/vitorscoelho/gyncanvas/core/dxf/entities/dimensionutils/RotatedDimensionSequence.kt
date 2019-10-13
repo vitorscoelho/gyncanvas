@@ -7,14 +7,14 @@ import vitorscoelho.gyncanvas.core.dxf.entities.LinearDimensionSequenceStart
 import vitorscoelho.gyncanvas.core.dxf.entities.RotatedDimension
 import vitorscoelho.gyncanvas.core.dxf.tables.DimStyle
 import vitorscoelho.gyncanvas.core.dxf.tables.Layer
-import vitorscoelho.gyncanvas.math.Vetor2D
+import vitorscoelho.gyncanvas.math.Vector2D
 
 interface RotatedDimensionSequenceStart : LinearDimensionSequenceStart {
-    override fun firstPoint(point: Vetor2D): RotatedDimensionSequence
+    override fun firstPoint(point: Vector2D): RotatedDimensionSequence
 }
 
 interface RotatedDimensionSequence : LinearDimensionSequence {
-    override fun next(point: Vetor2D): RotatedDimensionSequence
+    override fun next(point: Vector2D): RotatedDimensionSequence
     override fun next(x: Double, y: Double): RotatedDimensionSequence
     override fun nextWithDelta(deltaX: Double, deltaY: Double): RotatedDimensionSequence
     override fun toList(): List<RotatedDimension>
@@ -23,7 +23,7 @@ interface RotatedDimensionSequence : LinearDimensionSequence {
         fun init(
             layer: Layer, color: Color,
             dimStyle: DimStyle, dimStyleOverrides: DimStyleOverrides,
-            dimensionLineReferencePoint: Vetor2D,
+            dimensionLineReferencePoint: Vector2D,
             angle: Double, text: String = "<>"
         ): RotatedDimensionSequenceStart = RotatedDimensionSequenceImplementation(
             layer = layer, color = color,
@@ -39,20 +39,20 @@ private class RotatedDimensionSequenceImplementation(
     val color: Color,
     val dimStyle: DimStyle,
     val dimStyleOverrides: DimStyleOverrides,
-    val dimensionLineReferencePoint: Vetor2D,
+    val dimensionLineReferencePoint: Vector2D,
     val angle: Double,
     val text: String = "<>"
 ) : RotatedDimensionSequenceStart, RotatedDimensionSequence {
-    private val points = mutableListOf<Vetor2D>()
+    private val points = mutableListOf<Vector2D>()
 
-    override fun firstPoint(point: Vetor2D) = next(point)
+    override fun firstPoint(point: Vector2D) = next(point)
 
-    override fun next(point: Vetor2D): RotatedDimensionSequence {
+    override fun next(point: Vector2D): RotatedDimensionSequence {
         points.add(point)
         return this
     }
 
-    override fun next(x: Double, y: Double) = next(Vetor2D(x = x, y = y))
+    override fun next(x: Double, y: Double) = next(Vector2D(x = x, y = y))
 
     override fun nextWithDelta(deltaX: Double, deltaY: Double) = next(
         x = points.last().x + deltaX,

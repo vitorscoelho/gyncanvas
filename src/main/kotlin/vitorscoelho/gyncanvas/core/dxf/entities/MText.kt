@@ -7,7 +7,7 @@ import vitorscoelho.gyncanvas.core.dxf.tables.TextStyle
 import vitorscoelho.gyncanvas.core.dxf.transformation.ImmutableTransformationMatrix
 import vitorscoelho.gyncanvas.core.dxf.transformation.MutableTransformationMatrix
 import vitorscoelho.gyncanvas.core.dxf.transformation.TransformationMatrix
-import vitorscoelho.gyncanvas.math.Vetor2D
+import vitorscoelho.gyncanvas.math.Vector2D
 
 data class MText(
     override val layer: Layer,
@@ -16,7 +16,7 @@ data class MText(
     val size: Double,
     val justify: AttachmentPoint = AttachmentPoint.BOTTOM_LEFT,
     val rotation: Double = 0.0,
-    val position: Vetor2D,
+    val position: Vector2D,
     val content: String
 ) : Entity {
     private val tipoTexto: TipoTexto = TipoTexto.getTextType(

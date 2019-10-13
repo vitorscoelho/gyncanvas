@@ -1,17 +1,12 @@
 package vitorscoelho.gyncanvas
 
-import javafx.geometry.VPos
-import javafx.scene.canvas.GraphicsContext
 import javafx.scene.text.Font
-import javafx.scene.text.TextAlignment
 import vitorscoelho.gyncanvas.core.dxf.Color
 import vitorscoelho.gyncanvas.core.dxf.entities.*
 import vitorscoelho.gyncanvas.core.dxf.tables.DimStyle
 import vitorscoelho.gyncanvas.core.dxf.tables.Layer
 import vitorscoelho.gyncanvas.core.dxf.tables.TextStyle
-import vitorscoelho.gyncanvas.core.primitivas.CotaVertical
-import vitorscoelho.gyncanvas.math.Vetor2D
-import java.text.DecimalFormat
+import vitorscoelho.gyncanvas.math.Vector2D
 
 /**
  * @property hxPilar dimensão em x do pilar, em cm
@@ -39,7 +34,7 @@ class BlocoDeFundacao(
     val lyBloco: Double,
     val nivelPisoAcabado: Int,
     val diametroEstacas: Double,
-    val posicoesEstacas: List<Vetor2D>
+    val posicoesEstacas: List<Vector2D>
 ) {
     /**Dimensão interna em x do colarinho, em cm*/
     val hcxInt = hxPilar + 2.0 * folgaDeMontagem
@@ -54,7 +49,7 @@ class BlocoDeFundacao(
     val hcyExt = hcyInt + 2.0 * hcy
 
     /**Posição do eixo do bloco em planta, em cm*/
-    private val eixoBloco = Vetor2D(x = lxBloco / 2.0, y = lyBloco / 2.0)
+    private val eixoBloco = Vector2D(x = lxBloco / 2.0, y = lyBloco / 2.0)
 
     /**Abscissas de eixos de estacas e pilar, em cm*/
     private val abscissasEixosVerticais: List<Double> by lazy {
@@ -114,7 +109,7 @@ class BlocoDeFundacao(
 //    )
 
     private fun pilar(): List<Entity> {
-        val pontoInicial = Vetor2D(x = lxBloco / 2.0 - hxPilar / 2.0, y = lyBloco / 2.0 - hyPilar / 2.0)
+        val pontoInicial = Vector2D(x = lxBloco / 2.0 - hxPilar / 2.0, y = lyBloco / 2.0 - hyPilar / 2.0)
         val contorno = LwPolyline.rectangle(
             layer = layerPilarContorno, startPoint = pontoInicial,
             deltaX = hxPilar, deltaY = hyPilar
@@ -129,7 +124,7 @@ class BlocoDeFundacao(
     private fun contornoBloco(): List<Entity> {
         val contorno = LwPolyline.rectangle(
             layer = layerFormaContorno,
-            startPoint = Vetor2D.ZERO,
+            startPoint = Vector2D.ZERO,
             deltaX = lxBloco,
             deltaY = lyBloco
         )
@@ -139,12 +134,12 @@ class BlocoDeFundacao(
     private fun contornoColarinho(): List<Entity> {
         val contornoExterno = LwPolyline.rectangle(
             layer = layerFormaContorno,
-            startPoint = Vetor2D(x = lxBloco / 2.0 - hcxExt / 2.0, y = lyBloco / 2.0 - hcyExt / 2.0),
+            startPoint = Vector2D(x = lxBloco / 2.0 - hcxExt / 2.0, y = lyBloco / 2.0 - hcyExt / 2.0),
             deltaX = hcxExt, deltaY = hcyExt
         )
         val contornoInterno = LwPolyline.rectangle(
             layer = layerFormaContorno,
-            startPoint = Vetor2D(x = lxBloco / 2.0 - hcxInt / 2.0, y = lyBloco / 2.0 - hcyInt / 2.0),
+            startPoint = Vector2D(x = lxBloco / 2.0 - hcxInt / 2.0, y = lyBloco / 2.0 - hcyInt / 2.0),
             deltaX = hcxInt, deltaY = hcyInt
         )
         return listOf(contornoInterno, contornoExterno)
@@ -156,7 +151,7 @@ class BlocoDeFundacao(
             val yRealCentro = lyBloco / 2.0 + posicao.y
             val contornoEstaca = Circle(
                 layer = layerProjecao,
-                centerPoint = Vetor2D(x = xRealCentro, y = yRealCentro),
+                centerPoint = Vector2D(x = xRealCentro, y = yRealCentro),
                 diameter = 60.0
             )
             return@map contornoEstaca
@@ -167,15 +162,15 @@ class BlocoDeFundacao(
         val eixosVerticais = abscissasEixosVerticais.map { x ->
             Line(
                 layer = layerEixo,
-                startPoint = Vetor2D(x = x, y = 0.0),
-                endPoint = Vetor2D(x = x, y = lyBloco)
+                startPoint = Vector2D(x = x, y = 0.0),
+                endPoint = Vector2D(x = x, y = lyBloco)
             )
         }
         val eixosHorizontais = ordenadasEixosHorizontais.map { y ->
             Line(
                 layer = layerEixo,
-                startPoint = Vetor2D(x = 0.0, y = y),
-                endPoint = Vetor2D(x = lxBloco, y = y)
+                startPoint = Vector2D(x = 0.0, y = y),
+                endPoint = Vector2D(x = lxBloco, y = y)
             )
         }
         return eixosVerticais + eixosHorizontais
@@ -185,7 +180,7 @@ class BlocoDeFundacao(
         val xPonto = 0.0
         val sequencia = RotatedDimension.verticalSequence(
             layer = layerCota, dimStyle = dimStyle, xDimensionLine = -distanciaCota
-        ).firstPoint(Vetor2D.ZERO)
+        ).firstPoint(Vector2D.ZERO)
         ordenadasEixosHorizontais.forEach { y -> sequencia.next(x = xPonto, y = y) }
         sequencia.next(x = xPonto, y = lyBloco)
         return sequencia.toList()
@@ -212,7 +207,7 @@ class BlocoDeFundacao(
         val yPonto = 0.0
         val sequencia = RotatedDimension.horizontalSequence(
             layer = layerCota, dimStyle = dimStyle, yDimensionLine = -distanciaCota
-        ).firstPoint(Vetor2D.ZERO)
+        ).firstPoint(Vector2D.ZERO)
         abscissasEixosVerticais.forEach { x -> sequencia.next(x = x, y = yPonto) }
         sequencia.next(x = lxBloco, y = yPonto)
         return sequencia.toList()
@@ -221,7 +216,7 @@ class BlocoDeFundacao(
     private fun cotaVerticalComprimentoDoBloco(): List<Entity> {
         val cota = RotatedDimension.vertical(
             layer = layerCota, dimStyle = dimStyle,
-            xPoint1 = Vetor2D.ZERO, xPoint2 = Vetor2D(x = 0.0, y = lyBloco),
+            xPoint1 = Vector2D.ZERO, xPoint2 = Vector2D(x = 0.0, y = lyBloco),
             xDimensionLine = -2.0 * distanciaCota
         )
         return listOf(cota)
@@ -230,7 +225,7 @@ class BlocoDeFundacao(
     private fun cotaHorizontalComprimentoDoBloco(): List<Entity> {
         val cota = RotatedDimension.horizontal(
             layer = layerCota, dimStyle = dimStyle,
-            xPoint1 = Vetor2D.ZERO, xPoint2 = Vetor2D(x = lxBloco, y = 0.0),
+            xPoint1 = Vector2D.ZERO, xPoint2 = Vector2D(x = lxBloco, y = 0.0),
             yDimensionLine = -2.0 * distanciaCota
         )
         return listOf(cota)

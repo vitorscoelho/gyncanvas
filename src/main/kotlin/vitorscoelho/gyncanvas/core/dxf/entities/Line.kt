@@ -4,13 +4,13 @@ import vitorscoelho.gyncanvas.core.dxf.Color
 import vitorscoelho.gyncanvas.core.dxf.Drawer
 import vitorscoelho.gyncanvas.core.dxf.tables.Layer
 import vitorscoelho.gyncanvas.core.dxf.transformation.TransformationMatrix
-import vitorscoelho.gyncanvas.math.Vetor2D
+import vitorscoelho.gyncanvas.math.Vector2D
 
 data class Line(
     override val layer: Layer,
     override val color: Color = Color.BY_LAYER,
-    val startPoint: Vetor2D,
-    val endPoint: Vetor2D
+    val startPoint: Vector2D,
+    val endPoint: Vector2D
 ) : Entity {
     override fun draw(drawer: Drawer) {
         applyLineWidth(drawer = drawer)

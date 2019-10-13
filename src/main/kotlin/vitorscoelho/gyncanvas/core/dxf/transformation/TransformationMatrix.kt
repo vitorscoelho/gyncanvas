@@ -2,7 +2,7 @@ package vitorscoelho.gyncanvas.core.dxf.transformation
 
 import org.joml.Matrix4d
 import org.joml.Vector3d
-import vitorscoelho.gyncanvas.math.Vetor2D
+import vitorscoelho.gyncanvas.math.Vector2D
 import kotlin.math.sqrt
 
 sealed class TransformationMatrix {
@@ -20,10 +20,10 @@ sealed class TransformationMatrix {
     abstract val tz: Double
     abstract val scale: Double
 
-    fun transform(vector: Vetor2D): Vetor2D = transform(x = vector.x, y = vector.y)
+    fun transform(vector: Vector2D): Vector2D = transform(x = vector.x, y = vector.y)
 
     fun transform(x: Double, y: Double) =
-        Vetor2D(
+        Vector2D(
             x = mxx * x + mxy * y + tx,
             y = myx * x + myy * y + ty
         )
@@ -200,11 +200,11 @@ class MutableTransformationMatrix : TransformationMatrix {
         set(otherMatrix = TransformationMatrix.IDENTITY)
     }
 
-    fun worldCoordinates(xDrawingArea: Double, yDrawingArea: Double): Vetor2D {
+    fun worldCoordinates(xDrawingArea: Double, yDrawingArea: Double): Vector2D {
         val vetorJOML = Vector3d(xDrawingArea, yDrawingArea, 0.0)
 //        matrizJOML.transformPosition(vetorJOML)
         val matrizInversa = Matrix4d(jomlMatrix).invert()
         matrizInversa.transformPosition(vetorJOML)
-        return Vetor2D(x = vetorJOML.x, y = vetorJOML.y)
+        return Vector2D(x = vetorJOML.x, y = vetorJOML.y)
     }
 }

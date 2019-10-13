@@ -3,10 +3,9 @@ package vitorscoelho.gyncanvas
 import javafx.scene.Cursor
 import javafx.scene.input.MouseButton
 import tornadofx.*
-import vitorscoelho.gyncanvas.core.dxf.DrawingArea
 import vitorscoelho.gyncanvas.core.dxf.FXDrawingArea
 import vitorscoelho.gyncanvas.core.dxf.transformation.MutableTransformationMatrix
-import vitorscoelho.gyncanvas.math.Vetor2D
+import vitorscoelho.gyncanvas.math.Vector2D
 
 fun main() {
     launch<MeuAppDrawingArea>()
@@ -88,8 +87,8 @@ fun criarBloco(): BlocoDeFundacao {
         nivelPisoAcabado = 50034,
         diametroEstacas = 60.0,
         posicoesEstacas = listOf(
-            Vetor2D(x = -115.0, y = 0.0),
-            Vetor2D(x = 115.0, y = 0.0)
+            Vector2D(x = -115.0, y = 0.0),
+            Vector2D(x = 115.0, y = 0.0)
         )
     )
 //    val listaJson = blocoDeFundacao.mapPrimitivas { primitiva, atributo -> primitiva.toJsonEntity() }

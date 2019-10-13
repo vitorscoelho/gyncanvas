@@ -1,26 +1,17 @@
 package vitorscoelho.gyncanvas.core.dxf.entities
 
-import vitorscoelho.gyncanvas.core.dxf.Color
-import vitorscoelho.gyncanvas.core.dxf.DimStyleOverrides
-import vitorscoelho.gyncanvas.core.dxf.tables.DimStyle
-import vitorscoelho.gyncanvas.core.dxf.tables.Layer
-import vitorscoelho.gyncanvas.core.dxf.transformation.MutableTransformationMatrix
-import vitorscoelho.gyncanvas.core.dxf.transformation.TransformationMatrix
-import vitorscoelho.gyncanvas.math.Vetor2D
-import java.lang.Math.toRadians
-import kotlin.math.absoluteValue
-import kotlin.math.atan
+import vitorscoelho.gyncanvas.math.Vector2D
 
 interface LinearDimension : Dimension {
     val angle: Double
-    val xPoint1: Vetor2D
-    val xPoint2: Vetor2D
+    val xPoint1: Vector2D
+    val xPoint2: Vector2D
 
-    fun dimContinue(point: Vetor2D): LinearDimension = dimContinueXPoint2(point)
-    fun dimContinueXPoint1(point: Vetor2D): LinearDimension
-    fun dimContinueXPoint2(point: Vetor2D): LinearDimension
+    fun dimContinue(point: Vector2D): LinearDimension = dimContinueXPoint2(point)
+    fun dimContinueXPoint1(point: Vector2D): LinearDimension
+    fun dimContinueXPoint2(point: Vector2D): LinearDimension
 
-    fun createSequence(points: List<Vetor2D>): List<LinearDimension>
+    fun createSequence(points: List<Vector2D>): List<LinearDimension>
     fun initSequence(): LinearDimensionSequence
 
     //PRIMARY UNITS PROP
@@ -44,11 +35,11 @@ interface LinearDimension : Dimension {
 }
 
 interface LinearDimensionSequenceStart {
-    fun firstPoint(point: Vetor2D): LinearDimensionSequence
+    fun firstPoint(point: Vector2D): LinearDimensionSequence
 }
 
 interface LinearDimensionSequence {
-    fun next(point: Vetor2D): LinearDimensionSequence
+    fun next(point: Vector2D): LinearDimensionSequence
     fun next(x: Double, y: Double): LinearDimensionSequence
     fun nextWithDelta(deltaX: Double, deltaY: Double): LinearDimensionSequence
     fun toList(): List<LinearDimension>

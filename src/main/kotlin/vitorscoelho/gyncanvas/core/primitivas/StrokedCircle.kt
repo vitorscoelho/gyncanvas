@@ -2,9 +2,9 @@ package vitorscoelho.gyncanvas.core.primitivas
 
 import javafx.scene.canvas.GraphicsContext
 import vitorscoelho.gyncanvas.core.Transformacoes
-import vitorscoelho.gyncanvas.math.Vetor2D
+import vitorscoelho.gyncanvas.math.Vector2D
 
-class StrokedCircle(val centro: Vetor2D, val diametro: Double) : PrimitivaStroke {
+class StrokedCircle(val centro: Vector2D, val diametro: Double) : PrimitivaStroke {
     override fun desenhar(gc: GraphicsContext, transformacoes: Transformacoes) {
         val raio = diametro / 2.0
         gc.strokeOval(

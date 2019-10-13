@@ -3,17 +3,17 @@ package vitorscoelho.gyncanvas.core.dxf.entities.path
 import vitorscoelho.gyncanvas.core.dxf.Color
 import vitorscoelho.gyncanvas.core.dxf.entities.LwPolyline
 import vitorscoelho.gyncanvas.core.dxf.tables.Layer
-import vitorscoelho.gyncanvas.math.Vetor2D
+import vitorscoelho.gyncanvas.math.Vector2D
 
 interface LwPolylineBuilderStep1 {
-    fun startPoint(point: Vetor2D): LwPolylineBuilderStep2
+    fun startPoint(point: Vector2D): LwPolylineBuilderStep2
 }
 
 interface LwPolylineBuilderStep2 {
-    fun lineTo(point: Vetor2D): LwPolylineBuilderStep2
+    fun lineTo(point: Vector2D): LwPolylineBuilderStep2
     fun lineTo(x: Double, y: Double): LwPolylineBuilderStep2
     fun deltaLineTo(deltaX: Double = 0.0, deltaY: Double = 0.0): LwPolylineBuilderStep2
-    fun arcTo(tangentPoint1: Vetor2D, tangentPoint2: Vetor2D, radius: Double): LwPolylineBuilderStep2
+    fun arcTo(tangentPoint1: Vector2D, tangentPoint2: Vector2D, radius: Double): LwPolylineBuilderStep2
     fun arcTo(
         xTangent1: Double,
         yTangent1: Double,
@@ -38,28 +38,28 @@ class LwPolylineBuilder private constructor(val layer: Layer, val color: Color) 
     LwPolylineBuilderStep1,
     LwPolylineBuilderStep2 {
     private val pathSteps = mutableListOf<PathStep>()
-    private var pontoFinalAtual: Vetor2D = Vetor2D.ZERO
+    private var pontoFinalAtual: Vector2D = Vector2D.ZERO
 
-    override fun startPoint(point: Vetor2D): LwPolylineBuilderStep2 {
+    override fun startPoint(point: Vector2D): LwPolylineBuilderStep2 {
         pontoFinalAtual = point
         pathSteps += MoveTo(point = point)
         return this
     }
 
-    override fun lineTo(point: Vetor2D): LwPolylineBuilderStep2 {
+    override fun lineTo(point: Vector2D): LwPolylineBuilderStep2 {
         pontoFinalAtual = point
         pathSteps += LineTo(point = point)
         return this
     }
 
     override fun lineTo(x: Double, y: Double): LwPolylineBuilderStep2 =
-        lineTo(point = Vetor2D(x = x, y = y))
+        lineTo(point = Vector2D(x = x, y = y))
 
 
     override fun deltaLineTo(deltaX: Double, deltaY: Double): LwPolylineBuilderStep2 =
-        lineTo(point = pontoFinalAtual.somar(deltaX = deltaX, deltaY = deltaY))
+        lineTo(point = pontoFinalAtual.plus(deltaX = deltaX, deltaY = deltaY))
 
-    override fun arcTo(tangentPoint1: Vetor2D, tangentPoint2: Vetor2D, radius: Double): LwPolylineBuilderStep2 {
+    override fun arcTo(tangentPoint1: Vector2D, tangentPoint2: Vector2D, radius: Double): LwPolylineBuilderStep2 {
         pontoFinalAtual = tangentPoint2
         pathSteps += ArcTo(tangentPoint1 = tangentPoint1, tangentPoint2 = tangentPoint2, radius = radius)
         return this
@@ -73,8 +73,8 @@ class LwPolylineBuilder private constructor(val layer: Layer, val color: Color) 
         radius: Double
     ): LwPolylineBuilderStep2 =
         arcTo(
-            tangentPoint1 = Vetor2D(x = xTangent1, y = yTangent1),
-            tangentPoint2 = Vetor2D(x = xTangent2, y = yTangent2),
+            tangentPoint1 = Vector2D(x = xTangent1, y = yTangent1),
+            tangentPoint2 = Vector2D(x = xTangent2, y = yTangent2),
             radius = radius
         )
 
@@ -86,8 +86,8 @@ class LwPolylineBuilder private constructor(val layer: Layer, val color: Color) 
         radius: Double
     ): LwPolylineBuilderStep2 =
         arcTo(
-            tangentPoint1 = pontoFinalAtual.somar(deltaX = deltaXTangent1, deltaY = deltaYTangent1),
-            tangentPoint2 = pontoFinalAtual.somar(deltaX = deltaXTangent2, deltaY = deltaYTangent2),
+            tangentPoint1 = pontoFinalAtual.plus(deltaX = deltaXTangent1, deltaY = deltaYTangent1),
+            tangentPoint2 = pontoFinalAtual.plus(deltaX = deltaXTangent2, deltaY = deltaYTangent2),
             radius = radius
         )
 

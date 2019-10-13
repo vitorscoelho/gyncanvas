@@ -2,7 +2,7 @@ package vitorscoelho.gyncanvas.core.primitivas
 
 import javafx.scene.canvas.GraphicsContext
 import vitorscoelho.gyncanvas.core.Transformacoes
-import vitorscoelho.gyncanvas.math.Vetor2D
+import vitorscoelho.gyncanvas.math.Vector2D
 
 class Path private constructor(
     private val fechado: Boolean,
@@ -25,36 +25,36 @@ class Path private constructor(
         )
 
     companion object {
-        fun initBuilder(fechado: Boolean = false, preenchido: Boolean = false, pontoInicial: Vetor2D): Builder =
+        fun initBuilder(fechado: Boolean = false, preenchido: Boolean = false, pontoInicial: Vector2D): Builder =
             Builder(fechado = fechado, preenchido = preenchido, pontoInicial = pontoInicial)
 
-        class Builder(private val fechado: Boolean = false, private val preenchido: Boolean, pontoInicial: Vetor2D) {
+        class Builder(private val fechado: Boolean = false, private val preenchido: Boolean, pontoInicial: Vector2D) {
             private val passos = mutableListOf<Passo>()
-            private var pontoFinalAtual: Vetor2D = pontoInicial
+            private var pontoFinalAtual: Vector2D = pontoInicial
 
             init {
                 passos += MoveTo(ponto = pontoInicial)
             }
 
-            fun moveTo(ponto: Vetor2D): Builder {
+            fun moveTo(ponto: Vector2D): Builder {
                 pontoFinalAtual = ponto
                 passos += MoveTo(ponto = ponto)
                 return this
             }
 
-            fun lineTo(pontoFinal: Vetor2D): Builder {
+            fun lineTo(pontoFinal: Vector2D): Builder {
                 pontoFinalAtual = pontoFinal
                 passos += LineTo(pontoFinal = pontoFinal)
                 return this
             }
 
-            fun arcTo(pontoTangente1: Vetor2D, pontoTangente2: Vetor2D, raio: Double): Builder {
+            fun arcTo(pontoTangente1: Vector2D, pontoTangente2: Vector2D, raio: Double): Builder {
                 pontoFinalAtual = pontoTangente2
                 passos += ArcTo(pontoTangente1 = pontoTangente1, pontoTangente2 = pontoTangente2, raio = raio)
                 return this
             }
 
-            fun bezierCurveTo(pontoControle1: Vetor2D, pontoControle2: Vetor2D, pontoFinal: Vetor2D): Builder {
+            fun bezierCurveTo(pontoControle1: Vector2D, pontoControle2: Vector2D, pontoFinal: Vector2D): Builder {
                 pontoFinalAtual = pontoFinal
                 passos += BezierCurveTo(
                     pontoControle1 = pontoControle1,
@@ -64,7 +64,7 @@ class Path private constructor(
                 return this
             }
 
-            fun quadraticCurveTo(pontoControle: Vetor2D, pontoFinal: Vetor2D): Builder {
+            fun quadraticCurveTo(pontoControle: Vector2D, pontoFinal: Vector2D): Builder {
                 pontoFinalAtual = pontoFinal
                 passos += QuadraticCurveTo(pontoControle = pontoControle, pontoFinal = pontoFinal)
                 return this
@@ -74,16 +74,16 @@ class Path private constructor(
             //fun rect(pontoInsercao: Vetor2D, deltaX: Double, deltaY: Double): Builder {}
 
             fun deltaMoveTo(deltaX: Double, deltaY: Double): Builder =
-                moveTo(ponto = pontoFinalAtual.somar(deltaX = deltaX, deltaY = deltaY))
+                moveTo(ponto = pontoFinalAtual.plus(deltaX = deltaX, deltaY = deltaY))
 
             fun moveTo(x: Double, y: Double): Builder =
-                moveTo(ponto = Vetor2D(x = x, y = y))
+                moveTo(ponto = Vector2D(x = x, y = y))
 
             fun deltaLineTo(deltaX: Double = 0.0, deltaY: Double = 0.0): Builder =
-                lineTo(pontoFinal = pontoFinalAtual.somar(deltaX = deltaX, deltaY = deltaY))
+                lineTo(pontoFinal = pontoFinalAtual.plus(deltaX = deltaX, deltaY = deltaY))
 
             fun lineTo(x: Double, y: Double): Builder =
-                lineTo(pontoFinal = Vetor2D(x = x, y = y))
+                lineTo(pontoFinal = Vector2D(x = x, y = y))
 
             fun deltaArcTo(
                 deltaXTangente1: Double,
@@ -93,8 +93,8 @@ class Path private constructor(
                 raio: Double
             ): Builder =
                 arcTo(
-                    pontoTangente1 = pontoFinalAtual.somar(deltaX = deltaXTangente1, deltaY = deltaYTangente1),
-                    pontoTangente2 = pontoFinalAtual.somar(deltaX = deltaXTangente2, deltaY = deltaYTangente2),
+                    pontoTangente1 = pontoFinalAtual.plus(deltaX = deltaXTangente1, deltaY = deltaYTangente1),
+                    pontoTangente2 = pontoFinalAtual.plus(deltaX = deltaXTangente2, deltaY = deltaYTangente2),
                     raio = raio
                 )
 
@@ -106,8 +106,8 @@ class Path private constructor(
                 raio: Double
             ): Builder =
                 arcTo(
-                    pontoTangente1 = Vetor2D(x = xTangente1, y = yTangente1),
-                    pontoTangente2 = Vetor2D(x = xTangente2, y = yTangente2),
+                    pontoTangente1 = Vector2D(x = xTangente1, y = yTangente1),
+                    pontoTangente2 = Vector2D(x = xTangente2, y = yTangente2),
                     raio = raio
                 )
 
@@ -121,7 +121,7 @@ private interface Passo {
     fun copiarComTransformacao(transformacoes: Transformacoes): Passo
 }
 
-private class MoveTo(val ponto: Vetor2D) : Passo {
+private class MoveTo(val ponto: Vector2D) : Passo {
     override fun desenhar(gc: GraphicsContext, transformacoes: Transformacoes) {
         gc.moveTo(ponto.x, -ponto.y)
     }
@@ -130,7 +130,7 @@ private class MoveTo(val ponto: Vetor2D) : Passo {
         MoveTo(ponto = transformacoes.transformar(ponto))
 }
 
-private class LineTo(val pontoFinal: Vetor2D) : Passo {
+private class LineTo(val pontoFinal: Vector2D) : Passo {
     override fun desenhar(gc: GraphicsContext, transformacoes: Transformacoes) {
         gc.lineTo(pontoFinal.x, -pontoFinal.y)
     }
@@ -139,7 +139,7 @@ private class LineTo(val pontoFinal: Vetor2D) : Passo {
         LineTo(pontoFinal = transformacoes.transformar(pontoFinal))
 }
 
-private class ArcTo(val pontoTangente1: Vetor2D, val pontoTangente2: Vetor2D, val raio: Double) : Passo {
+private class ArcTo(val pontoTangente1: Vector2D, val pontoTangente2: Vector2D, val raio: Double) : Passo {
     override fun desenhar(gc: GraphicsContext, transformacoes: Transformacoes) {
         gc.arcTo(pontoTangente1.x, -pontoTangente1.y, pontoTangente2.x, -pontoTangente2.y, raio)
     }
@@ -153,9 +153,9 @@ private class ArcTo(val pontoTangente1: Vetor2D, val pontoTangente2: Vetor2D, va
 }
 
 private class BezierCurveTo(
-    val pontoControle1: Vetor2D,
-    val pontoControle2: Vetor2D,
-    val pontoFinal: Vetor2D
+    val pontoControle1: Vector2D,
+    val pontoControle2: Vector2D,
+    val pontoFinal: Vector2D
 ) : Passo {
     override fun desenhar(gc: GraphicsContext, transformacoes: Transformacoes) {
         gc.bezierCurveTo(
@@ -176,7 +176,7 @@ private class BezierCurveTo(
         )
 }
 
-private class QuadraticCurveTo(val pontoControle: Vetor2D, val pontoFinal: Vetor2D) : Passo {
+private class QuadraticCurveTo(val pontoControle: Vector2D, val pontoFinal: Vector2D) : Passo {
     override fun desenhar(gc: GraphicsContext, transformacoes: Transformacoes) {
         gc.quadraticCurveTo(pontoControle.x, -pontoControle.y, pontoFinal.x, -pontoFinal.y)
     }

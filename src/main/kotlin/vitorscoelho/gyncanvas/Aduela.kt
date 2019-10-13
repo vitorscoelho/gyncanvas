@@ -9,7 +9,7 @@ import vitorscoelho.gyncanvas.core.GynCanvas
 import vitorscoelho.gyncanvas.core.Transformacoes
 import vitorscoelho.gyncanvas.core.primitivas.*
 import vitorscoelho.gyncanvas.core.primitivas.propriedades.DrawAttributes
-import vitorscoelho.gyncanvas.math.Vetor2D
+import vitorscoelho.gyncanvas.math.Vector2D
 import java.text.DecimalFormat
 
 class FormaAduela(
@@ -65,10 +65,10 @@ class FormaAduela(
     }
 
     private fun corteTransversal() {
-        val contornoExterno = StrokedRect(pontoInsercao = Vetor2D.ZERO, deltaX = larguraExterna, deltaY = alturaExterna)
+        val contornoExterno = StrokedRect(pontoInsercao = Vector2D.ZERO, deltaX = larguraExterna, deltaY = alturaExterna)
         val contornoInterno = Path.initBuilder(
             fechado = true,
-            pontoInicial = Vetor2D(
+            pontoInicial = Vector2D(
                 x = espessuraParedeLateral + misulaHorizontalFundo,
                 y = espessuraLajeFundo
             )
@@ -101,12 +101,12 @@ class FormaAduela(
         doubleArrayOf(distanciaFuroIcamento, larguraExterna - distanciaFuroIcamento).forEach { xFuro ->
             val raioFuro = diametroFuroIcamento / 2.0
             val linhaEsquerda = StrokedLine(
-                ponto1 = Vetor2D(x = xFuro - raioFuro, y = yInf),
-                ponto2 = Vetor2D(x = xFuro - raioFuro, y = ySup)
+                ponto1 = Vector2D(x = xFuro - raioFuro, y = yInf),
+                ponto2 = Vector2D(x = xFuro - raioFuro, y = ySup)
             )
             val linhaDireita = StrokedLine(
-                ponto1 = Vetor2D(x = xFuro + raioFuro, y = yInf),
-                ponto2 = Vetor2D(x = xFuro + raioFuro, y = ySup)
+                ponto1 = Vector2D(x = xFuro + raioFuro, y = yInf),
+                ponto2 = Vector2D(x = xFuro + raioFuro, y = ySup)
             )
             elementos[linhaEsquerda] = propContornoConcretoCorte
             elementos[linhaDireita] = propContornoConcretoCorte
@@ -115,7 +115,7 @@ class FormaAduela(
 
     private fun cotasHorizontaisInferioresCorteTransversal() {
         SequenciaCotaHorizontal(
-            pontoInicial = Vetor2D.ZERO,
+            pontoInicial = Vector2D.ZERO,
             yDimensionLine = -20.0,
             propriedadesCotas = propriedadesCotas
         )
@@ -130,7 +130,7 @@ class FormaAduela(
 
     private fun cotasVerticaisDireitaCorteTransversal() {
         SequenciaCotaVertical(
-            pontoInicial = Vetor2D(x = larguraExterna, y = 0.0),
+            pontoInicial = Vector2D(x = larguraExterna, y = 0.0),
             xDimensionLine = larguraExterna + 20.0,
             propriedadesCotas = propriedadesCotas
         )

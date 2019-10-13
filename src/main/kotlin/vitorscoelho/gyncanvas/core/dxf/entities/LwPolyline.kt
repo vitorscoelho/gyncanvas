@@ -7,7 +7,7 @@ import vitorscoelho.gyncanvas.core.dxf.entities.path.LwPolylineBuilderStep1
 import vitorscoelho.gyncanvas.core.dxf.entities.path.PathStep
 import vitorscoelho.gyncanvas.core.dxf.tables.Layer
 import vitorscoelho.gyncanvas.core.dxf.transformation.TransformationMatrix
-import vitorscoelho.gyncanvas.math.Vetor2D
+import vitorscoelho.gyncanvas.math.Vector2D
 
 data class LwPolyline internal constructor(
     override val layer: Layer,
@@ -36,7 +36,7 @@ data class LwPolyline internal constructor(
         fun rectangle(
             layer: Layer,
             color: Color = Color.BY_LAYER,
-            startPoint: Vetor2D,
+            startPoint: Vector2D,
             deltaX: Double,
             deltaY: Double
         ): LwPolyline {

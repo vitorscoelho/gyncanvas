@@ -1,9 +1,5 @@
 package vitorscoelho.gyncanvas.core.dxf
 
-import javafx.scene.canvas.GraphicsContext
-import vitorscoelho.gyncanvas.core.Transformacoes
-import vitorscoelho.gyncanvas.math.Vetor2D
-
 //class Path private constructor(
 //    private val closed: Boolean,
 //    private val filled: Boolean,

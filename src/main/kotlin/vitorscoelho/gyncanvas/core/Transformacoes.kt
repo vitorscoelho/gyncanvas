@@ -3,7 +3,7 @@ package vitorscoelho.gyncanvas.core
 import javafx.scene.transform.Affine
 import org.joml.Matrix4d
 import org.joml.Vector3d
-import vitorscoelho.gyncanvas.math.Vetor2D
+import vitorscoelho.gyncanvas.math.Vector2D
 
 class Transformacoes {
     private val matrizJOML = Matrix4d()
@@ -49,12 +49,12 @@ class Transformacoes {
         return this
     }
 
-    fun coordenadasMundo(xTela: Double, yTela: Double): Vetor2D {
+    fun coordenadasMundo(xTela: Double, yTela: Double): Vector2D {
         val vetorJOML = Vector3d(xTela, yTela, 0.0)
 //        matrizJOML.transformPosition(vetorJOML)
         val matrizInversa = Matrix4d(matrizJOML).invert()
         matrizInversa.transformPosition(vetorJOML)
-        return Vetor2D(x = vetorJOML.x, y = vetorJOML.y)
+        return Vector2D(x = vetorJOML.x, y = vetorJOML.y)
     }
 
     fun toAffine(): Affine = with(matrizJOML) {
@@ -82,11 +82,11 @@ class Transformacoes {
         return nova
     }
 
-    fun transformar(vetor: Vetor2D): Vetor2D = transformar(x = vetor.x, y = vetor.y)
+    fun transformar(vector: Vector2D): Vector2D = transformar(x = vector.x, y = vector.y)
 
-    fun transformar(x: Double, y: Double): Vetor2D {
+    fun transformar(x: Double, y: Double): Vector2D {
         val vetorJOM = Vector3d(x, y, 0.0)
         this.matrizJOML.transformPosition(vetorJOM)
-        return Vetor2D(x = vetorJOM.x, y = vetorJOM.y)
+        return Vector2D(x = vetorJOM.x, y = vetorJOM.y)
     }
 }

@@ -1,15 +1,15 @@
 package vitorscoelho.gyncanvas.json
 
 import vitorscoelho.gyncanvas.core.primitivas.*
-import vitorscoelho.gyncanvas.math.Vetor2D
+import vitorscoelho.gyncanvas.math.Vector2D
 
 internal fun tipoJson(classeMae: String, subclasse: String) =
     "JsonAutoCad.JsonConversorNovo.$subclasse, JsonAutoCad"//"jsondxfcsharp.$classeMae.$subclasse, jsondxfcsharp"
 
 internal const val NOME_VARIAVEL_TYPE = "$" + "type"
 
-fun Vetor2D.toJsonPoint2d() = JsonPoint2d(x = x, y = y)
-fun Vetor2D.toJsonPoint3d() = JsonPoint3d(x = x, y = y, z = 0.0)
+fun Vector2D.toJsonPoint2d() = JsonPoint2d(x = x, y = y)
+fun Vector2D.toJsonPoint3d() = JsonPoint3d(x = x, y = y, z = 0.0)
 
 const val COLOR_NUMBER_BY_LAYER: Short = 256
 val LAYER_0_NAME: String by lazy { "0" }
