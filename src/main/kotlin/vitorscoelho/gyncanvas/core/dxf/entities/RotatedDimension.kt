@@ -2,14 +2,13 @@ package vitorscoelho.gyncanvas.core.dxf.entities
 
 import vitorscoelho.gyncanvas.core.dxf.Color
 import vitorscoelho.gyncanvas.core.dxf.DimStyleOverrides
+import vitorscoelho.gyncanvas.core.dxf.entities.dimensionutils.RotatedDimensionPoints
 import vitorscoelho.gyncanvas.core.dxf.entities.dimensionutils.RotatedDimensionSequence
 import vitorscoelho.gyncanvas.core.dxf.entities.dimensionutils.RotatedDimensionSequenceStart
 import vitorscoelho.gyncanvas.core.dxf.tables.DimStyle
 import vitorscoelho.gyncanvas.core.dxf.tables.Layer
-import vitorscoelho.gyncanvas.core.dxf.transformation.MutableTransformationMatrix
 import vitorscoelho.gyncanvas.core.dxf.transformation.TransformationMatrix
 import vitorscoelho.gyncanvas.math.Vector2D
-import kotlin.math.absoluteValue
 import java.lang.Math.toRadians
 
 data class RotatedDimension(
@@ -27,53 +26,30 @@ data class RotatedDimension(
     override val entities: List<Entity>
 
     init {
-        /*
-        Rotacionar os três pontos (xPoint1, xPoint2, dimensionLineReferencePoint) utilizando um deles como pivô,
-        transformando a cota em uma HorizontalDimension.
-        Criar todas as entidades necessárias para desenhar a dimension.
-        Rotacionar todas as entidades da HorizontalDimension de volta para a posição original.
-         */
-        val originPoint = xPoint1
-        val transformationMatrix: TransformationMatrix = MutableTransformationMatrix()
-            .translate(xOffset = originPoint.x, yOffset = originPoint.y)
-            .rotate(angle = -angle)
-        val rotatedXPoint1 = xPoint1.transform(transformationMatrix)
-        val rotatedXPoint2 = xPoint2.transform(transformationMatrix)
-        val rotatedDimensionLineReferencePoint = dimensionLineReferencePoint.transform(transformationMatrix)
-
-        val horizontalDimensionPoints = HorizontalDimensionPoints(
-            deltaXPoint2 = rotatedXPoint2 - rotatedXPoint1,
-            yDimensionLine = rotatedDimensionLineReferencePoint.y,
-            extensionLinesOffsetFromOrigin = extensionLinesOffsetFromOrigin,
+        val points = RotatedDimensionPoints(
+            xPoint1 = xPoint1, xPoint2 = xPoint2, dimensionLineReferencePoint = dimensionLineReferencePoint,
+            angle = angle,
             extensionLinesExtendBeyondDimLines = extensionLinesExtendBeyondDimLines,
+            extensionLinesOffsetFromOrigin = extensionLinesOffsetFromOrigin,
             textOffsetFromDimLine = textOffsetFromDimLine,
             overallScale = overallScale
         )
-        val reverseTransformationMatrix: TransformationMatrix = MutableTransformationMatrix()
-            .rotate(angle = angle)
-            .translate(xOffset = originPoint.x, yOffset = originPoint.y)
 
-        val dimensionLine: Line? = createDimensionLine(
-            horizontalDimensionPoints = horizontalDimensionPoints,
-            reverseTransformationMatrix = reverseTransformationMatrix
-        )
+        val dimensionLine: Line? = createDimensionLine(points = points)
         val extensionLine1: Line? = createExtensionLine(
             supress = extensionLinesSupressExtLine1,
-            horizontalDimensionPoint1 = horizontalDimensionPoints.point1ExtensionLine1,
-            horizontalDimensionPoint2 = horizontalDimensionPoints.point2ExtensionLine1,
-            reverseTransformationMatrix = reverseTransformationMatrix
+            dimensionPoint1 = points.point1ExtensionLine1,
+            dimensionPoint2 = points.point2ExtensionLine1
         )
         val extensionLine2: Line? = createExtensionLine(
             supress = extensionLinesSupressExtLine2,
-            horizontalDimensionPoint1 = horizontalDimensionPoints.point1ExtensionLine2,
-            horizontalDimensionPoint2 = horizontalDimensionPoints.point2ExtensionLine2,
-            reverseTransformationMatrix = reverseTransformationMatrix
+            dimensionPoint1 = points.point1ExtensionLine2,
+            dimensionPoint2 = points.point2ExtensionLine2
         )
-        this.measurement = (horizontalDimensionPoints.xPoint1.x - horizontalDimensionPoints.xPoint2.x).absoluteValue
+        this.measurement = Vector2D.distance(points.point1DimensionLine, points.point2DimensionLine)
         val mText: MText? = createMText(
             content = text,
-            horizontalDimensionPoint = horizontalDimensionPoints.mTextPosition,
-            reverseTransformationMatrix = reverseTransformationMatrix,
+            dimensionPoint = points.mTextPosition,
             measurement = measurement
         )
         this.entities = listOfNotNull(dimensionLine, extensionLine1, extensionLine2, mText)
@@ -95,58 +71,40 @@ data class RotatedDimension(
         return dimensions
     }
 
-    override fun initSequence(): RotatedDimensionSequence = RotatedDimensionSequence.init(
+    fun initSequence(): RotatedDimensionSequence = RotatedDimensionSequence.init(
         layer = layer, color = color,
         dimStyle = dimStyle, dimStyleOverrides = dimStyleOverrides,
         dimensionLineReferencePoint = dimensionLineReferencePoint, angle = angle, text = text
     ).firstPoint(xPoint1).next(xPoint2)
 
-    private fun createDimensionLine(
-        horizontalDimensionPoints: HorizontalDimensionPoints,
-        reverseTransformationMatrix: TransformationMatrix
-    ): Line? {
+    private fun createDimensionLine(points: RotatedDimensionPoints): Line? {
         val point1: Vector2D
         val point2: Vector2D
         if (this.dimensionLinesSupressDimLine1 && this.dimensionLinesSupressDimLine2) return null
         if (!this.dimensionLinesSupressDimLine1 && !this.dimensionLinesSupressDimLine2) {
-            point1 = horizontalDimensionPoints.point1DimensionLine
-            point2 = horizontalDimensionPoints.point2DimensionLine
+            point1 = points.point1DimensionLine
+            point2 = points.point2DimensionLine
         } else if (this.dimensionLinesSupressDimLine1) {
-            point1 = horizontalDimensionPoints.midPointDimensionLine
-            point2 = horizontalDimensionPoints.point2DimensionLine
+            point1 = points.midPointDimensionLine
+            point2 = points.point2DimensionLine
         } else {
-            point1 = horizontalDimensionPoints.point1DimensionLine
-            point2 = horizontalDimensionPoints.midPointDimensionLine
+            point1 = points.point1DimensionLine
+            point2 = points.midPointDimensionLine
         }
-        return Line(
-            layer = layer,
-            color = dimensionLinesColor,
-            startPoint = point1.transform(reverseTransformationMatrix),
-            endPoint = point2.transform(reverseTransformationMatrix)
-        )
+        return Line(layer = layer, color = dimensionLinesColor, startPoint = point1, endPoint = point2)
     }
 
-    private fun createExtensionLine(
-        supress: Boolean,
-        horizontalDimensionPoint1: Vector2D,
-        horizontalDimensionPoint2: Vector2D,
-        reverseTransformationMatrix: TransformationMatrix
-    ): Line? {
+    private fun createExtensionLine(supress: Boolean, dimensionPoint1: Vector2D, dimensionPoint2: Vector2D): Line? {
         if (supress) return null
         return Line(
             layer = layer,
             color = extensionLinesColor,
-            startPoint = horizontalDimensionPoint1.transform(reverseTransformationMatrix),
-            endPoint = horizontalDimensionPoint2.transform(reverseTransformationMatrix)
+            startPoint = dimensionPoint1,
+            endPoint = dimensionPoint2
         )
     }
 
-    private fun createMText(
-        content: String,
-        horizontalDimensionPoint: Vector2D,
-        reverseTransformationMatrix: TransformationMatrix,
-        measurement: Double
-    ): MText? {
+    private fun createMText(content: String, dimensionPoint: Vector2D, measurement: Double): MText? {
         return MText(
             layer = layer,
             color = textColor,
@@ -154,7 +112,7 @@ data class RotatedDimension(
             size = textHeight * overallScale,
             justify = AttachmentPoint.BOTTOM_CENTER,
             rotation = angle,
-            position = horizontalDimensionPoint.transform(reverseTransformationMatrix),
+            position = dimensionPoint,
             content = content.replaceFirst("<>", dimStyle.linearDimensionFormat(measurement))
         )
     }
@@ -227,57 +185,6 @@ data class RotatedDimension(
             dimStyle = dimStyle, dimStyleOverrides = dimStyleOverrides,
             dimensionLineReferencePoint = Vector2D(x = xDimensionLine, y = 0.0),
             angle = toRadians(90.0), text = text
-        )
-    }
-}
-
-/**
- * Representa uma cota horizontal que tem o primeiro ponto na origem (0,0).
- */
-private class HorizontalDimensionPoints(
-    deltaXPoint2: Vector2D,
-    private val yDimensionLine: Double,
-    private val extensionLinesOffsetFromOrigin: Double,
-    private val extensionLinesExtendBeyondDimLines: Double,
-    private val textOffsetFromDimLine: Double,
-    private val overallScale: Double
-) {
-    val xPoint1 = Vector2D.ZERO
-    val xPoint2 = xPoint1 + deltaXPoint2
-    val point1DimensionLine: Vector2D = Vector2D(x = xPoint1.x, y = yDimensionLine)
-    val point2DimensionLine: Vector2D = Vector2D(x = xPoint2.x, y = yDimensionLine)
-    val midPointDimensionLine: Vector2D = Vector2D(x = (xPoint1.x + xPoint2.x) / 2.0, y = yDimensionLine)
-    val point1ExtensionLine1: Vector2D
-    val point2ExtensionLine1: Vector2D
-    val point1ExtensionLine2: Vector2D
-    val point2ExtensionLine2: Vector2D
-    val mTextPosition = Vector2D(
-        x = (xPoint1.x + xPoint2.x) / 2.0,
-        y = yDimensionLine + textOffsetFromDimLine * overallScale
-    )
-
-    init {
-        val (point1Line1, point2Line1) = extensionLinePoints(xPoint = xPoint1)
-        this.point1ExtensionLine1 = point1Line1
-        this.point2ExtensionLine1 = point2Line1
-        val (point1Line2, point2Line2) = extensionLinePoints(xPoint = xPoint2)
-        this.point1ExtensionLine2 = point1Line2
-        this.point2ExtensionLine2 = point2Line2
-    }
-
-    private fun extensionLinePoints(xPoint: Vector2D): Pair<Vector2D, Vector2D> {
-        val yPoint1: Double
-        val yPoint2: Double
-        if (yDimensionLine > xPoint.y) {
-            yPoint1 = xPoint.y + extensionLinesOffsetFromOrigin * overallScale
-            yPoint2 = yDimensionLine + extensionLinesExtendBeyondDimLines * overallScale
-        } else {
-            yPoint1 = xPoint.y - extensionLinesOffsetFromOrigin * overallScale
-            yPoint2 = yDimensionLine - extensionLinesExtendBeyondDimLines * overallScale
-        }
-        return Pair(
-            first = Vector2D(x = xPoint.x, y = yPoint1),
-            second = Vector2D(x = xPoint.x, y = yPoint2)
         )
     }
 }

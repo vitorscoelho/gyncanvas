@@ -1,16 +1,12 @@
 package vitorscoelho.gyncanvas
 
-import javafx.geometry.VPos
-import javafx.scene.canvas.GraphicsContext
-import javafx.scene.paint.Color
 import javafx.scene.text.Font
-import javafx.scene.text.TextAlignment
-import vitorscoelho.gyncanvas.core.GynCanvas
-import vitorscoelho.gyncanvas.core.Transformacoes
-import vitorscoelho.gyncanvas.core.primitivas.*
-import vitorscoelho.gyncanvas.core.primitivas.propriedades.DrawAttributes
+import vitorscoelho.gyncanvas.core.dxf.Color
+import vitorscoelho.gyncanvas.core.dxf.entities.*
+import vitorscoelho.gyncanvas.core.dxf.tables.DimStyle
+import vitorscoelho.gyncanvas.core.dxf.tables.Layer
+import vitorscoelho.gyncanvas.core.dxf.tables.TextStyle
 import vitorscoelho.gyncanvas.math.Vector2D
-import java.text.DecimalFormat
 
 class FormaAduela(
     val larguraLivre: Double,
@@ -29,50 +25,33 @@ class FormaAduela(
     val espessuraMacho: Double,
     val espessuraChanfradoEncaixe: Double
 ) {
-    private val elementos = hashMapOf<Primitiva, DrawAttributes>()
     val larguraExterna = larguraLivre + 2.0 * espessuraParedeLateral
     val alturaExterna = alturaLivre + espessuraLajeFundo + espessuraLajeCobertura
     val larguraEntreMisulasCobertura = larguraLivre - 2.0 * misulaHorizontalCobertura
     val larguraEntreMisulasFundo = larguraLivre - 2.0 * misulaHorizontalFundo
     val alturaEntreMisulas = alturaLivre - misulaVerticalCobertura - misulaVerticalFundo
 
-    private val propContornoConcretoCorte = object : DrawAttributes {
-        override fun aplicar(gc: GraphicsContext, transformacoes: Transformacoes) {
-            gc.stroke = Color.DEEPSKYBLUE
-            gc.lineWidth = 1.0
-        }
-    }
+    private val layerContornoConcretoCorte = Layer(name = "Forma elemento cortado", color = Color.INDEX_121)
+    private val layerCota = Layer(name = "Cota", color = Color.INDEX_142)
 
-    private val propCota = object : DrawAttributes {
-        override fun aplicar(gc: GraphicsContext, transformacoes: Transformacoes) {
-            gc.stroke = Color.RED
-            gc.fill = Color.RED
-            gc.lineWidth = 1.0
-            gc.textAlign = TextAlignment.CENTER
-            gc.textBaseline = VPos.BOTTOM
-            gc.font = Font(gc.font.name, 12.0)
-        }
-    }
-    val propriedadesCotas = PropriedadesCotas(
-        formatoNumero = DecimalFormat("#.##"),
-        offsetExtensionLine = 5.0,
-        offsetText = 0.0,
-        arrowSize = 2.0
+    private val dimStyle = DimStyle(
+        name = "1_100 TQS",
+        textStyle = TextStyle(
+            name = "Standard",
+            fontName = Font.getDefault().name,
+            fontFileName = Font.getDefault().name
+        ),
+        overallScale = 100.0,
+        extensionLinesExtendBeyondDimLines = 0.0
     )
 
-    init {
-        corteTransversal()
-    }
-
-    private fun corteTransversal() {
-        val contornoExterno = StrokedRect(pontoInsercao = Vector2D.ZERO, deltaX = larguraExterna, deltaY = alturaExterna)
-        val contornoInterno = Path.initBuilder(
-            fechado = true,
-            pontoInicial = Vector2D(
-                x = espessuraParedeLateral + misulaHorizontalFundo,
-                y = espessuraLajeFundo
-            )
+    private fun corteTransversal(): List<Entity> {
+        val contornoExterno = LwPolyline.rectangle(
+            layer = layerContornoConcretoCorte,
+            startPoint = Vector2D.ZERO, deltaX = larguraExterna, deltaY = alturaExterna
         )
+        val contornoInterno = LwPolyline.initBuilder(layer = layerContornoConcretoCorte)
+            .startPoint(x = espessuraParedeLateral + misulaHorizontalFundo, y = espessuraLajeFundo)
             .deltaLineTo(deltaX = larguraEntreMisulasFundo)
             .deltaLineTo(deltaX = misulaHorizontalFundo, deltaY = misulaVerticalFundo)
             .deltaLineTo(deltaY = alturaEntreMisulas)
@@ -81,74 +60,59 @@ class FormaAduela(
             .deltaLineTo(deltaX = -misulaHorizontalCobertura, deltaY = -misulaVerticalCobertura)
             .deltaLineTo(deltaY = -alturaEntreMisulas)
             .build()
-        elementos[contornoExterno] = propContornoConcretoCorte
-        elementos[contornoInterno] = propContornoConcretoCorte
-        furosCorteTransversal()
-        cotasHorizontaisInferioresCorteTransversal()
-        cotasVerticaisDireitaCorteTransversal()
+        return listOf(contornoExterno, contornoInterno)
     }
 
-    private fun furosCorteTransversal() {
+    private fun furosCorteTransversal(): List<Entity> {
         val yInfLajeFundo = 0.0
         val ySupLajeFundo = espessuraLajeFundo
-        linhasFuroCorteTransversal(yInf = yInfLajeFundo, ySup = ySupLajeFundo)
+        val furoEsquerda = linhasFuroCorteTransversal(yInf = yInfLajeFundo, ySup = ySupLajeFundo)
         val yInfLajeCobertura = alturaExterna - espessuraLajeCobertura
         val ySupLajeCobertura = alturaExterna
-        linhasFuroCorteTransversal(yInf = yInfLajeCobertura, ySup = ySupLajeCobertura)
+        val furoDireita = linhasFuroCorteTransversal(yInf = yInfLajeCobertura, ySup = ySupLajeCobertura)
+        return furoEsquerda + furoDireita
     }
 
-    private fun linhasFuroCorteTransversal(yInf: Double, ySup: Double) {
+    private fun linhasFuroCorteTransversal(yInf: Double, ySup: Double): List<Entity> {
+        val lista = mutableListOf<Entity>()
         doubleArrayOf(distanciaFuroIcamento, larguraExterna - distanciaFuroIcamento).forEach { xFuro ->
             val raioFuro = diametroFuroIcamento / 2.0
-            val linhaEsquerda = StrokedLine(
-                ponto1 = Vector2D(x = xFuro - raioFuro, y = yInf),
-                ponto2 = Vector2D(x = xFuro - raioFuro, y = ySup)
+            val linhaEsquerda = Line(
+                layer = layerContornoConcretoCorte,
+                startPoint = Vector2D(x = xFuro - raioFuro, y = yInf),
+                endPoint = Vector2D(x = xFuro - raioFuro, y = ySup)
             )
-            val linhaDireita = StrokedLine(
-                ponto1 = Vector2D(x = xFuro + raioFuro, y = yInf),
-                ponto2 = Vector2D(x = xFuro + raioFuro, y = ySup)
+            lista += linhaEsquerda
+            val linhaDireita = Line(
+                layer = layerContornoConcretoCorte,
+                startPoint = Vector2D(x = xFuro + raioFuro, y = yInf),
+                endPoint = Vector2D(x = xFuro + raioFuro, y = ySup)
             )
-            elementos[linhaEsquerda] = propContornoConcretoCorte
-            elementos[linhaDireita] = propContornoConcretoCorte
+            lista += linhaDireita
         }
+        return lista
     }
 
-    private fun cotasHorizontaisInferioresCorteTransversal() {
-        SequenciaCotaHorizontal(
-            pontoInicial = Vector2D.ZERO,
-            yDimensionLine = -20.0,
-            propriedadesCotas = propriedadesCotas
-        )
-            .addDelta(deltaX = espessuraParedeLateral)
-            .addDelta(deltaX = misulaHorizontalFundo)
-            .addDelta(deltaX = larguraEntreMisulasFundo)
-            .addDelta(deltaX = misulaHorizontalFundo)
-            .addDelta(deltaX = espessuraParedeLateral)
+    private fun cotasHorizontaisInferioresCorteTransversal(): List<Entity> =
+        RotatedDimension.horizontalSequence(
+            layer = layerCota, dimStyle = dimStyle, yDimensionLine = -20.0
+        ).firstPoint(Vector2D.ZERO)
+            .nextDelta(deltaX = espessuraParedeLateral)
+            .nextDelta(deltaX = misulaHorizontalFundo)
+            .nextDelta(deltaX = larguraEntreMisulasFundo)
+            .nextDelta(deltaX = misulaHorizontalFundo)
+            .nextDelta(deltaX = espessuraParedeLateral)
             .toList()
-            .forEach { elementos.put(key = it, value = propCota) }
-    }
 
-    private fun cotasVerticaisDireitaCorteTransversal() {
-        SequenciaCotaVertical(
-            pontoInicial = Vector2D(x = larguraExterna, y = 0.0),
-            xDimensionLine = larguraExterna + 20.0,
-            propriedadesCotas = propriedadesCotas
-        )
-            .addDelta(deltaY = espessuraLajeFundo)
-            .addDelta(deltaY = misulaVerticalFundo)
-            .addDelta(deltaY = alturaEntreMisulas)
-            .addDelta(deltaY = misulaVerticalCobertura)
-            .addDelta(deltaY = espessuraLajeCobertura)
+    private fun cotasVerticaisDireitaCorteTransversal(): List<Entity> =
+        RotatedDimension.verticalSequence(
+            layer = layerCota, dimStyle = dimStyle, xDimensionLine = larguraExterna + 20.0
+        ).firstPoint(x = larguraExterna, y = 0.0)
+            .nextDelta(deltaY = espessuraLajeFundo)
+            .nextDelta(deltaY = misulaVerticalFundo)
+            .nextDelta(deltaY = alturaEntreMisulas)
+            .nextDelta(deltaY = misulaVerticalCobertura)
+            .nextDelta(deltaY = espessuraLajeCobertura)
             .toList()
-            .forEach { elementos.put(key = it, value = propCota) }
-    }
 
-    fun adicionarDesenho(gynCanvas: GynCanvas) {
-        elementos.forEach { primitiva, propriedade ->
-            gynCanvas.addPrimitiva(
-                primitiva = primitiva,
-                propriedade = propriedade
-            )
-        }
-    }
 }

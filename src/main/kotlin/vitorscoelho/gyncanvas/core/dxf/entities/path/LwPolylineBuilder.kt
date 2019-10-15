@@ -7,6 +7,7 @@ import vitorscoelho.gyncanvas.math.Vector2D
 
 interface LwPolylineBuilderStep1 {
     fun startPoint(point: Vector2D): LwPolylineBuilderStep2
+    fun startPoint(x: Double, y: Double): LwPolylineBuilderStep2
 }
 
 interface LwPolylineBuilderStep2 {
@@ -38,16 +39,18 @@ class LwPolylineBuilder private constructor(val layer: Layer, val color: Color) 
     LwPolylineBuilderStep1,
     LwPolylineBuilderStep2 {
     private val pathSteps = mutableListOf<PathStep>()
-    private var pontoFinalAtual: Vector2D = Vector2D.ZERO
+    private var lastPoint: Vector2D = Vector2D.ZERO
 
     override fun startPoint(point: Vector2D): LwPolylineBuilderStep2 {
-        pontoFinalAtual = point
+        lastPoint = point
         pathSteps += MoveTo(point = point)
         return this
     }
 
+    override fun startPoint(x: Double, y: Double): LwPolylineBuilderStep2 = startPoint(point = Vector2D(x = x, y = y))
+
     override fun lineTo(point: Vector2D): LwPolylineBuilderStep2 {
-        pontoFinalAtual = point
+        lastPoint = point
         pathSteps += LineTo(point = point)
         return this
     }
@@ -57,10 +60,10 @@ class LwPolylineBuilder private constructor(val layer: Layer, val color: Color) 
 
 
     override fun deltaLineTo(deltaX: Double, deltaY: Double): LwPolylineBuilderStep2 =
-        lineTo(point = pontoFinalAtual.plus(deltaX = deltaX, deltaY = deltaY))
+        lineTo(point = lastPoint.plus(deltaX = deltaX, deltaY = deltaY))
 
     override fun arcTo(tangentPoint1: Vector2D, tangentPoint2: Vector2D, radius: Double): LwPolylineBuilderStep2 {
-        pontoFinalAtual = tangentPoint2
+        lastPoint = tangentPoint2
         pathSteps += ArcTo(tangentPoint1 = tangentPoint1, tangentPoint2 = tangentPoint2, radius = radius)
         return this
     }
@@ -86,8 +89,8 @@ class LwPolylineBuilder private constructor(val layer: Layer, val color: Color) 
         radius: Double
     ): LwPolylineBuilderStep2 =
         arcTo(
-            tangentPoint1 = pontoFinalAtual.plus(deltaX = deltaXTangent1, deltaY = deltaYTangent1),
-            tangentPoint2 = pontoFinalAtual.plus(deltaX = deltaXTangent2, deltaY = deltaYTangent2),
+            tangentPoint1 = lastPoint.plus(deltaX = deltaXTangent1, deltaY = deltaYTangent1),
+            tangentPoint2 = lastPoint.plus(deltaX = deltaXTangent2, deltaY = deltaYTangent2),
             radius = radius
         )
 

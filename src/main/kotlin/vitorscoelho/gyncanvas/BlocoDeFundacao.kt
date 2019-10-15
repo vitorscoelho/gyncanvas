@@ -184,26 +184,9 @@ class BlocoDeFundacao(
         ordenadasEixosHorizontais.forEach { y -> sequencia.next(x = xPonto, y = y) }
         sequencia.next(x = xPonto, y = lyBloco)
         return sequencia.toList()
-        /*val sequencia = SequenciaCotaVertical(
-            pontoInicial = Vetor2D.ZERO,
-            xDimensionLine = -distanciaCota,
-            propriedadesCotas = formatoCota
-        )
-        ordenadasEixosHorizontais.forEach { y -> sequencia.add(x = xPonto, y = y) }
-        sequencia.add(x = xPonto, y = lyBloco)
-        return sequencia.toList().map { DesenhoAdicionavel(it, propriedadeCota) }*/
     }
 
     private fun cotasHorizontaisDosEixos(): List<Entity> {
-//        val yPonto = 0.0
-//        val sequencia = SequenciaCotaHorizontal(
-//            pontoInicial = Vetor2D.ZERO,
-//            yDimensionLine = -distanciaCota,
-//            propriedadesCotas = formatoCota
-//        )
-//        abscissasEixosVerticais.forEach { x -> sequencia.add(x = x, y = yPonto) }
-//        sequencia.add(x = lxBloco, y = yPonto)
-//        return sequencia.toList().map { DesenhoAdicionavel(it, propriedadeCota) }
         val yPonto = 0.0
         val sequencia = RotatedDimension.horizontalSequence(
             layer = layerCota, dimStyle = dimStyle, yDimensionLine = -distanciaCota
@@ -230,57 +213,49 @@ class BlocoDeFundacao(
         )
         return listOf(cota)
     }
-//
-//    private fun cotasVerticaisDasDimensoesDoColarinho(): List<DesenhoAdicionavel> {
-//        val yInferior = lyBloco / 2.0 - hcyExt / 2.0
-//        val xPonto = lxBloco
-//        val sequenciaInterna = SequenciaCotaVertical(
-//            pontoInicial = Vetor2D(x = xPonto, y = yInferior),
-//            xDimensionLine = lxBloco + distanciaCota,
-//            propriedadesCotas = formatoCota
-//        )
-//            .addDelta(deltaY = hcy)
-//            .addDelta(deltaY = hcyInt)
-//            .addDelta(deltaY = hcy)
-//        val cotasMedidasInternas = sequenciaInterna.toList().toList()
-//        if (hcyExt == lyBloco) return emptyList()
-//        val sequenciaExterna = SequenciaCotaVertical(
-//            pontoInicial = Vetor2D(x = xPonto, y = 0.0),
-//            xDimensionLine = lxBloco + 2.0 * distanciaCota,
-//            propriedadesCotas = formatoCota
-//        )
-//            .add(x = xPonto, y = yInferior)
-//            .addDelta(deltaY = hcyExt)
-//            .add(x = xPonto, y = lyBloco)
-//        val cotasMedidasExternas = sequenciaExterna.toList().toList()
-//        return (cotasMedidasInternas + cotasMedidasExternas).map { DesenhoAdicionavel(it, propriedadeCota) }
-//    }
-//
-//    private fun cotasHorizontaisDasDimensoesDoColarinho(): List<DesenhoAdicionavel> {
-//        val xEsquerda = lxBloco / 2.0 - hcxExt / 2.0
-//        val yPonto = lyBloco
-//        val sequenciaInterna = SequenciaCotaHorizontal(
-//            pontoInicial = Vetor2D(x = xEsquerda, y = yPonto),
-//            yDimensionLine = lyBloco + distanciaCota,
-//            propriedadesCotas = formatoCota
-//        )
-//            .addDelta(deltaX = hcx)
-//            .addDelta(deltaX = hcxInt)
-//            .addDelta(deltaX = hcx)
-//        val cotasMedidasInternas = sequenciaInterna.toList().toList()
-//        if (hcxExt == lxBloco) return emptyList()
-//        val sequenciaExterna = SequenciaCotaHorizontal(
-//            pontoInicial = Vetor2D(x = 0.0, y = yPonto),
-//            yDimensionLine = lyBloco + 2.0 * distanciaCota,
-//            propriedadesCotas = formatoCota
-//        )
-//            .add(x = xEsquerda, y = yPonto)
-//            .addDelta(deltaX = hcxExt)
-//            .add(x = lxBloco, y = yPonto)
-//        val cotasMedidasExternas = sequenciaExterna.toList().toList()
-//        return (cotasMedidasInternas + cotasMedidasExternas).map { DesenhoAdicionavel(it, propriedadeCota) }
-//    }
-//
+
+    private fun cotasVerticaisDasDimensoesDoColarinho(): List<Entity> {
+        val yInferior = lyBloco / 2.0 - hcyExt / 2.0
+        val xPonto = lxBloco
+        val sequenciaInterna = RotatedDimension.verticalSequence(
+            layer = layerCota, dimStyle = dimStyle,
+            xDimensionLine = lxBloco + distanciaCota
+        ).firstPoint(x = xPonto, y = yInferior)
+            .nextDelta(deltaY = hcy)
+            .nextDelta(deltaY = hcyInt)
+            .nextDelta(deltaY = hcy)
+        if (hcyExt == lyBloco) return emptyList()
+        val sequenciaExterna = RotatedDimension.verticalSequence(
+            layer = layerCota, dimStyle = dimStyle,
+            xDimensionLine = lxBloco + 2.0 * distanciaCota
+        ).firstPoint(x = xPonto, y = 0.0)
+            .next(x = xPonto, y = yInferior)
+            .nextDelta(deltaY = hcyExt)
+            .next(x = xPonto, y = lyBloco)
+        return (sequenciaInterna.toList() + sequenciaExterna.toList())
+    }
+
+    private fun cotasHorizontaisDasDimensoesDoColarinho(): List<Entity> {
+        val xEsquerda = lxBloco / 2.0 - hcxExt / 2.0
+        val yPonto = lyBloco
+        val sequenciaInterna = RotatedDimension.horizontalSequence(
+            layer = layerCota, dimStyle = dimStyle,
+            yDimensionLine = lyBloco + distanciaCota
+        ).firstPoint(x = xEsquerda, y = yPonto)
+            .nextDelta(deltaX = hcx)
+            .nextDelta(deltaX = hcxInt)
+            .nextDelta(deltaX = hcx)
+        if (hcxExt == lxBloco) return emptyList()
+        val sequenciaExterna = RotatedDimension.horizontalSequence(
+            layer = layerCota, dimStyle = dimStyle,
+            yDimensionLine = lyBloco + 2.0 * distanciaCota
+        ).firstPoint(x = 0.0, y = yPonto)
+            .next(x = xEsquerda, y = yPonto)
+            .nextDelta(deltaX = hcxExt)
+            .next(x = lxBloco, y = yPonto)
+        return (sequenciaInterna.toList() + sequenciaExterna.toList())
+    }
+
 //    private fun indicacaoCorte(): List<DesenhoAdicionavel> {
 //        val setaBase =
 //            Path.initBuilder(fechado = false, pontoInicial = Vetor2D.ZERO).deltaLineTo(deltaX = -distanciaCota)
@@ -317,11 +292,11 @@ class BlocoDeFundacao(
                 contornoColarinho() +
                 estacas() +
                 linhasDeEixo() +
-                cotasVerticaisDosEixos()
-//                cotasHorizontaisDosEixos() +
-//                cotaVerticalComprimentoDoBloco() +
-//                cotaHorizontalComprimentoDoBloco() //+
-//                cotasVerticaisDasDimensoesDoColarinho() +
-//                cotasHorizontaisDasDimensoesDoColarinho() +
+                cotasVerticaisDosEixos() +
+                cotasHorizontaisDosEixos() +
+                cotaVerticalComprimentoDoBloco() +
+                cotaHorizontalComprimentoDoBloco() +
+                cotasVerticaisDasDimensoesDoColarinho() +
+                cotasHorizontaisDasDimensoesDoColarinho() //+
 //                indicacaoCorte()
 }

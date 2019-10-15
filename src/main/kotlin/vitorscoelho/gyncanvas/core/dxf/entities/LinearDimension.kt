@@ -12,7 +12,6 @@ interface LinearDimension : Dimension {
     fun dimContinueXPoint2(point: Vector2D): LinearDimension
 
     fun createSequence(points: List<Vector2D>): List<LinearDimension>
-    fun initSequence(): LinearDimensionSequence
 
     //PRIMARY UNITS PROP
     //Propriedade: LinearDimensions
@@ -32,15 +31,4 @@ interface LinearDimension : Dimension {
         get() = dimStyleOverrides.linearDimensionSuppressLeadingZeros(dimStyle)
     val linearDimensionSuppressTrailingZeros: Boolean
         get() = dimStyleOverrides.linearDimensionSuppressTrailingZeros(dimStyle)
-}
-
-interface LinearDimensionSequenceStart {
-    fun firstPoint(point: Vector2D): LinearDimensionSequence
-}
-
-interface LinearDimensionSequence {
-    fun next(point: Vector2D): LinearDimensionSequence
-    fun next(x: Double, y: Double): LinearDimensionSequence
-    fun nextWithDelta(deltaX: Double, deltaY: Double): LinearDimensionSequence
-    fun toList(): List<LinearDimension>
 }
