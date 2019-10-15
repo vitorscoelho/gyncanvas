@@ -6,6 +6,7 @@ import javafx.scene.text.Font
 import javafx.scene.text.TextAlignment
 import javafx.scene.transform.Affine
 import vitorscoelho.gyncanvas.core.dxf.entities.AttachmentPoint
+import vitorscoelho.gyncanvas.core.dxf.transformation.ImmutableTransformationMatrix
 import vitorscoelho.gyncanvas.core.dxf.transformation.MutableTransformationMatrix
 import vitorscoelho.gyncanvas.core.dxf.transformation.TransformationMatrix
 
@@ -21,6 +22,7 @@ abstract class Drawer {
     abstract fun strokeLine(x1: Double, y1: Double, x2: Double, y2: Double)
     abstract fun strokeCircle(xCenter: Double, yCenter: Double, diameter: Double)
     abstract fun fillText(text: String, x: Double, y: Double)
+    abstract fun fillText(text: String, x: Double, y: Double, angle: Double)
     abstract fun beginPath()
     abstract fun closePath()
     abstract fun fill()
@@ -135,6 +137,21 @@ class FXDrawer(val canvas: Canvas) : Drawer() {
 
     override fun fillText(text: String, x: Double, y: Double) {
         gc.fillText(text, x, -y)
+    }
+
+    override fun fillText(text: String, x: Double, y: Double, angle: Double) {
+        if (angle == 0.0) {
+            gc.fillText(text, x, -y)
+            return
+        }
+        val matrizOriginal = ImmutableTransformationMatrix(otherMatrix = transform)
+        copyToTransform(
+            transformationMatrix = MutableTransformationMatrix(otherMatrix = matrizOriginal)
+                .translate(xOffset = x, yOffset = -y)
+                .rotate(angle = -angle)
+        )
+        gc.fillText(text, 0.0, 0.0)
+        copyToTransform(transformationMatrix = matrizOriginal)
     }
 
     override fun beginPath() = gc.beginPath()

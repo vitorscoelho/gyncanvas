@@ -256,6 +256,17 @@ class BlocoDeFundacao(
         return (sequenciaInterna.toList() + sequenciaExterna.toList())
     }
 
+    private fun testeCotaInclinada(): List<Entity> {
+        val ponto1 = Vector2D.ZERO
+        val ponto2 = Vector2D(lxBloco, lyBloco)
+        val cota = RotatedDimension(
+            layer = layerCota, dimStyle = dimStyle,
+            xPoint1 = ponto1, xPoint2 = ponto2,
+            dimensionLineReferencePoint = Vector2D(x = 0.0, y = lyBloco + 50.0), angle = Math.toRadians(30.0)
+        )
+        return listOf(cota)
+    }
+
 //    private fun indicacaoCorte(): List<DesenhoAdicionavel> {
 //        val setaBase =
 //            Path.initBuilder(fechado = false, pontoInicial = Vetor2D.ZERO).deltaLineTo(deltaX = -distanciaCota)
@@ -297,6 +308,6 @@ class BlocoDeFundacao(
                 cotaVerticalComprimentoDoBloco() +
                 cotaHorizontalComprimentoDoBloco() +
                 cotasVerticaisDasDimensoesDoColarinho() +
-                cotasHorizontaisDasDimensoesDoColarinho() //+
+                cotasHorizontaisDasDimensoesDoColarinho() + testeCotaInclinada()//+
 //                indicacaoCorte()
 }
