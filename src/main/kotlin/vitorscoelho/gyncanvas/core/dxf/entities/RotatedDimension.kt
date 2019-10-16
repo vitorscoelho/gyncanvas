@@ -37,12 +37,12 @@ data class RotatedDimension(
 
         val dimensionLine: Line? = createDimensionLine(points = points)
         val extensionLine1: Line? = createExtensionLine(
-            supress = extensionLinesSupressExtLine1,
+            suppress = extensionLinessuppressExtLine1,
             dimensionPoint1 = points.point1ExtensionLine1,
             dimensionPoint2 = points.point2ExtensionLine1
         )
         val extensionLine2: Line? = createExtensionLine(
-            supress = extensionLinesSupressExtLine2,
+            suppress = extensionLinessuppressExtLine2,
             dimensionPoint1 = points.point1ExtensionLine2,
             dimensionPoint2 = points.point2ExtensionLine2
         )
@@ -80,11 +80,11 @@ data class RotatedDimension(
     private fun createDimensionLine(points: RotatedDimensionPoints): Line? {
         val point1: Vector2D
         val point2: Vector2D
-        if (this.dimensionLinesSupressDimLine1 && this.dimensionLinesSupressDimLine2) return null
-        if (!this.dimensionLinesSupressDimLine1 && !this.dimensionLinesSupressDimLine2) {
+        if (this.dimensionLinessuppressDimLine1 && this.dimensionLinessuppressDimLine2) return null
+        if (!this.dimensionLinessuppressDimLine1 && !this.dimensionLinessuppressDimLine2) {
             point1 = points.point1DimensionLine
             point2 = points.point2DimensionLine
-        } else if (this.dimensionLinesSupressDimLine1) {
+        } else if (this.dimensionLinessuppressDimLine1) {
             point1 = points.midPointDimensionLine
             point2 = points.point2DimensionLine
         } else {
@@ -94,8 +94,8 @@ data class RotatedDimension(
         return Line(layer = layer, color = dimensionLinesColor, startPoint = point1, endPoint = point2)
     }
 
-    private fun createExtensionLine(supress: Boolean, dimensionPoint1: Vector2D, dimensionPoint2: Vector2D): Line? {
-        if (supress) return null
+    private fun createExtensionLine(suppress: Boolean, dimensionPoint1: Vector2D, dimensionPoint2: Vector2D): Line? {
+        if (suppress) return null
         return Line(
             layer = layer,
             color = extensionLinesColor,

@@ -10,13 +10,13 @@ class DimStyle(
     //LINES PROP
     //Propriedade: Dimensions lines
     override val dimensionLinesColor: Color = Color.BY_BLOCK,//DIMCLRD - 176
-    override val dimensionLinesSupressDimLine1: Boolean = false,//DIMSD1 - 281
-    override val dimensionLinesSupressDimLine2: Boolean = false,//DIMSD1 - 282
+    override val dimensionLinessuppressDimLine1: Boolean = false,//DIMSD1 - 281
+    override val dimensionLinessuppressDimLine2: Boolean = false,//DIMSD1 - 282
 
     //Propriedade: Extension lines
     override val extensionLinesColor: Color = Color.BY_BLOCK,//DIMCLRE - 177
-    override val extensionLinesSupressExtLine1: Boolean = false,//DIMSE1 - 75
-    override val extensionLinesSupressExtLine2: Boolean = false,//DIMSE2 - 76
+    override val extensionLinessuppressExtLine1: Boolean = false,//DIMSE1 - 75
+    override val extensionLinessuppressExtLine2: Boolean = false,//DIMSE2 - 76
     override val extensionLinesExtendBeyondDimLines: Double = 0.18,//DIMEXE - 44
     override val extensionLinesOffsetFromOrigin: Double = 0.0625,//DIMEXO - 42
 

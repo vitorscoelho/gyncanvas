@@ -5,12 +5,12 @@ import java.text.DecimalFormatSymbols
 
 fun main() {
     val leading = true //Se o número for menor do que zero, mostra o zero antes da vírgula
-    val supress = true //Suprime os zeros a direita da vírgula
+    val suppress = true //Suprime os zeros a direita da vírgula
     val precision = 1
     val prefix = "prefix "
     val sufix = " suffix"
 
-    val caracterDepoisDaVirgula = if (supress) "0".repeat(precision) else "#".repeat(precision)
+    val caracterDepoisDaVirgula = if (suppress) "0".repeat(precision) else "#".repeat(precision)
     val caracterAntesDaVirgula = if (leading) "0" else "#"
 
     val decimalFormatSymbols = DecimalFormatSymbols()
