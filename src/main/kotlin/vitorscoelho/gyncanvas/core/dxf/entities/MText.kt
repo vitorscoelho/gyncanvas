@@ -2,6 +2,7 @@ package vitorscoelho.gyncanvas.core.dxf.entities
 
 import vitorscoelho.gyncanvas.core.dxf.Color
 import vitorscoelho.gyncanvas.core.dxf.Drawer
+import vitorscoelho.gyncanvas.core.dxf.ShapeType
 import vitorscoelho.gyncanvas.core.dxf.tables.Layer
 import vitorscoelho.gyncanvas.core.dxf.tables.TextStyle
 import vitorscoelho.gyncanvas.core.dxf.transformation.ImmutableTransformationMatrix
@@ -19,9 +20,11 @@ data class MText(
     val position: Vector2D,
     val content: String
 ) : Entity {
+    override val shapeType: ShapeType
+        get() = ShapeType.FILLED
+
     override fun draw(drawer: Drawer) {
         applyLineWidth(drawer = drawer)
-        applyColor(drawer = drawer, layer = layer, color = color)
         drawer.setFont(fontName = style.fontFileName, fontSize = size)
         drawer.textJustify = justify
         drawer.fillText(text = content,x = position.x,y = position.y,angle = rotation)

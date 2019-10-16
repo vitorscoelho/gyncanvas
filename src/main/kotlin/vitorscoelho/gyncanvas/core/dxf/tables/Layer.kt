@@ -5,4 +5,8 @@ import vitorscoelho.gyncanvas.core.dxf.Color
 class Layer(
     override val name: String,
     val color: Color
-) : Table
+) : Table {
+    init {
+        require(color != Color.BY_BLOCK && color != Color.BY_LAYER) { "|color| cannot be Color.BY_BLOCK or Color.BY_LAYER." }
+    }
+}

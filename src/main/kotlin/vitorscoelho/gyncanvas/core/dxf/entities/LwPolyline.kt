@@ -2,6 +2,7 @@ package vitorscoelho.gyncanvas.core.dxf.entities
 
 import vitorscoelho.gyncanvas.core.dxf.Color
 import vitorscoelho.gyncanvas.core.dxf.Drawer
+import vitorscoelho.gyncanvas.core.dxf.ShapeType
 import vitorscoelho.gyncanvas.core.dxf.entities.path.LwPolylineBuilder
 import vitorscoelho.gyncanvas.core.dxf.entities.path.LwPolylineBuilderStep1
 import vitorscoelho.gyncanvas.core.dxf.entities.path.PathStep
@@ -15,10 +16,11 @@ data class LwPolyline internal constructor(
     val closed: Boolean,
     internal val pathSteps: List<PathStep>
 ) : Entity {
+    override val shapeType: ShapeType
+        get() = ShapeType.STROKED
 
     override fun draw(drawer: Drawer) {
         applyLineWidth(drawer = drawer)
-        applyColor(drawer = drawer, layer = layer, color = color)
         drawer.beginPath()
         pathSteps.forEach { it.draw(drawer = drawer) }
         if (closed) drawer.closePath()

@@ -91,7 +91,10 @@ class BlocoDeFundacao(
         ),
         overallScale = 100.0,
         extensionLinesExtendBeyondDimLines = 0.0,
-        firstArrowHead = blocoCota, secondArrowHead = blocoCota
+        firstArrowHead = blocoCota, secondArrowHead = blocoCota,
+        textColor = Color.INDEX_10,
+        extensionLinesColor = Color.INDEX_101,
+        dimensionLinesColor = Color.INDEX_7
     )
 
 //    private val propriedadeTextoCorte = FillTextAttributes(

@@ -8,19 +8,47 @@ import vitorscoelho.gyncanvas.core.dxf.entities.CompositeEntity
 import vitorscoelho.gyncanvas.core.dxf.entities.Entity
 import vitorscoelho.gyncanvas.core.dxf.transformation.TransformationMatrix
 
-interface DrawingArea {
-    fun addEntity(entity: Entity)
-    fun addEntities(entities: Iterable<Entity>)
-    fun draw(transformationMatrix: TransformationMatrix)
-}
-
-class FXDrawingArea : DrawingArea {
-    private val canvas = Canvas()
-    private val drawer = FXDrawer(canvas = canvas)
-
-    private val backgroundColor = Color.INDEX_250
+abstract class DrawingArea(
+    val backgroundColor: Color = Color.INDEX_250
+) {
+    protected abstract val drawer: Drawer
     private val entities = mutableListOf<Entity>()
 
+    fun addEntity(entity: Entity) {
+        entities += entity
+    }
+
+    fun addEntities(entities: Iterable<Entity>) {
+        entities.forEach { addEntity(entity = it) }
+    }
+
+    fun draw(transformationMatrix: TransformationMatrix) {
+        resetTransform()
+        drawer.fill = backgroundColor
+        drawer.fillBackground()
+        drawer.copyToTransform(transformationMatrix)
+        entities.forEach { entity -> drawEntity(entity) }
+    }
+
+    private fun drawEntity(entity: Entity) {
+        if (entity is CompositeEntity) {
+            entity.entities.forEach { drawEntity(it) }
+        } else {
+            entity.shapeType.applyColor(drawer = drawer, entity = entity)
+            entity.draw(drawer = drawer)
+        }
+    }
+
+    private fun resetTransform() {
+        drawer.copyToTransform(TransformationMatrix.IDENTITY)
+    }
+}
+
+class FXDrawingArea(
+    backgroundColor: Color = Color.INDEX_250
+) : DrawingArea(backgroundColor = backgroundColor) {
+    private val canvas = Canvas()
+    protected override val drawer = FXDrawer(canvas = canvas)
     val node: Node
 
     init {
@@ -30,25 +58,5 @@ class FXDrawingArea : DrawingArea {
         }
         canvas.widthProperty().bind(node.widthProperty())
         canvas.heightProperty().bind(node.heightProperty())
-    }
-
-    override fun addEntity(entity: Entity) {
-        entities += entity
-    }
-
-    override fun addEntities(entities: Iterable<Entity>) {
-        entities.forEach { addEntity(entity = it) }
-    }
-
-    override fun draw(transformationMatrix: TransformationMatrix) {
-        resetTransform()
-        drawer.fill = backgroundColor
-        drawer.fillBackground()
-        drawer.copyToTransform(transformationMatrix)
-        entities.forEach { entity -> entity.draw(drawer = drawer) }
-    }
-
-    private fun resetTransform() {
-        drawer.copyToTransform(TransformationMatrix.IDENTITY)
     }
 }

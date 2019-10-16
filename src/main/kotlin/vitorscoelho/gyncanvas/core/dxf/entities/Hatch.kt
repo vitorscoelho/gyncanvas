@@ -2,6 +2,7 @@ package vitorscoelho.gyncanvas.core.dxf.entities
 
 import vitorscoelho.gyncanvas.core.dxf.Color
 import vitorscoelho.gyncanvas.core.dxf.Drawer
+import vitorscoelho.gyncanvas.core.dxf.ShapeType
 import vitorscoelho.gyncanvas.core.dxf.entities.path.PathStep
 import vitorscoelho.gyncanvas.core.dxf.tables.Layer
 import vitorscoelho.gyncanvas.core.dxf.transformation.TransformationMatrix
@@ -11,8 +12,10 @@ data class Hatch internal constructor(
     override val color: Color = Color.BY_LAYER,
     internal val pathSteps: List<PathStep>
 ) : Entity {
+    override val shapeType: ShapeType
+        get() = ShapeType.STROKED_AND_FILLED
+
     override fun draw(drawer: Drawer) {
-        applyColor(drawer = drawer, layer = layer, color = color)
         drawer.beginPath()
         pathSteps.forEach { it.draw(drawer = drawer) }
         drawer.closePath()
