@@ -23,8 +23,9 @@ data class Insert(
 
     init {
         val transformationMatrix: TransformationMatrix = MutableTransformationMatrix()
-            .scale(factor = scaleFactor, xOrigin = 0.0, yOrigin = 0.0)
             .translate(xOffset = insertionPoint.x, yOffset = insertionPoint.y)
+            .scale(factor = scaleFactor, xOrigin = 0.0, yOrigin = 0.0)
+            .rotate(angle = rotationAngle)
         this.entities = block.entities.map { it.transform(transformationMatrix) }
     }
 

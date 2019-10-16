@@ -54,12 +54,6 @@ class Vector2D(
     fun transform(transformationMatrix: TransformationMatrix): Vector2D =
         transformationMatrix.transform(vector = this)
 
-    fun transform(vararg transformationsMatrices: TransformationMatrix): Vector2D {
-        var transformedVector = this
-        transformationsMatrices.forEach { transformedVector = transformedVector.transform(it) }
-        return transformedVector
-    }
-
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false

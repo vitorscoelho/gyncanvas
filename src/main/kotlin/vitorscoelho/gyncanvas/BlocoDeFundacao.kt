@@ -2,6 +2,7 @@ package vitorscoelho.gyncanvas
 
 import javafx.scene.text.Font
 import vitorscoelho.gyncanvas.core.dxf.Color
+import vitorscoelho.gyncanvas.core.dxf.blocks.Block
 import vitorscoelho.gyncanvas.core.dxf.entities.*
 import vitorscoelho.gyncanvas.core.dxf.tables.DimStyle
 import vitorscoelho.gyncanvas.core.dxf.tables.Layer
@@ -74,6 +75,13 @@ class BlocoDeFundacao(
     private val layerLinhaCorte = Layer(name = "Linha corte", color = Color.INDEX_190)
     private val layerTexto = Layer(name = "Texto", color = Color.INDEX_43)
 
+    private val blocoCota: Block = run {
+        val circulo1 = Circle(layer = layerCota, centerPoint = Vector2D.ZERO, diameter = 0.5)
+        val circulo2 = Circle(layer = layerCota, centerPoint = Vector2D.ZERO, diameter = 1.0)
+        val linha =
+            Line(layer = layerCota, startPoint = Vector2D(x = -1.0, y = 0.0), endPoint = Vector2D(x = 0.0, y = 0.0))
+        return@run Block(name = "_Origin2", entities = listOf(circulo1, circulo2, linha))
+    }
     private val dimStyle = DimStyle(
         name = "1_100 TQS",
         textStyle = TextStyle(
@@ -82,7 +90,8 @@ class BlocoDeFundacao(
             fontFileName = Font.getDefault().name
         ),
         overallScale = 100.0,
-        extensionLinesExtendBeyondDimLines = 0.0
+        extensionLinesExtendBeyondDimLines = 0.0,
+        firstArrowHead = blocoCota, secondArrowHead = blocoCota
     )
 
 //    private val propriedadeTextoCorte = FillTextAttributes(

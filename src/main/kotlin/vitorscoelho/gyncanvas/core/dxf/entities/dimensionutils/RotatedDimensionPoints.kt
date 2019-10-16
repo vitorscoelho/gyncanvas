@@ -3,6 +3,7 @@ package vitorscoelho.gyncanvas.core.dxf.entities.dimensionutils
 import vitorscoelho.gyncanvas.core.dxf.transformation.MutableTransformationMatrix
 import vitorscoelho.gyncanvas.core.dxf.transformation.TransformationMatrix
 import vitorscoelho.gyncanvas.math.Vector2D
+import kotlin.math.PI
 
 internal class RotatedDimensionPoints(
     val xPoint1: Vector2D,
@@ -26,6 +27,9 @@ internal class RotatedDimensionPoints(
     val point1ExtensionLine2: Vector2D
     val point2ExtensionLine2: Vector2D
     val mTextPosition: Vector2D
+
+    val rotationArrowHead1: Double
+    val rotationArrowHead2: Double
 
     init {
         val originPoint = xPoint1
@@ -57,6 +61,14 @@ internal class RotatedDimensionPoints(
         this.mTextPosition = Vector2D(
             x = (localXPoint1.x + localXPoint2.x) / 2.0, y = yDimensionLine + textOffsetFromDimLine
         ).transform(reverseTransformationMatrix)
+
+        if (extensionLine1Points.second.x <= extensionLine2Points.second.x) {
+            this.rotationArrowHead1 = PI + angle
+            this.rotationArrowHead2 = 0.0 + angle
+        } else {
+            this.rotationArrowHead1 = 0.0 + angle
+            this.rotationArrowHead2 = PI + angle
+        }
     }
 
     private fun extensionLinePoints(xPoint: Vector2D, yDimensionLine: Double): Pair<Vector2D, Vector2D> {

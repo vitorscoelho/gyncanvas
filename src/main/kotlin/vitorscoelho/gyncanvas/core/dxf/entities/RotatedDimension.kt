@@ -2,6 +2,7 @@ package vitorscoelho.gyncanvas.core.dxf.entities
 
 import vitorscoelho.gyncanvas.core.dxf.Color
 import vitorscoelho.gyncanvas.core.dxf.DimStyleOverrides
+import vitorscoelho.gyncanvas.core.dxf.blocks.Block
 import vitorscoelho.gyncanvas.core.dxf.entities.dimensionutils.RotatedDimensionPoints
 import vitorscoelho.gyncanvas.core.dxf.entities.dimensionutils.RotatedDimensionSequence
 import vitorscoelho.gyncanvas.core.dxf.entities.dimensionutils.RotatedDimensionSequenceStart
@@ -52,7 +53,13 @@ data class RotatedDimension(
             dimensionPoint = points.mTextPosition,
             measurement = measurement
         )
-        this.entities = listOfNotNull(dimensionLine, extensionLine1, extensionLine2, mText)
+        val (firstArrowHead, secondArrowHead) = createArrowHeads(
+            dimensionLinePoint1 = points.point1DimensionLine, dimensionLinePoint2 = points.point2DimensionLine,
+            rotationPoint1 = points.rotationArrowHead1, rotationPoint2 = points.rotationArrowHead2
+        )
+        this.entities = listOfNotNull(
+            dimensionLine, extensionLine1, extensionLine2, mText, firstArrowHead, secondArrowHead
+        )
     }
 
     override fun dimContinue(point: Vector2D): RotatedDimension = dimContinueXPoint2(point)
@@ -80,11 +87,11 @@ data class RotatedDimension(
     private fun createDimensionLine(points: RotatedDimensionPoints): Line? {
         val point1: Vector2D
         val point2: Vector2D
-        if (this.dimensionLinessuppressDimLine1 && this.dimensionLinessuppressDimLine2) return null
-        if (!this.dimensionLinessuppressDimLine1 && !this.dimensionLinessuppressDimLine2) {
+        if (this.dimensionLinesSuppressDimLine1 && this.dimensionLinesSuppressDimLine2) return null
+        if (!this.dimensionLinesSuppressDimLine1 && !this.dimensionLinesSuppressDimLine2) {
             point1 = points.point1DimensionLine
             point2 = points.point2DimensionLine
-        } else if (this.dimensionLinessuppressDimLine1) {
+        } else if (this.dimensionLinesSuppressDimLine1) {
             point1 = points.midPointDimensionLine
             point2 = points.point2DimensionLine
         } else {
@@ -115,6 +122,29 @@ data class RotatedDimension(
             position = dimensionPoint,
             content = content.replaceFirst("<>", dimStyle.linearDimensionFormat(measurement))
         )
+    }
+
+    private fun createArrowHeads(
+        dimensionLinePoint1: Vector2D, dimensionLinePoint2: Vector2D, rotationPoint1: Double, rotationPoint2: Double
+    ): Pair<Insert?, Insert?> {
+        val size: Double = arrowSize * overallScale
+        var first: Insert? = null
+        if (!dimensionLinesSuppressDimLine1 && firstArrowHead != Block.NONE) {
+            first = Insert(
+                layer = layer, color = dimensionLinesColor,
+                insertionPoint = dimensionLinePoint1, scaleFactor = size, rotationAngle = rotationPoint1,
+                block = firstArrowHead
+            )
+        }
+        var second: Insert? = null
+        if (!dimensionLinesSuppressDimLine2 && secondArrowHead != Block.NONE) {
+            second = Insert(
+                layer = layer, color = dimensionLinesColor,
+                insertionPoint = dimensionLinePoint2, scaleFactor = size, rotationAngle = rotationPoint2,
+                block = secondArrowHead
+            )
+        }
+        return Pair(first, second)
     }
 
     override fun transform(transformationMatrix: TransformationMatrix): Entity {

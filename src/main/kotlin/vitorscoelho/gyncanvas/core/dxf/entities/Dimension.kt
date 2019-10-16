@@ -16,9 +16,9 @@ interface Dimension : CompositeEntity {
     //Propriedade: Dimensions lines
     val dimensionLinesColor: Color
         get() = dimStyleOverrides.dimensionLinesColor(dimStyle)
-    val dimensionLinessuppressDimLine1: Boolean
+    val dimensionLinesSuppressDimLine1: Boolean
         get() = dimStyleOverrides.dimensionLinessuppressDimLine1(dimStyle)
-    val dimensionLinessuppressDimLine2: Boolean
+    val dimensionLinesSuppressDimLine2: Boolean
         get() = dimStyleOverrides.dimensionLinessuppressDimLine2(dimStyle)
 
     //Propriedade: Extension lines

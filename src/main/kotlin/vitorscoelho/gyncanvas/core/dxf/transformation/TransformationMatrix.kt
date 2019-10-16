@@ -71,6 +71,11 @@ class ImmutableTransformationMatrix(
     override val scale: Double by lazy { sqrt(mxz * mxz + myz * myz + mzz * mzz) }
 }
 
+/**
+ * As transformações nesta classe devem ser inseridas na ordem inversa a que elas ocorrem de fato, por exemplo,
+ * se o desejo for fazer uma transformação que translade e depois rotacione, deve-se fazer da seguinte forma:
+ * MutableTransformationMatrix().rotate(....).translate(....)
+ */
 class MutableTransformationMatrix : TransformationMatrix {
     constructor() {}
     constructor(otherMatrix: TransformationMatrix) {
