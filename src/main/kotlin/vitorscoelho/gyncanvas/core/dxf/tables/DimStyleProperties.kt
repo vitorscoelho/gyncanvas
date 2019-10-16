@@ -10,16 +10,16 @@ interface DimStyleProperties {
     //    val dimensionLinesLType: LType = LType.BY_BLOCK,//DIMLTYPE
 //    val dimensionLinesLineWeight: LineWeight = LineWeight.BY_BLOCK,//DIMLWD
 //    val dimensionLinesBaselineSpacing: Double = 0.38,//DIMDLI
-    val dimensionLinessuppressDimLine1: Boolean?//DIMSD1 - 281
-    val dimensionLinessuppressDimLine2: Boolean?//DIMSD1 - 282
+    val dimensionLinesSuppressDimLine1: Boolean?//DIMSD1 - 281
+    val dimensionLinesSuppressDimLine2: Boolean?//DIMSD1 - 282
 
     //Propriedade: Extension lines
     val extensionLinesColor: Color?//DIMCLRE - 177
     //    val extensionLinesLTypeExtLine1: LType = LType.BY_BLOCK,//DIMLTEX1
 //    val extensionLinesLTypeExtLine2: LType = LType.BY_BLOCK,//DIMLTEX2
 //    val extensionLinesLineWeight: LineWeight = LineWeight.BY_BLOCK,//DIMLWE - 372
-    val extensionLinessuppressExtLine1: Boolean?//DIMSE1 - 75
-    val extensionLinessuppressExtLine2: Boolean?//DIMSE2 - 76
+    val extensionLinesSuppressExtLine1: Boolean?//DIMSE1 - 75
+    val extensionLinesSuppressExtLine2: Boolean?//DIMSE2 - 76
     val extensionLinesExtendBeyondDimLines: Double?//DIMEXE - 44
     val extensionLinesOffsetFromOrigin: Double? //DIMEXO - 42
     //val fixedLengthExtensionLines:Double//DIMFXLON. PARECE QUE NÃO EXISTE PARA DXF2000
@@ -80,11 +80,11 @@ interface DimStyleProperties {
     val prefix: String? //DIMPOST - 3 NÃO SEI
     val suffix: String? //DIMPOST - 3
     val scaleFactor: Double? //DIMLFAC - 144
-    //    val linearDimensionZerosuppress;
+    //    val linearDimensionZeroSuppress;
     val linearDimensionSuppressLeadingZeros: Boolean?
     val linearDimensionSuppressTrailingZeros: Boolean?
     //Propriedade: AngularDimensions
 //    val angularDimensionUnitFormat: AngularDimensionUnitFormat = AngularDimensionUnitFormat.DECIMAL_DEGREES,//DIMAUNIT - 275
     val angularDimensionPrecision: Int?//DIMADEC - 179
-//    val angularDimensionZerosuppress: AngularDimensionZerosuppress = AngularDimensionZerosuppress.NaoSuprimir//DIMAZIN - 79
+//    val angularDimensionZeroSuppress: AngularDimensionZeroSuppress = AngularDimensionZeroSuppress.NaoSuprimir//DIMAZIN - 79
 }

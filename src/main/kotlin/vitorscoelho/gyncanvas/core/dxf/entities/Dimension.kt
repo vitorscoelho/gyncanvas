@@ -17,17 +17,17 @@ interface Dimension : CompositeEntity {
     val dimensionLinesColor: Color
         get() = dimStyleOverrides.dimensionLinesColor(dimStyle)
     val dimensionLinesSuppressDimLine1: Boolean
-        get() = dimStyleOverrides.dimensionLinessuppressDimLine1(dimStyle)
+        get() = dimStyleOverrides.dimensionLinesSuppressDimLine1(dimStyle)
     val dimensionLinesSuppressDimLine2: Boolean
-        get() = dimStyleOverrides.dimensionLinessuppressDimLine2(dimStyle)
+        get() = dimStyleOverrides.dimensionLinesSuppressDimLine2(dimStyle)
 
     //Propriedade: Extension lines
     val extensionLinesColor: Color
         get() = dimStyleOverrides.extensionLinesColor(dimStyle)
-    val extensionLinessuppressExtLine1: Boolean
-        get() = dimStyleOverrides.extensionLinessuppressExtLine1(dimStyle)
-    val extensionLinessuppressExtLine2: Boolean
-        get() = dimStyleOverrides.extensionLinessuppressExtLine2(dimStyle)
+    val extensionLinesSuppressExtLine1: Boolean
+        get() = dimStyleOverrides.extensionLinesSuppressExtLine1(dimStyle)
+    val extensionLinesSuppressExtLine2: Boolean
+        get() = dimStyleOverrides.extensionLinesSuppressExtLine2(dimStyle)
     val extensionLinesExtendBeyondDimLines: Double
         get() = dimStyleOverrides.extensionLinesExtendBeyondDimLines(dimStyle)
     val extensionLinesOffsetFromOrigin: Double

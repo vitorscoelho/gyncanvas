@@ -7,11 +7,11 @@ import vitorscoelho.gyncanvas.core.dxf.tables.TextStyle
 
 class DimStyleOverrides(
     override val dimensionLinesColor: Color?,
-    override val dimensionLinessuppressDimLine1: Boolean?,
-    override val dimensionLinessuppressDimLine2: Boolean?,
+    override val dimensionLinesSuppressDimLine1: Boolean?,
+    override val dimensionLinesSuppressDimLine2: Boolean?,
     override val extensionLinesColor: Color?,
-    override val extensionLinessuppressExtLine1: Boolean?,
-    override val extensionLinessuppressExtLine2: Boolean?,
+    override val extensionLinesSuppressExtLine1: Boolean?,
+    override val extensionLinesSuppressExtLine2: Boolean?,
     override val extensionLinesExtendBeyondDimLines: Double?,
     override val extensionLinesOffsetFromOrigin: Double?,
     override val firstArrowHead: Block?,
@@ -34,18 +34,18 @@ class DimStyleOverrides(
     override val angularDimensionPrecision: Int?
 ) : DimStyleProperties {
     fun dimensionLinesColor(base: DimStyle): Color = dimensionLinesColor ?: base.dimensionLinesColor
-    fun dimensionLinessuppressDimLine1(base: DimStyle): Boolean =
-        dimensionLinessuppressDimLine1 ?: base.dimensionLinessuppressDimLine1
+    fun dimensionLinesSuppressDimLine1(base: DimStyle): Boolean =
+        dimensionLinesSuppressDimLine1 ?: base.dimensionLinesSuppressDimLine1
 
-    fun dimensionLinessuppressDimLine2(base: DimStyle): Boolean =
-        dimensionLinessuppressDimLine2 ?: base.dimensionLinessuppressDimLine2
+    fun dimensionLinesSuppressDimLine2(base: DimStyle): Boolean =
+        dimensionLinesSuppressDimLine2 ?: base.dimensionLinesSuppressDimLine2
 
     fun extensionLinesColor(base: DimStyle): Color = extensionLinesColor ?: base.extensionLinesColor
-    fun extensionLinessuppressExtLine1(base: DimStyle): Boolean =
-        extensionLinessuppressExtLine1 ?: base.extensionLinessuppressExtLine1
+    fun extensionLinesSuppressExtLine1(base: DimStyle): Boolean =
+        extensionLinesSuppressExtLine1 ?: base.extensionLinesSuppressExtLine1
 
-    fun extensionLinessuppressExtLine2(base: DimStyle): Boolean =
-        extensionLinessuppressExtLine2 ?: base.extensionLinessuppressExtLine2
+    fun extensionLinesSuppressExtLine2(base: DimStyle): Boolean =
+        extensionLinesSuppressExtLine2 ?: base.extensionLinesSuppressExtLine2
 
     fun extensionLinesExtendBeyondDimLines(base: DimStyle): Double =
         extensionLinesExtendBeyondDimLines ?: base.extensionLinesExtendBeyondDimLines
@@ -83,13 +83,13 @@ class DimStyleOverrides(
                 angularDimensionPrecision = null,
                 arrowSize = null,
                 decimalSeparator = null,
-                dimensionLinessuppressDimLine1 = null,
-                dimensionLinessuppressDimLine2 = null,
+                dimensionLinesSuppressDimLine1 = null,
+                dimensionLinesSuppressDimLine2 = null,
                 extensionLinesColor = null,
                 extensionLinesExtendBeyondDimLines = null,
                 extensionLinesOffsetFromOrigin = null,
-                extensionLinessuppressExtLine1 = null,
-                extensionLinessuppressExtLine2 = null,
+                extensionLinesSuppressExtLine1 = null,
+                extensionLinesSuppressExtLine2 = null,
                 firstArrowHead = null,
                 leaderArrowHead = null,
                 linearDimensionPrecision = null,

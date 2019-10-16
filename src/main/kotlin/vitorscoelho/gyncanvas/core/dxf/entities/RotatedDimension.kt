@@ -38,12 +38,12 @@ data class RotatedDimension(
 
         val dimensionLine: Line? = createDimensionLine(points = points)
         val extensionLine1: Line? = createExtensionLine(
-            suppress = extensionLinessuppressExtLine1,
+            suppress = extensionLinesSuppressExtLine1,
             dimensionPoint1 = points.point1ExtensionLine1,
             dimensionPoint2 = points.point2ExtensionLine1
         )
         val extensionLine2: Line? = createExtensionLine(
-            suppress = extensionLinessuppressExtLine2,
+            suppress = extensionLinesSuppressExtLine2,
             dimensionPoint1 = points.point1ExtensionLine2,
             dimensionPoint2 = points.point2ExtensionLine2
         )
