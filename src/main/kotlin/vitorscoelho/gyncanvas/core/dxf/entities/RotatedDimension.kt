@@ -71,7 +71,7 @@ data class RotatedDimension(
         return dimensions
     }
 
-    fun initSequence(): RotatedDimensionSequence = RotatedDimensionSequence.init(
+    override fun initSequence(): RotatedDimensionSequence = RotatedDimensionSequence.init(
         layer = layer, color = color,
         dimStyle = dimStyle, dimStyleOverrides = dimStyleOverrides,
         dimensionLineReferencePoint = dimensionLineReferencePoint, angle = angle, text = text

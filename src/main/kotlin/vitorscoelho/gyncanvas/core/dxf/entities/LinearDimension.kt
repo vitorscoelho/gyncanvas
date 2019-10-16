@@ -1,5 +1,6 @@
 package vitorscoelho.gyncanvas.core.dxf.entities
 
+import vitorscoelho.gyncanvas.core.dxf.entities.dimensionutils.RotatedDimensionSequence
 import vitorscoelho.gyncanvas.math.Vector2D
 
 interface LinearDimension : Dimension {
@@ -11,6 +12,7 @@ interface LinearDimension : Dimension {
     fun dimContinueXPoint1(point: Vector2D): LinearDimension
     fun dimContinueXPoint2(point: Vector2D): LinearDimension
 
+    fun initSequence(): RotatedDimensionSequence
     fun createSequence(points: List<Vector2D>): List<LinearDimension>
 
     //PRIMARY UNITS PROP

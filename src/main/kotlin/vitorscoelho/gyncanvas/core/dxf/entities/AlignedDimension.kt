@@ -2,6 +2,8 @@ package vitorscoelho.gyncanvas.core.dxf.entities
 
 import vitorscoelho.gyncanvas.core.dxf.Color
 import vitorscoelho.gyncanvas.core.dxf.DimStyleOverrides
+import vitorscoelho.gyncanvas.core.dxf.entities.dimensionutils.RotatedDimensionSequence
+import vitorscoelho.gyncanvas.core.dxf.entities.dimensionutils.RotatedDimensionSequenceStart
 import vitorscoelho.gyncanvas.core.dxf.tables.DimStyle
 import vitorscoelho.gyncanvas.core.dxf.tables.Layer
 import vitorscoelho.gyncanvas.math.Vector2D
@@ -49,8 +51,4 @@ data class AlignedDimension(
         points.forEach { dimensions.add(dimensions.last().dimContinue(it)) }
         return dimensions
     }
-
-//    override fun initSequence(): LinearDimensionSequence {
-//        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-//    }
 }
