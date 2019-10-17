@@ -75,20 +75,20 @@ class MeuViewDrawingArea : View() {
 
 fun criarBloco(): BlocoDeFundacao {
     val blocoDeFundacao = BlocoDeFundacao(
-        hxPilar = 80.0,
-        hyPilar = 40.0,
-        folgaDeMontagem = 7.5,
-        hcx = 35.0,
-        hcy = 25.0,
-        embutimento = 130.0,
-        espessuraNivelamento = 5.0,
-        lxBloco = 320.0,
-        lyBloco = 205.0,
-        nivelPisoAcabado = 50034,
-        diametroEstacas = 60.0,
+        hxPilar = 80.0 / 100.0,
+        hyPilar = 40.0 / 100.0,
+        folgaDeMontagem = 7.5 / 100.0,
+        hcx = 35.0 / 100.0,
+        hcy = 25.0 / 100.0,
+        embutimento = 130.0 / 100.0,
+        espessuraNivelamento = 5.0 / 100.0,
+        lxBloco = 320.0 / 100.0,
+        lyBloco = 205.0 / 100.0,
+        nivelPisoAcabado = 50034 / 100,
+        diametroEstacas = 60.0 / 100.0,
         posicoesEstacas = listOf(
-            Vector2D(x = -115.0, y = 0.0),
-            Vector2D(x = 115.0, y = 0.0)
+            Vector2D(x = -115.0 / 100.0, y = 0.0),
+            Vector2D(x = 115.0 / 100.0, y = 0.0)
         )
     )
 //    val listaJson = blocoDeFundacao.mapPrimitivas { primitiva, atributo -> primitiva.toJsonEntity() }

@@ -36,7 +36,7 @@ abstract class DrawingArea(
         } else {
             entity.shapeType.applyColor(drawer = drawer, entity = entity)
             entity.draw(drawer = drawer)
-        }
+        }//TODO dar um jeito de remover esse 'if'
     }
 
     private fun resetTransform() {

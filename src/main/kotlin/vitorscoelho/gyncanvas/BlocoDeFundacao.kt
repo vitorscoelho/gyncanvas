@@ -63,7 +63,7 @@ class BlocoDeFundacao(
     }
 
     /**Distância entre cotas, em cm*/
-    private val distanciaCota = 18.0
+    private val distanciaCota = 18.0 / 100.0
 
     private val layerPilarContorno = Layer(name = "Pilar contorno", color = Color.INDEX_121)
     private val layerLinhaClara = Layer(name = "Linha clara", color = Color.INDEX_191)
@@ -82,19 +82,44 @@ class BlocoDeFundacao(
             Line(layer = layerCota, startPoint = Vector2D(x = -1.0, y = 0.0), endPoint = Vector2D(x = 0.0, y = 0.0))
         return@run Block(name = "_Origin2", entities = listOf(circulo1, circulo2, linha))
     }
+    private val textStyle = TextStyle(
+        name = "Standard",
+        fontName = "Ubuntu Light",
+        fontFileName = "Ubuntu Light"
+    )
+
+    init {
+        println(Font.font("Ubuntu Light"))
+    }
+
     private val dimStyle = DimStyle(
         name = "1_100 TQS",
-        textStyle = TextStyle(
-            name = "Standard",
-            fontName = Font.getDefault().name,
-            fontFileName = Font.getDefault().name
-        ),
-        overallScale = 100.0,
+        dimensionLinesColor = Color.BY_BLOCK,
+        dimensionLinesSuppressDimLine1 = false,
+        dimensionLinesSuppressDimLine2 = false,
+        extensionLinesColor = Color.BY_BLOCK,
+        extensionLinesSuppressExtLine1 = false,
+        extensionLinesSuppressExtLine2 = false,
         extensionLinesExtendBeyondDimLines = 0.0,
-        firstArrowHead = blocoCota, secondArrowHead = blocoCota,
-        textColor = Color.INDEX_10,
-        extensionLinesColor = Color.INDEX_101,
-        dimensionLinesColor = Color.INDEX_7
+        extensionLinesOffsetFromOrigin = 0.06,
+        firstArrowHead = blocoCota,
+        secondArrowHead = blocoCota,
+        leaderArrowHead = Block.NONE,
+        arrowSize = 0.05,
+        textStyle = textStyle,
+        textColor = Color.BY_LAYER,
+        textHeight = 0.12,
+        textOffsetFromDimLine = 0.015,
+        overallScale = 0.75,
+        linearDimensionPrecision = 4,
+        decimalSeparator = ',',
+        unitRound = 0.1,
+        prefix = "",
+        suffix = "",
+        scaleFactor = 100.0,
+        linearDimensionSuppressLeadingZeros = true,
+        linearDimensionSuppressTrailingZeros = true,
+        angularDimensionPrecision = 0
     )
 
 //    private val propriedadeTextoCorte = FillTextAttributes(
@@ -164,7 +189,7 @@ class BlocoDeFundacao(
             val contornoEstaca = Circle(
                 layer = layerProjecao,
                 centerPoint = Vector2D(x = xRealCentro, y = yRealCentro),
-                diameter = 60.0
+                diameter = diametroEstacas
             )
             return@map contornoEstaca
         }
@@ -309,6 +334,22 @@ class BlocoDeFundacao(
 //                listOf(textoCorteA).map { DesenhoAdicionavel(it, propriedadeTextoCorte) }
 //    }
 
+    fun textoTeste(): List<Entity> {
+        val texto = MText(
+            layer = layerTexto, style = textStyle,
+            size = 1.0, position = Vector2D(lxBloco + 5.0, 0.0),
+            content = "D"
+        )
+        val pontoInicial = Vector2D(lxBloco + 5.09, 0.201)
+        val x1 = 0.0
+        val x2 = 20.0
+        val y1 = 0.201 * 1.445 + .001
+        val y2 = y1 + 0.9636
+        val line1 = Line(layer = layerCota, startPoint = Vector2D(x1, y1), endPoint = Vector2D(x2, y1))
+        val line2 = Line(layer = layerCota, startPoint = Vector2D(x1, y2), endPoint = Vector2D(x2, y2))
+        return listOf(texto, line1, line2)
+    }
+
     fun listarDesenhos(): List<Entity> =
         pilar() +
                 contornoBloco() +
@@ -320,6 +361,6 @@ class BlocoDeFundacao(
                 cotaVerticalComprimentoDoBloco() +
                 cotaHorizontalComprimentoDoBloco() +
                 cotasVerticaisDasDimensoesDoColarinho() +
-                cotasHorizontaisDasDimensoesDoColarinho() + testeCotaInclinada()//+
+                cotasHorizontaisDasDimensoesDoColarinho() + testeCotaInclinada() + textoTeste()//+
 //                indicacaoCorte()
 }

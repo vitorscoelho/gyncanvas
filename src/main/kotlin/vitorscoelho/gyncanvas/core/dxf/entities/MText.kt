@@ -25,9 +25,9 @@ data class MText(
 
     override fun draw(drawer: Drawer) {
         applyLineWidth(drawer = drawer)
-        drawer.setFont(fontName = style.fontFileName, fontSize = size)
+        drawer.setFont(fontName = style.fontFileName)
         drawer.textJustify = justify
-        drawer.fillText(text = content,x = position.x,y = position.y,angle = rotation)
+        drawer.fillText(text = content,size = size,x = position.x,y = position.y,angle = rotation)
     }
 
     override fun transform(transformationMatrix: TransformationMatrix): MText =

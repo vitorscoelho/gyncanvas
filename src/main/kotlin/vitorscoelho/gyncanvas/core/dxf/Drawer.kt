@@ -16,13 +16,11 @@ abstract class Drawer {
     abstract var lineWidht: Double
     abstract var textJustify: AttachmentPoint
     abstract var fontName: String
-    abstract var fontSize: Double
-    abstract fun setFont(fontName: String, fontSize: Double)
+    abstract fun setFont(fontName: String)
     abstract fun fillBackground()
     abstract fun strokeLine(x1: Double, y1: Double, x2: Double, y2: Double)
     abstract fun strokeCircle(xCenter: Double, yCenter: Double, diameter: Double)
-    abstract fun fillText(text: String, x: Double, y: Double)
-    abstract fun fillText(text: String, x: Double, y: Double, angle: Double)
+    abstract fun fillText(text: String, size: Double, x: Double, y: Double, angle: Double)
     abstract fun beginPath()
     abstract fun closePath()
     abstract fun fill()
@@ -36,6 +34,11 @@ abstract class Drawer {
 
 class FXDrawer(val canvas: Canvas) : Drawer() {
     private val gc = canvas.graphicsContext2D
+    /**Necessário fixar um tamanho de fonte para contornar bug do JavaFX com fontes muito pequenas*/
+    private val fontSize = 10.0
+    /**Fator utilizado para que o tamanho dos textos no Canvas sejam iguais aos dos textos do AutoCAD*/
+    private val factorAutoCADFontSize = 1.445
+    private val factorFontSize = factorAutoCADFontSize / fontSize
 
     /**
      * Array que contém uma relação dos índices das cores e as cores do JavaFX.
@@ -68,22 +71,19 @@ class FXDrawer(val canvas: Canvas) : Drawer() {
         }
         get() = gc.lineWidth
 
-    private val fontsInCache = hashMapOf<Pair<String, Double>, Font>()
-    private fun getFXFont(fontName: String, fontSize: Double): Font {
-        val pair = Pair(fontName, fontSize)
+    private val fontsInCache = hashMapOf<String, Font>()
+    private fun getFXFont(fontName: String): Font {
         return fontsInCache.getOrPut(
-            key = pair,
+            key = fontName,
             defaultValue = { Font.font(fontName, fontSize) }
         )
     }
 
     override var fontName: String = gc.font.name
-    override var fontSize: Double = gc.font.size
 
-    override fun setFont(fontName: String, fontSize: Double) {
+    override fun setFont(fontName: String) {
         this.fontName = fontName
-        this.fontSize = fontSize
-        gc.font = getFXFont(fontName = fontName, fontSize = fontSize)
+        gc.font = getFXFont(fontName = fontName)
     }
 
     private val mapTextJustifyAutocadToJFX = mapOf(
@@ -135,23 +135,16 @@ class FXDrawer(val canvas: Canvas) : Drawer() {
         )
     }
 
-    override fun fillText(text: String, x: Double, y: Double) {
-        gc.fillText(text, x, -y)
-    }
-
-    override fun fillText(text: String, x: Double, y: Double, angle: Double) {
-        if (angle == 0.0) {
-            gc.fillText(text, x, -y)
-            return
-        }
-        val matrizOriginal = ImmutableTransformationMatrix(otherMatrix = transform)
-        copyToTransform(
-            transformationMatrix = MutableTransformationMatrix(otherMatrix = matrizOriginal)
-                .translate(xOffset = x, yOffset = -y)
-                .rotate(angle = -angle)
-        )
+    override fun fillText(text: String, size: Double, x: Double, y: Double, angle: Double) {
+        val originalMatrix = ImmutableTransformationMatrix(otherMatrix = transform)
+        val transformationMatrix = MutableTransformationMatrix(otherMatrix = originalMatrix)
+            .translate(xOffset = x, yOffset = -y)
+            .scale(factor = size * factorFontSize, xOrigin = 0.0, yOrigin = 0.0)
+        //Existe um bug no Canvas que impede fontes muito pequenas. Por isso o ajuste do tamanho teve que ser feito escalando a matriz de transformação
+        if (angle != 0.0) transformationMatrix.rotate(angle = -angle)
+        copyToTransform(transformationMatrix = transformationMatrix)
         gc.fillText(text, 0.0, 0.0)
-        copyToTransform(transformationMatrix = matrizOriginal)
+        copyToTransform(transformationMatrix = originalMatrix)
     }
 
     override fun beginPath() = gc.beginPath()
