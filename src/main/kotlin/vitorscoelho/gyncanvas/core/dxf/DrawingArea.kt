@@ -34,6 +34,10 @@ abstract class DrawingArea(
         entities.removeAt(index)
     }
 
+    fun removeAllEntities() {
+        entities.clear()
+    }
+
     fun draw(transformationMatrix: TransformationMatrix) {
         resetTransform()
         drawer.fill = backgroundColor
