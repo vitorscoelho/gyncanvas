@@ -1,9 +1,15 @@
 package vitorscoelho.gyncanvas
 
+import javafx.geometry.Rectangle2D
+import javafx.scene.Scene
+import javafx.scene.SnapshotParameters
 import javafx.scene.canvas.Canvas
 import javafx.scene.canvas.GraphicsContext
+import javafx.scene.image.Image
 import javafx.scene.input.MouseButton
+import javafx.scene.layout.Pane
 import javafx.scene.paint.Color
+import javafx.scene.paint.ImagePattern
 import javafx.scene.shape.Line
 import javafx.scene.shape.StrokeLineCap
 import javafx.scene.text.Text
@@ -43,6 +49,22 @@ class MeuView2 : View() {
             doubleArrayOf(100.0, 100.0, 200.0),
             3
         )
+        gc.fill = Color.GREENYELLOW
+        gc.beginPath()
+        gc.moveTo(500.0, 100.0)
+        gc.lineTo(600.0, 100.0)
+        gc.lineTo(600.0, 200.0)
+        gc.lineTo(500.0, 200.0)
+        gc.closePath()
+        gc.moveTo(525.0, 125.0)
+        gc.lineTo(525.0, 175.0)
+        gc.lineTo(575.0, 175.0)
+        gc.lineTo(575.0, 125.0)
+        gc.closePath()
+        val hatch: Image = createHatch()
+        val pattern = ImagePattern(hatch, 0.0, 0.0, 20.0, 20.0, false)
+        gc.fill = pattern
+        gc.fill()
 
 //        val matrizTransformacao = Matrix4d()
 //        matrizTransformacao.translate(200.0, 200.0, 0.0)
@@ -65,6 +87,41 @@ class MeuView2 : View() {
             canvas.width / 2.0 - 40.0, canvas.height / 2.0 - 40.0,
             80.0, 80.0
         )
+    }
+
+    private fun createHatch2(): Image {
+        val canvas = Canvas(150.0, 150.0)
+        val gc = canvas.graphicsContext2D
+        gc.stroke = Color.RED
+        gc.strokeLine(0.0, 0.0, 200.0, 200.0)
+        gc.strokeLine(190.0,0.0,190.0,200.0)
+
+//        val node = Pane(canvas)
+//        canvas.widthProperty().bind(node.widthProperty())
+//        canvas.heightProperty().bind(node.heightProperty())
+//        node.setPrefSize(20.0,20.0)
+//        Scene(node)
+        val parametros = SnapshotParameters()
+        parametros.isDepthBuffer = true
+        parametros.fill = Color.TRANSPARENT
+        parametros.viewport= Rectangle2D(0.0,0.0,5.0,5.0)
+        val pane = Pane(canvas)
+        Scene(pane)
+        return pane.snapshot(parametros, null)
+    }
+
+    private fun createHatch(): Image {
+        val pane = Pane()
+        pane.setPrefSize(1.0, 1.0)
+        val fw = Line(-5.0, -5.0, 25.0, 25.0)
+        val bw = Line(-5.0, 25.0, 25.0, -5.0)
+        fw.stroke = Color.RED
+        bw.stroke = Color.BLUE
+        fw.strokeWidth = 5.0
+        bw.strokeWidth = 5.0
+        pane.children.addAll(fw, bw)
+        Scene(pane)
+        return pane.snapshot(null, null)
     }
 
     private fun Matrix3x2d.toAffine() = Affine(m00, m01, m10, m11, m20, m21)

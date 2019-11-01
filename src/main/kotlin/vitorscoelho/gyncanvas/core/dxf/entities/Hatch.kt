@@ -30,3 +30,7 @@ data class Hatch internal constructor(
             Hatch(layer = layer, color = color, pathSteps = lwPolyline.pathSteps)
     }
 }
+
+interface HatchPattern {
+
+}

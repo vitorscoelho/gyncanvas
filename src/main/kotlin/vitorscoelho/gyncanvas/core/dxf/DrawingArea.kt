@@ -22,6 +22,18 @@ abstract class DrawingArea(
         entities.forEach { addEntity(entity = it) }
     }
 
+    fun removeEntity(entity: Entity) {
+        entities -= entity
+    }
+
+    fun removeEntities(entity: Entity) {
+        entities.forEach { addEntity(entity = it) }
+    }
+
+    fun removeEntity(index: Int) {
+        entities.removeAt(index)
+    }
+
     fun draw(transformationMatrix: TransformationMatrix) {
         resetTransform()
         drawer.fill = backgroundColor
