@@ -90,7 +90,7 @@ class ZoomScroll(val zoomFactor: Double, val drawingArea: FXDrawingArea) {
         require(zoomFactor > 0.0) { "|zoomFactor| must be greater than zero" }
     }
 
-    private val eventHandlerZoomScroll: EventHandler<ScrollEvent> by lazy {
+    private val eventHandlerScroll: EventHandler<ScrollEvent> by lazy {
         EventHandler<ScrollEvent> { event ->
             val worldCoordinates = drawingArea.camera.worldCoordinates(xCamera = event.x, yCamera = event.y)
             val factor = when {
@@ -106,20 +106,20 @@ class ZoomScroll(val zoomFactor: Double, val drawingArea: FXDrawingArea) {
 
     fun enable() {
         disable()
-        drawingArea.node.addEventHandler(ScrollEvent.SCROLL, eventHandlerZoomScroll)
+        drawingArea.node.addEventHandler(ScrollEvent.SCROLL, eventHandlerScroll)
     }
 
     fun disable() {
-        drawingArea.node.removeEventHandler(ScrollEvent.SCROLL, eventHandlerZoomScroll)
+        drawingArea.node.removeEventHandler(ScrollEvent.SCROLL, eventHandlerScroll)
     }
 }
 
-class PanDragged(val mouseButton: MouseButton, val cursorWhenDraged: Cursor, val drawingArea: FXDrawingArea) {
+class PanDragged(val mouseButton: MouseButton, val cursorPan: Cursor, val drawingArea: FXDrawingArea) {
     private var xStartPan: Double = 0.0
     private var yStartPan: Double = 0.0
     private var currentDefaultCursor: Cursor = Cursor.DEFAULT
 
-    private val eventHandlerMousePressedPanDragged: EventHandler<MouseEvent> by lazy {
+    private val eventHandlerMousePressed: EventHandler<MouseEvent> by lazy {
         EventHandler<MouseEvent> { event ->
             if (event.button == mouseButton) {
                 currentDefaultCursor = drawingArea.node.cursor ?: Cursor.DEFAULT
@@ -128,15 +128,15 @@ class PanDragged(val mouseButton: MouseButton, val cursorWhenDraged: Cursor, val
             }
         }
     }
-    private val eventHandlerMouseReleasedPanDragged: EventHandler<MouseEvent> by lazy {
+    private val eventHandlerMouseReleased: EventHandler<MouseEvent> by lazy {
         EventHandler<MouseEvent> { event ->
             if (event.button == mouseButton) drawingArea.node.cursor = currentDefaultCursor
         }
     }
-    private val eventHandlerMouseDraggedPanDragged: EventHandler<MouseEvent> by lazy {
+    private val eventHandlerMouseDragged: EventHandler<MouseEvent> by lazy {
         EventHandler<MouseEvent> { event ->
             if (event.isMiddleButtonDown) {
-                drawingArea.node.cursor = cursorWhenDraged
+                drawingArea.node.cursor = cursorPan
                 val worldStartPan = drawingArea.camera.worldCoordinates(
                     xCamera = xStartPan, yCamera = yStartPan
                 )
@@ -154,14 +154,65 @@ class PanDragged(val mouseButton: MouseButton, val cursorWhenDraged: Cursor, val
 
     fun enable() {
         disable()
-        drawingArea.node.addEventHandler(MouseEvent.MOUSE_PRESSED, eventHandlerMousePressedPanDragged)
-        drawingArea.node.addEventHandler(MouseEvent.MOUSE_RELEASED, eventHandlerMouseReleasedPanDragged)
-        drawingArea.node.addEventHandler(MouseEvent.MOUSE_DRAGGED, eventHandlerMouseDraggedPanDragged)
+        drawingArea.node.addEventHandler(MouseEvent.MOUSE_PRESSED, eventHandlerMousePressed)
+        drawingArea.node.addEventHandler(MouseEvent.MOUSE_RELEASED, eventHandlerMouseReleased)
+        drawingArea.node.addEventHandler(MouseEvent.MOUSE_DRAGGED, eventHandlerMouseDragged)
     }
 
     fun disable() {
-        drawingArea.node.removeEventHandler(MouseEvent.MOUSE_PRESSED, eventHandlerMousePressedPanDragged)
-        drawingArea.node.removeEventHandler(MouseEvent.MOUSE_RELEASED, eventHandlerMouseReleasedPanDragged)
-        drawingArea.node.removeEventHandler(MouseEvent.MOUSE_DRAGGED, eventHandlerMouseDraggedPanDragged)
+        drawingArea.node.removeEventHandler(MouseEvent.MOUSE_PRESSED, eventHandlerMousePressed)
+        drawingArea.node.removeEventHandler(MouseEvent.MOUSE_RELEASED, eventHandlerMouseReleased)
+        drawingArea.node.removeEventHandler(MouseEvent.MOUSE_DRAGGED, eventHandlerMouseDragged)
+    }
+}
+
+class PanClicked(val mouseButton: MouseButton, val cursorPan: Cursor, val drawingArea: FXDrawingArea) {
+    private var xStartPan: Double = 0.0
+    private var yStartPan: Double = 0.0
+    private var started: Boolean = false
+    private var currentDefaultCursor: Cursor = Cursor.DEFAULT
+
+    private val eventHandlerMouseClicked: EventHandler<MouseEvent> by lazy {
+        EventHandler<MouseEvent> { event ->
+            if (event.button == mouseButton) {
+                started = !started
+                if (started) {
+                    currentDefaultCursor = drawingArea.node.cursor ?: Cursor.DEFAULT
+                    drawingArea.node.cursor = cursorPan
+                    xStartPan = event.x
+                    yStartPan = event.y
+                } else {
+                    drawingArea.node.cursor = currentDefaultCursor
+                }
+            }
+        }
+    }
+    private val eventHandlerMouseMoved: EventHandler<MouseEvent> by lazy {
+        EventHandler<MouseEvent> { event ->
+            if (started) {
+                val worldStartPan = drawingArea.camera.worldCoordinates(
+                    xCamera = xStartPan, yCamera = yStartPan
+                )
+                val worldEndPan = drawingArea.camera.worldCoordinates(
+                    xCamera = event.x, yCamera = event.y
+                )
+                val deltaWorld = worldEndPan - worldStartPan
+                drawingArea.camera.translate(-deltaWorld.x, -deltaWorld.y)
+                xStartPan = event.x
+                yStartPan = event.y
+                drawingArea.draw()
+            }
+        }
+    }
+
+    fun enable() {
+        disable()
+        drawingArea.node.addEventHandler(MouseEvent.MOUSE_CLICKED, eventHandlerMouseClicked)
+        drawingArea.node.addEventHandler(MouseEvent.MOUSE_MOVED, eventHandlerMouseMoved)
+    }
+
+    fun disable() {
+        drawingArea.node.removeEventHandler(MouseEvent.MOUSE_CLICKED, eventHandlerMouseClicked)
+        drawingArea.node.removeEventHandler(MouseEvent.MOUSE_MOVED, eventHandlerMouseMoved)
     }
 }

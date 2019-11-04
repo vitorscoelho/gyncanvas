@@ -4,6 +4,7 @@ import javafx.scene.Cursor
 import javafx.scene.input.MouseButton
 import tornadofx.*
 import vitorscoelho.gyncanvas.core.dxf.FXDrawingArea
+import vitorscoelho.gyncanvas.core.dxf.PanClicked
 import vitorscoelho.gyncanvas.core.dxf.PanDragged
 import vitorscoelho.gyncanvas.core.dxf.ZoomScroll
 import vitorscoelho.gyncanvas.core.dxf.transformation.MutableTransformationMatrix
@@ -21,7 +22,7 @@ class MeuViewDrawingArea : View() {
     }
 
     init {
-        PanDragged(mouseButton = MouseButton.MIDDLE, cursorWhenDraged = Cursor.MOVE, drawingArea = drawingArea).enable()
+        PanDragged(mouseButton = MouseButton.MIDDLE, cursorPan = Cursor.MOVE, drawingArea = drawingArea).enable()
         ZoomScroll(zoomFactor = 1.2, drawingArea = drawingArea).enable()
     }
 
