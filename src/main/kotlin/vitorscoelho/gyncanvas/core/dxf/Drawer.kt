@@ -9,8 +9,10 @@ import vitorscoelho.gyncanvas.core.dxf.entities.AttachmentPoint
 import vitorscoelho.gyncanvas.core.dxf.transformation.ImmutableTransformationMatrix
 import vitorscoelho.gyncanvas.core.dxf.transformation.MutableTransformationMatrix
 import vitorscoelho.gyncanvas.core.dxf.transformation.TransformationMatrix
+import java.lang.Math.toDegrees
 
 abstract class Drawer {
+    abstract val camera: Camera
     abstract var fill: Color
     abstract var stroke: Color
     abstract var lineWidht: Double
@@ -28,12 +30,12 @@ abstract class Drawer {
     abstract fun moveTo(x: Double, y: Double)
     abstract fun lineTo(x: Double, y: Double)
     abstract fun arcTo(xTangent1: Double, yTangent1: Double, xTangent2: Double, yTangent2: Double, radius: Double)
-    abstract val transform: TransformationMatrix
-    abstract fun copyToTransform(transformationMatrix: TransformationMatrix)
+    abstract fun apllyCameraTransform()
 }
 
 class FXDrawer(val canvas: Canvas) : Drawer() {
     private val gc = canvas.graphicsContext2D
+    override val camera = FXCamera(canvas = canvas)
     /**Necessário fixar um tamanho de fonte para contornar bug do JavaFX com fontes muito pequenas*/
     private val fontSize = 10.0
     /**Fator utilizado para que o tamanho dos textos no Canvas sejam iguais aos dos textos do AutoCAD*/
@@ -120,8 +122,11 @@ class FXDrawer(val canvas: Canvas) : Drawer() {
         }
         get() = mapTextJustifyJFXToAutocad[gc.textBaseline]!![gc.textAlign]!!
 
-    override fun fillBackground() =
-        gc.fillRect(0.0, 0.0, this.canvas.width, this.canvas.height)
+    override fun fillBackground() = with(camera) {
+        val deltaX = xMax - xMin
+        val deltaY = yMax - yMin
+        gc.fillRect(xMin, -yMax, deltaX, deltaY)
+    }
 
     override fun strokeLine(x1: Double, y1: Double, x2: Double, y2: Double) =
         gc.strokeLine(x1, -y1, x2, -y2)
@@ -136,15 +141,14 @@ class FXDrawer(val canvas: Canvas) : Drawer() {
     }
 
     override fun fillText(text: String, size: Double, x: Double, y: Double, angle: Double) {
-        val originalMatrix = ImmutableTransformationMatrix(otherMatrix = transform)
-        val transformationMatrix = MutableTransformationMatrix(otherMatrix = originalMatrix)
-            .translate(xOffset = x, yOffset = -y)
-            .scale(factor = size * factorFontSize, xOrigin = 0.0, yOrigin = 0.0)
-        //Existe um bug no Canvas que impede fontes muito pequenas. Por isso o ajuste do tamanho teve que ser feito escalando a matriz de transformação
-        if (angle != 0.0) transformationMatrix.rotate(angle = -angle)
-        copyToTransform(transformationMatrix = transformationMatrix)
+        gc.save()
+        gc.translate(x, -y)
+        val scale =
+            size * factorFontSize //Existe um bug no Canvas que impede fontes muito pequenas. Por isso o ajuste do tamanho teve que ser feito escalando a matriz de transformação
+        gc.scale(scale, scale)
+        if (angle != 0.0) gc.rotate(toDegrees(-angle))
         gc.fillText(text, 0.0, 0.0)
-        copyToTransform(transformationMatrix = originalMatrix)
+        gc.restore()
     }
 
     override fun beginPath() = gc.beginPath()
@@ -156,16 +160,7 @@ class FXDrawer(val canvas: Canvas) : Drawer() {
     override fun arcTo(xTangent1: Double, yTangent1: Double, xTangent2: Double, yTangent2: Double, radius: Double) =
         gc.arcTo(xTangent1, -yTangent1, xTangent2, -yTangent2, radius)
 
-    override val transform: TransformationMatrix
-        get() = mutableTransform
-
-    private val mutableTransform = MutableTransformationMatrix()
-
-    override fun copyToTransform(transformationMatrix: TransformationMatrix) {
-        mutableTransform.set(otherMatrix = transformationMatrix)
-        gc.transform = mutableTransform.toAffine()
+    override fun apllyCameraTransform() {
+        gc.transform = camera.toAffine()
     }
-
-    private fun TransformationMatrix.toAffine(): Affine =
-        Affine(mxx, mxy, mxz, tx, myx, myy, myz, ty, mzx, mzy, mzz, tz)
 }

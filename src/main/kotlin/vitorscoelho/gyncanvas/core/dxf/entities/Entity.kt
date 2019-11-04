@@ -18,5 +18,5 @@ interface Entity {
 }
 
 internal fun applyLineWidth(drawer: Drawer) {
-    drawer.lineWidht = 1.0 / drawer.transform.scale
+    drawer.lineWidht = 1.0 / drawer.camera.zoom
 }

@@ -4,6 +4,8 @@ import javafx.scene.Cursor
 import javafx.scene.input.MouseButton
 import tornadofx.*
 import vitorscoelho.gyncanvas.core.dxf.FXDrawingArea
+import vitorscoelho.gyncanvas.core.dxf.PanDragged
+import vitorscoelho.gyncanvas.core.dxf.ZoomScroll
 import vitorscoelho.gyncanvas.core.dxf.transformation.MutableTransformationMatrix
 import vitorscoelho.gyncanvas.math.Vector2D
 
@@ -17,59 +19,37 @@ class MeuViewDrawingArea : View() {
     val drawingArea = FXDrawingArea().apply {
         addEntities(criarBloco().listarDesenhos())
     }
+
+    init {
+        PanDragged(mouseButton = MouseButton.MIDDLE, cursorWhenDraged = Cursor.MOVE, drawingArea = drawingArea).enable()
+        ZoomScroll(zoomFactor = 1.2, drawingArea = drawingArea).enable()
+    }
+
     val transformacoes = MutableTransformationMatrix()
     override val root = hbox {
         setPrefSize(1300.0, 600.0)
         this += drawingArea.node
-        drawingArea.draw(transformacoes)
 
-        var xPanInicial: Double = 0.0
-        var yPanInicial: Double = 0.0
-        setOnMousePressed { event ->
-            if (event.button == MouseButton.MIDDLE) {
-                xPanInicial = event.x
-                yPanInicial = event.y
-            }
-        }
-
-        setOnMouseReleased { event ->
-            if (event.button == MouseButton.MIDDLE) cursor = Cursor.DEFAULT
-        }
-
-        setOnMouseDragged { event ->
-            if (event.isMiddleButtonDown) {
-                cursor = Cursor.MOVE
-                val deltaX: Double = (event.x - xPanInicial) / transformacoes.scale
-                val deltaY: Double = (event.y - yPanInicial) / transformacoes.scale
-
-                transformacoes.translate(deltaX, deltaY)
-
-                xPanInicial = event.x
-                yPanInicial = event.y
-            }
-            drawingArea.draw(transformacoes)
-        }
-
-        val fatorDeEscala = 1.2
-        setOnScroll { event ->
-            val coordenadasMundoClique = transformacoes.worldCoordinates(xDrawingArea = event.x, yDrawingArea = event.y)
-            if (event.deltaY > 0) {
-                transformacoes.scale(
-                    factor = fatorDeEscala,
-                    xOrigin = coordenadasMundoClique.x,
-                    yOrigin = coordenadasMundoClique.y
-                )
-                println("Rolou positivo")
-            } else if (event.deltaY < 0) {
-                transformacoes.scale(
-                    factor = 1.0 / fatorDeEscala,
-                    xOrigin = coordenadasMundoClique.x,
-                    yOrigin = coordenadasMundoClique.y
-                )
-                println("Rolou negativo")
-            }
-            drawingArea.draw(transformacoes)
-        }
+//        var pontoZoom: Vector2D? = null
+//        setOnMouseClicked { event ->
+//            if (event.button == MouseButton.PRIMARY) {
+//                println("Clicou ${drawingArea.camera.worldCoordinates(event.x, event.y)}")
+////            drawingArea.camera.translate(deltaX = 20.0, deltaY = -20.0)
+//                drawingArea.camera.setPosition(x = 3.2, y = 2.05, zoom = 200.0)
+//                drawingArea.draw()
+//            } else if (event.button == MouseButton.SECONDARY) {
+//                if (pontoZoom == null) {
+//                    pontoZoom = drawingArea.camera.worldCoordinates(event.x, event.y)
+//                } else {
+//                    val outroPontoZoom = drawingArea.camera.worldCoordinates(event.x, event.y)
+//                    drawingArea.camera.zoomWindow(
+//                        x1 = pontoZoom!!.x, y1 = pontoZoom!!.y, x2 = outroPontoZoom.x, y2 = outroPontoZoom.y
+//                    )
+//                    drawingArea.draw()
+//                    pontoZoom = null
+//                }
+//            }
+//        }
     }
 }
 
