@@ -93,7 +93,7 @@ class MeuView2 : View() {
         val gc = canvas.graphicsContext2D
         gc.stroke = Color.RED
         gc.strokeLine(0.0, 0.0, 200.0, 200.0)
-        gc.strokeLine(190.0,0.0,190.0,200.0)
+        gc.strokeLine(190.0, 0.0, 190.0, 200.0)
 
 //        val node = Pane(canvas)
 //        canvas.widthProperty().bind(node.widthProperty())
@@ -103,7 +103,7 @@ class MeuView2 : View() {
         val parametros = SnapshotParameters()
         parametros.isDepthBuffer = true
         parametros.fill = Color.TRANSPARENT
-        parametros.viewport= Rectangle2D(0.0,0.0,5.0,5.0)
+        parametros.viewport = Rectangle2D(0.0, 0.0, 5.0, 5.0)
         val pane = Pane(canvas)
         Scene(pane)
         return pane.snapshot(parametros, null)

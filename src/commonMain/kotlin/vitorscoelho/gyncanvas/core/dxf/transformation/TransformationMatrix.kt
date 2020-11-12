@@ -1,7 +1,6 @@
 package vitorscoelho.gyncanvas.core.dxf.transformation
 
-import org.joml.Matrix4d
-import org.joml.Vector3d
+import com.soywiz.korma.geom.*
 import vitorscoelho.gyncanvas.math.Vector2D
 import kotlin.math.sqrt
 
@@ -82,76 +81,72 @@ class MutableTransformationMatrix : TransformationMatrix {
         this.set(otherMatrix)
     }
 
-    private val jomlMatrix = Matrix4d()
-    private val jomlScaleVector = Vector3d()
+    private val jomlMatrix = Matrix3D()
+//    private val jomlScaleVector = Vector3d() //TODO remover este trecho
 
     override var mxx: Double
         set(value) {
-            jomlMatrix.m00(value)
+            jomlMatrix.v00 = value.toFloat()
         }
-        get() = jomlMatrix.m00()
+        get() = jomlMatrix.v00.toDouble()
     override var mxy: Double
         set(value) {
-            jomlMatrix.m10(value)
+            jomlMatrix.v10 = value.toFloat()
         }
-        get() = jomlMatrix.m10()
+        get() = jomlMatrix.v10.toDouble()
     override var mxz: Double
         set(value) {
-            jomlMatrix.m20(value)
+            jomlMatrix.v20 = value.toFloat()
         }
-        get() = jomlMatrix.m20()
+        get() = jomlMatrix.v20.toDouble()
     override var tx: Double
         set(value) {
-            jomlMatrix.m30(value)
+            jomlMatrix.v30 = value.toFloat()
         }
-        get() = jomlMatrix.m30()
+        get() = jomlMatrix.v30.toDouble()
     override var myx: Double
         set(value) {
-            jomlMatrix.m01(value)
+            jomlMatrix.v01 = value.toFloat()
         }
-        get() = jomlMatrix.m01()
+        get() = jomlMatrix.v01.toDouble()
     override var myy: Double
         set(value) {
-            jomlMatrix.m11(value)
+            jomlMatrix.v11 = value.toFloat()
         }
-        get() = jomlMatrix.m11()
+        get() = jomlMatrix.v11.toDouble()
     override var myz: Double
         set(value) {
-            jomlMatrix.m21(value)
+            jomlMatrix.v21 = value.toFloat()
         }
-        get() = jomlMatrix.m21()
+        get() = jomlMatrix.v21.toDouble()
     override var ty: Double
         set(value) {
-            jomlMatrix.m31(value)
+            jomlMatrix.v31 = value.toFloat()
         }
-        get() = jomlMatrix.m31()
+        get() = jomlMatrix.v31.toDouble()
     override var mzx: Double
         set(value) {
-            jomlMatrix.m02(value)
+            jomlMatrix.v02 = value.toFloat()
         }
-        get() = jomlMatrix.m02()
+        get() = jomlMatrix.v02.toDouble()
     override var mzy: Double
         set(value) {
-            jomlMatrix.m12(value)
+            jomlMatrix.v12 = value.toFloat()
         }
-        get() = jomlMatrix.m12()
+        get() = jomlMatrix.v12.toDouble()
     override var mzz: Double
         set(value) {
-            jomlMatrix.m22(value)
+            jomlMatrix.v22 = value.toFloat()
         }
-        get() = jomlMatrix.m22()
+        get() = jomlMatrix.v22.toDouble()
     override var tz: Double
         set(value) {
-            jomlMatrix.m32(value)
+            jomlMatrix.v32 = value.toFloat()
         }
-        get() = jomlMatrix.m32()
+        get() = jomlMatrix.v32.toDouble()
 
     override var scale: Double = 1.0
         private set
-        get() {
-            jomlMatrix.getScale(jomlScaleVector)
-            return jomlScaleVector.z
-        }
 
     /**
      * Aumenta (quando maior do que 1) ou diminui (quando menor do que 1) o
@@ -162,7 +157,8 @@ class MutableTransformationMatrix : TransformationMatrix {
      * possuem a mesma dimensão das coordenadas de tela (pixels).
      */
     fun scale(factor: Double, xOrigin: Double, yOrigin: Double): MutableTransformationMatrix {
-        jomlMatrix.scaleAround(factor, xOrigin, yOrigin, 0.0)
+//        jomlMatrix.scaleAround(factor, xOrigin, yOrigin, 0.0) //TODO remover este trecho depois de descobrir como escalar na ponto Origin
+        jomlMatrix.setToScale(factor, factor, 1.0) // TODO talvez o w seja o fator
         return this
     }
 
@@ -172,17 +168,13 @@ class MutableTransformationMatrix : TransformationMatrix {
     }
 
     fun rotate(angle: Double/*, xPivo: Double, yPivo: Double*/): MutableTransformationMatrix {
-//        val quaterniond = Quaterniond(0.0, 0.0, 2.0, 0.0)
-//        matrizJOML.rotate(rotacao,xPivo,yPivo,0.0)
-//        matrizJOML.rotateAroundLocal(quaterniond, xPivo, yPivo, 0.0)
-//        matrizJOML.rotate(3.14, 0.0, 0.0, 1.0)
-//        matrizJOML.rotate(quaterniond)
-        jomlMatrix.rotateZ(angle)
+        jomlMatrix.rotate(Angle(angle), 0.0, 0.0, 1.0)
         return this
     }
 
     fun reflect(eixoX: Double, eixoY: Double, pontoX: Double, pontoY: Double): MutableTransformationMatrix {
-        jomlMatrix.reflect(eixoY, eixoX, 0.0, pontoX, pontoY, 0.0)
+//        jomlMatrix.reflect(eixoY, eixoX, 0.0, pontoX, pontoY, 0.0)
+        TODO("Not yet implemented")
         return this
     }
 
@@ -206,10 +198,10 @@ class MutableTransformationMatrix : TransformationMatrix {
     }
 
     fun worldCoordinates(xDrawingArea: Double, yDrawingArea: Double): Vector2D {
-        val vetorJOML = Vector3d(xDrawingArea, yDrawingArea, 0.0)
-//        matrizJOML.transformPosition(vetorJOML)
-        val matrizInversa = Matrix4d(jomlMatrix).invert()
-        matrizInversa.transformPosition(vetorJOML)
-        return Vector2D(x = vetorJOML.x, y = vetorJOML.y)
+//        val vetorJOML = Vector3d(xDrawingArea, yDrawingArea, 0.0)
+//        val matrizInversa = Matrix4d(jomlMatrix).invert()
+//        matrizInversa.transformPosition(vetorJOML)
+//        return Vector2D(x = vetorJOML.x, y = vetorJOML.y)
+        TODO("Not yet implemented")
     }
 }

@@ -1,5 +1,5 @@
 plugins {
-    id 'org.jetbrains.kotlin.multiplatform' version "$kotlin_version"
+    id 'org.jetbrains.kotlin.multiplatform' version "$kotlinVersion"
 }
 
 group 'vitorscoelho'
@@ -8,9 +8,8 @@ version '1.0-SNAPSHOT'
 repositories {
     mavenCentral()
     jcenter()
-    maven {
-        url 'https://dl.bintray.com/kotlin/kotlinx'
-    }
+    maven { url 'https://dl.bintray.com/kotlin/kotlinx' }
+    maven { url("https://dl.bintray.com/korlibs/korlibs") }
 }
 
 kotlin {
@@ -31,7 +30,9 @@ kotlin {
     }
     sourceSets {
         commonMain {
-
+            dependencies {
+                implementation("com.soywiz.korlibs.korma:korma:$kormaVersion")
+            }
         }
         commonTest {
             dependencies {
