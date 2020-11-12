@@ -68,7 +68,6 @@ class FXCamera internal constructor(private val canvas: Canvas) : Camera() {
         yMin = bottomLeft.y
         xMax = upperRight.x
         yMax = upperRight.y
-        println("BL: $bottomLeft /// UR: $upperRight")
     }
 
     override fun setPosition(x: Double, y: Double) {
