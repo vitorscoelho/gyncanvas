@@ -1,31 +1,67 @@
 plugins {
-    id 'java'
-    id 'org.jetbrains.kotlin.jvm' version '1.4.10'
+    id 'org.jetbrains.kotlin.multiplatform' version "$kotlin_version"
 }
 
 group 'vitorscoelho'
 version '1.0-SNAPSHOT'
 
-sourceCompatibility = 1.8
-
 repositories {
     mavenCentral()
     jcenter()
+    maven {
+        url 'https://dl.bintray.com/kotlin/kotlinx'
+    }
 }
 
-dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+kotlin {
+    jvm {
+        compilations.all {
+            kotlinOptions.jvmTarget = '1.8'
+        }
+    }
+    js {
+        browser {
+            testTask {
+                useKarma {
+                    useChromeHeadless()
+                    webpackConfig.cssSupport.enabled = true
+                }
+            }
+        }
+    }
+    sourceSets {
+        commonMain {
 
-    compile group: 'com.fasterxml.jackson.module', name: 'jackson-module-kotlin', version: '2.9.9'
-    compile 'no.tornado:tornadofx:1.7.19'
-    compile 'org.joml:joml-jdk8:1.9.14'
+        }
+        commonTest {
+            dependencies {
+                implementation kotlin('test-common')
+                implementation kotlin('test-annotations-common')
+            }
+        }
+        jvmMain {
+            dependencies {
+                implementation "org.jetbrains.kotlin:kotlin-stdlib"
 
-    testCompile group: 'junit', name: 'junit', version: '4.12'
-}
-
-compileKotlin {
-    kotlinOptions.jvmTarget = "1.8"
-}
-compileTestKotlin {
-    kotlinOptions.jvmTarget = "1.8"
+                implementation group: 'com.fasterxml.jackson.module', name: 'jackson-module-kotlin', version: '2.9.9'
+                implementation 'no.tornado:tornadofx:1.7.19'
+                implementation 'org.joml:joml-jdk8:1.9.14'
+            }
+        }
+        jvmTest {
+            dependencies {
+                implementation kotlin('test-junit')
+            }
+        }
+        jsMain {
+            dependencies {
+                implementation 'org.jetbrains.kotlinx:kotlinx-html-js:0.7.2'
+            }
+        }
+        jsTest {
+            dependencies {
+                implementation kotlin('test-js')
+            }
+        }
+    }
 }
