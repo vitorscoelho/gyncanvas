@@ -1,4 +1,4 @@
-package vitorscoelho.gyncanvas
+package testes
 
 import javafx.geometry.Rectangle2D
 import javafx.scene.Scene
@@ -16,7 +16,6 @@ import javafx.scene.text.Text
 import javafx.scene.transform.Affine
 import org.joml.Matrix3x2d
 import org.joml.Matrix4d
-import org.joml.Vector3d
 import tornadofx.*
 import kotlin.random.Random
 

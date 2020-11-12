@@ -1,10 +1,9 @@
-package vitorscoelho.gyncanvas
+package testes
 
 import javafx.scene.Cursor
 import javafx.scene.input.MouseButton
 import tornadofx.*
 import vitorscoelho.gyncanvas.core.dxf.FXDrawingArea
-import vitorscoelho.gyncanvas.core.dxf.PanClicked
 import vitorscoelho.gyncanvas.core.dxf.PanDragged
 import vitorscoelho.gyncanvas.core.dxf.ZoomScroll
 import vitorscoelho.gyncanvas.core.dxf.transformation.MutableTransformationMatrix

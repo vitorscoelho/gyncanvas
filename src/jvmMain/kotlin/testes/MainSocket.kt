@@ -1,4 +1,4 @@
-package vitorscoelho.gyncanvas
+package testes
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import vitorscoelho.gyncanvas.json.FuncaoJsonDrawing

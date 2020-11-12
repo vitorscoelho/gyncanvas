@@ -1,4 +1,4 @@
-package vitorscoelho.gyncanvas
+package testes
 
 import javafx.scene.text.Font
 import vitorscoelho.gyncanvas.core.dxf.Color

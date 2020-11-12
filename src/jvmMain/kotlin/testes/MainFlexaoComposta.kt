@@ -1,4 +1,4 @@
-package vitorscoelho.gyncanvas
+package testes
 
 import kotlin.math.pow
 
