@@ -142,8 +142,9 @@ class MutableTransformationMatrix : TransformationMatrix {
         ty = otherMatrix.ty
     }
 
-    fun identity() {
+    fun identity(): MutableTransformationMatrix {
         set(otherMatrix = TransformationMatrix.IDENTITY)
+        return this
     }
 
     fun worldCoordinates(xDrawingArea: Double, yDrawingArea: Double): Vector2D {

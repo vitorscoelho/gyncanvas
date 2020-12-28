@@ -1,14 +1,14 @@
 package vitorscoelho.gyncanvas.core.dxf.entities
 
 import vitorscoelho.gyncanvas.core.dxf.Color
-import vitorscoelho.gyncanvas.core.dxf.Drawer
+import vitorscoelho.gyncanvas.core.Drawer
 import vitorscoelho.gyncanvas.core.dxf.ShapeType
 import vitorscoelho.gyncanvas.core.dxf.tables.Layer
 import vitorscoelho.gyncanvas.core.dxf.tables.TextStyle
-import vitorscoelho.gyncanvas.core.dxf.transformation.ImmutableTransformationMatrix
-import vitorscoelho.gyncanvas.core.dxf.transformation.MutableTransformationMatrix
 import vitorscoelho.gyncanvas.core.dxf.transformation.TransformationMatrix
 import vitorscoelho.gyncanvas.math.Vector2D
+import vitorscoelho.gyncanvas.core.dxf.entities.AttachmentPointBaseline.*
+import vitorscoelho.gyncanvas.core.dxf.entities.AttachmentPointAlign.*
 
 data class MText(
     override val layer: Layer,
@@ -27,7 +27,7 @@ data class MText(
         applyLineWidth(drawer = drawer)
         drawer.setFont(fontName = style.fontFileName)
         drawer.textJustify = justify
-        drawer.fillText(text = content,size = size,x = position.x,y = position.y,angle = rotation)
+        drawer.fillText(text = content, size = size, x = position.x, y = position.y, angle = rotation)
     }
 
     override fun transform(transformationMatrix: TransformationMatrix): MText =
@@ -39,7 +39,17 @@ data class MText(
         )
 }
 
-enum class AttachmentPoint(val value: Byte) {
-    TOP_LEFT(value = 1), TOP_CENTER(value = 2), TOP_RIGHT(value = 3), MIDDLE_LEFT(value = 4), MIDDLE_CENTER(value = 5),
-    MIDDLE_RIGHT(value = 6), BOTTOM_LEFT(value = 7), BOTTOM_CENTER(value = 8), BOTTOM_RIGHT(value = 9)
+enum class AttachmentPoint(val value: Byte, val baseline: AttachmentPointBaseline, val align: AttachmentPointAlign) {
+    TOP_LEFT(value = 1, baseline = TOP, align = LEFT),
+    TOP_CENTER(value = 2, baseline = TOP, align = CENTER),
+    TOP_RIGHT(value = 3, baseline = TOP, align = RIGHT),
+    MIDDLE_LEFT(value = 4, baseline = MIDDLE, align = LEFT),
+    MIDDLE_CENTER(value = 5, baseline = MIDDLE, align = CENTER),
+    MIDDLE_RIGHT(value = 6, baseline = MIDDLE, align = RIGHT),
+    BOTTOM_LEFT(value = 7, baseline = BOTTOM, align = LEFT),
+    BOTTOM_CENTER(value = 8, baseline = BOTTOM, align = CENTER),
+    BOTTOM_RIGHT(value = 9, baseline = BOTTOM, align = RIGHT);
 }
+
+enum class AttachmentPointBaseline { TOP, MIDDLE, BOTTOM }
+enum class AttachmentPointAlign { LEFT, CENTER, RIGHT }

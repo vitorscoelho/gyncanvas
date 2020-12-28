@@ -1,15 +1,41 @@
-package vitorscoelho.gyncanvas.core.dxf
+package vitorscoelho.gyncanvas.core
 
 import javafx.geometry.VPos
 import javafx.scene.canvas.Canvas
 import javafx.scene.text.Font
 import javafx.scene.text.TextAlignment
+import javafx.scene.transform.Affine
+import vitorscoelho.gyncanvas.core.dxf.Color
 import vitorscoelho.gyncanvas.core.dxf.entities.AttachmentPoint
+import vitorscoelho.gyncanvas.core.dxf.entities.AttachmentPointAlign
+import vitorscoelho.gyncanvas.core.dxf.entities.AttachmentPointBaseline
+import vitorscoelho.gyncanvas.core.dxf.transformation.TransformationMatrix
 import java.lang.Math.toDegrees
+
+private val mapTextBaselineAutocadToJFX: Map<AttachmentPointBaseline, VPos> by lazy {
+    mapOf(
+        AttachmentPointBaseline.BOTTOM to VPos.BOTTOM,
+        AttachmentPointBaseline.MIDDLE to VPos.CENTER,
+        AttachmentPointBaseline.TOP to VPos.TOP
+    )
+}
+
+private val mapTextAlignAutocadToJFX: Map<AttachmentPointAlign, TextAlignment> by lazy {
+    mapOf(
+        AttachmentPointAlign.LEFT to TextAlignment.LEFT,
+        AttachmentPointAlign.CENTER to TextAlignment.CENTER,
+        AttachmentPointAlign.RIGHT to TextAlignment.RIGHT
+    )
+}
+
+private fun getTextBaseline(attachmentPointBaseline: AttachmentPointBaseline): VPos =
+    mapTextBaselineAutocadToJFX[attachmentPointBaseline]!!
+
+private fun getTextAlign(attachmentPointAlign: AttachmentPointAlign): TextAlignment =
+    mapTextAlignAutocadToJFX[attachmentPointAlign]!!
 
 class FXDrawer(val canvas: Canvas) : Drawer() {
     private val gc = canvas.graphicsContext2D
-    override val camera = FXCamera(canvas = canvas)
 
     /**Necessário fixar um tamanho de fonte para contornar bug do JavaFX com fontes muito pequenas*/
     private val fontSize = 10.0
@@ -64,45 +90,24 @@ class FXDrawer(val canvas: Canvas) : Drawer() {
         gc.font = getFXFont(fontName = fontName)
     }
 
-    private val mapTextJustifyAutocadToJFX = mapOf(
-        AttachmentPoint.BOTTOM_LEFT to { gc.textBaseline = VPos.BOTTOM;gc.textAlign = TextAlignment.LEFT },
-        AttachmentPoint.BOTTOM_CENTER to { gc.textBaseline = VPos.BOTTOM;gc.textAlign = TextAlignment.CENTER },
-        AttachmentPoint.BOTTOM_RIGHT to { gc.textBaseline = VPos.BOTTOM;gc.textAlign = TextAlignment.RIGHT },
-        AttachmentPoint.MIDDLE_LEFT to { gc.textBaseline = VPos.CENTER;gc.textAlign = TextAlignment.LEFT },
-        AttachmentPoint.MIDDLE_CENTER to { gc.textBaseline = VPos.CENTER;gc.textAlign = TextAlignment.CENTER },
-        AttachmentPoint.MIDDLE_RIGHT to { gc.textBaseline = VPos.CENTER;gc.textAlign = TextAlignment.RIGHT },
-        AttachmentPoint.TOP_LEFT to { gc.textBaseline = VPos.TOP;gc.textAlign = TextAlignment.LEFT },
-        AttachmentPoint.TOP_CENTER to { gc.textBaseline = VPos.TOP;gc.textAlign = TextAlignment.CENTER },
-        AttachmentPoint.TOP_RIGHT to { gc.textBaseline = VPos.TOP;gc.textAlign = TextAlignment.RIGHT }
-    )
-    private val mapTextJustifyJFXToAutocad = mapOf<VPos, Map<TextAlignment, AttachmentPoint>>(
-        VPos.BOTTOM to mapOf(
-            TextAlignment.LEFT to AttachmentPoint.BOTTOM_LEFT,
-            TextAlignment.CENTER to AttachmentPoint.BOTTOM_CENTER,
-            TextAlignment.RIGHT to AttachmentPoint.BOTTOM_RIGHT
-        ),
-        VPos.CENTER to mapOf(
-            TextAlignment.LEFT to AttachmentPoint.MIDDLE_LEFT,
-            TextAlignment.CENTER to AttachmentPoint.MIDDLE_CENTER,
-            TextAlignment.RIGHT to AttachmentPoint.MIDDLE_RIGHT
-        ),
-        VPos.TOP to mapOf(
-            TextAlignment.LEFT to AttachmentPoint.TOP_LEFT,
-            TextAlignment.CENTER to AttachmentPoint.TOP_CENTER,
-            TextAlignment.RIGHT to AttachmentPoint.TOP_RIGHT
-        )
-    )
-    override var textJustify: AttachmentPoint
+    override var textJustify: AttachmentPoint = AttachmentPoint.BOTTOM_LEFT
         set(value) {
-            mapTextJustifyAutocadToJFX[value]!!.invoke()
+            field = value
+            gc.textAlign = getTextAlign(value.align)
+            gc.textBaseline = getTextBaseline(value.baseline)
         }
-        get() = mapTextJustifyJFXToAutocad[gc.textBaseline]!![gc.textAlign]!!
 
-    override fun fillBackground() = with(camera) {
-        val deltaX = xMax - xMin
-        val deltaY = yMax - yMin
-        gc.fillRect(xMin, -yMax, deltaX, deltaY)
-    }
+    override fun fillBackground() = gc.fillRect(
+        0.0,
+        0.0,
+        this.canvas.width,
+        this.canvas.height
+    )//TODO corrigir, pois, desta maneira,não preenche a tela inteira, já que a matriz pode estar alterada por escalas, translações, etc...
+//        with(camera) {
+//        val deltaX = xMax - xMin
+//        val deltaY = yMax - yMin
+//        gc.fillRect(xMin, -yMax, deltaX, deltaY)
+//    }
 
     override fun strokeLine(x1: Double, y1: Double, x2: Double, y2: Double) =
         gc.strokeLine(x1, -y1, x2, -y2)
@@ -136,7 +141,14 @@ class FXDrawer(val canvas: Canvas) : Drawer() {
     override fun arcTo(xTangent1: Double, yTangent1: Double, xTangent2: Double, yTangent2: Double, radius: Double) =
         gc.arcTo(xTangent1, -yTangent1, xTangent2, -yTangent2, radius)
 
-    override fun apllyCameraTransform() {
-        gc.transform = camera.toAffine()
-    }
+    protected override  var transform: TransformationMatrix = TransformationMatrix.IDENTITY
+        set(value) {
+            field = value
+            gc.transform = with(value) {
+                Affine(
+                    mxx, mxy, tx,
+                    myx, myy, ty
+                )
+            }
+        }
 }

@@ -2,12 +2,11 @@ package vitorscoelho.gyncanvas.core.dxf.entities
 
 import vitorscoelho.gyncanvas.core.dxf.Color
 import vitorscoelho.gyncanvas.core.dxf.DimStyleOverrides
-import vitorscoelho.gyncanvas.core.dxf.entities.dimensionutils.RotatedDimensionSequence
-import vitorscoelho.gyncanvas.core.dxf.entities.dimensionutils.RotatedDimensionSequenceStart
 import vitorscoelho.gyncanvas.core.dxf.tables.DimStyle
 import vitorscoelho.gyncanvas.core.dxf.tables.Layer
 import vitorscoelho.gyncanvas.math.Vector2D
 import kotlin.math.atan
+import vitorscoelho.gyncanvas.math.degreesToRadians
 
 data class AlignedDimension(
     override val layer: Layer,
@@ -32,7 +31,7 @@ data class AlignedDimension(
         val rightPoint: Vector2D = points.maxBy { it.x }!!
         val leftPoint: Vector2D = points.minBy { it.x }!!
         val delta = rightPoint - leftPoint
-        if (delta.x == 0.0) return@run Math.toRadians(90.0)
+        if (delta.x == 0.0) return@run degreesToRadians(90.0)
         return@run atan(delta.y / delta.x)
     }
 ) {

@@ -1,7 +1,7 @@
 package vitorscoelho.gyncanvas.core.dxf
 
+import vitorscoelho.gyncanvas.core.Drawer
 import vitorscoelho.gyncanvas.core.dxf.entities.Entity
-import vitorscoelho.gyncanvas.core.dxf.tables.Layer
 
 enum class ShapeType {
     STROKED {
