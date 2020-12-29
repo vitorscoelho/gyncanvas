@@ -4,6 +4,8 @@ import kotlinx.html.dom.*
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.RenderingContext
+import org.w3c.dom.events.Event
+import org.w3c.dom.events.MouseEvent
 import vitorscoelho.JSDrawingArea
 import vitorscoelho.gyncanvas.core.dxf.Color
 import vitorscoelho.gyncanvas.testes.desenhar
@@ -27,6 +29,14 @@ fun main() {
         }
     }
     val canvas = document.getElementById("canvasTeste") as HTMLCanvasElement
+//    val context = canvas.getContext("2d") as CanvasRenderingContext2D
+//    context.fillStyle = "blue"
+//    context.fillRect(50.0, 80.0, 50.0, 80.0)
+//    canvas.addEventListener(type = "click", callback = {ev->
+//        context.fillStyle="red"
+//        context.fillRect(50.0,80.0,50.0,80.0)
+//        console.log(ev)
+//    })
     val drawingArea = JSDrawingArea(canvas = canvas)
     desenhar(drawingArea = drawingArea)
 }
