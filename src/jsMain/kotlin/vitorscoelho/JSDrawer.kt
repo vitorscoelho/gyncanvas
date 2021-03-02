@@ -1,7 +1,6 @@
 package vitorscoelho
 
 import org.w3c.dom.*
-import org.w3c.dom.events.MouseEvent
 import vitorscoelho.gyncanvas.core.dxf.Color
 import vitorscoelho.gyncanvas.core.Drawer
 import vitorscoelho.gyncanvas.core.dxf.entities.AttachmentPoint

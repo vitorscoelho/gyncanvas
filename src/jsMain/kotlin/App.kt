@@ -29,13 +29,18 @@ fun main() {
         }
     }
     val canvas = document.getElementById("canvasTeste") as HTMLCanvasElement
-//    val context = canvas.getContext("2d") as CanvasRenderingContext2D
+    val context = canvas.getContext("2d") as CanvasRenderingContext2D
 //    context.fillStyle = "blue"
 //    context.fillRect(50.0, 80.0, 50.0, 80.0)
-//    canvas.addEventListener(type = "click", callback = {ev->
-//        context.fillStyle="red"
-//        context.fillRect(50.0,80.0,50.0,80.0)
+//    canvas.addEventListener(type = "click", callback = { ev ->
+//        context.fillStyle = "red"
+//        context.fillRect(50.0, 80.0, 50.0, 80.0)
 //        console.log(ev)
+//    })
+//    canvas.addEventListener(type = "wheel", callback = { ev ->
+//        ev.preventDefault()
+//        context.fillStyle = "green"
+//        context.fillRect(200.0,200.0,100.0,40.0)
 //    })
     val drawingArea = JSDrawingArea(canvas = canvas)
     desenhar(drawingArea = drawingArea)

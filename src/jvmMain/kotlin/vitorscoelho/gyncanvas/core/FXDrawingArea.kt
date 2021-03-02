@@ -1,15 +1,16 @@
 package vitorscoelho.gyncanvas.core
 
 import javafx.event.EventHandler
+import javafx.event.EventType
 import javafx.scene.Node
 import javafx.scene.canvas.Canvas
 import javafx.scene.input.MouseButton
 import javafx.scene.input.MouseEvent
+import javafx.scene.input.ScrollEvent
 import javafx.scene.layout.Pane
 import tornadofx.fitToParentSize
-import vitorscoelho.gyncanvas.core.event.CanvasMouseButton
-import vitorscoelho.gyncanvas.core.event.CanvasMouseEvent
-import vitorscoelho.gyncanvas.core.event.CanvasMouseEventType
+import vitorscoelho.gyncanvas.core.event.*
+import java.lang.IllegalArgumentException
 
 private val mapMouseButton by lazy {
     mapOf(
@@ -35,12 +36,37 @@ private val mapMouseEventType by lazy {
     )
 }
 
-private fun mouseEventType(canvasMouseEventType: CanvasMouseEventType) = mapMouseEventType[canvasMouseEventType]!!
+private fun jfxMouseEventType(canvasMouseEventType: CanvasMouseEventType) = mapMouseEventType[canvasMouseEventType]!!
+private fun jfxScrollEventType(canvasScrollEventType: CanvasScrollEventType) = ScrollEvent.SCROLL
+private fun jfxEventType(canvasEventType: CanvasEventType): EventType<*> = when (canvasEventType) {
+    is CanvasMouseEventType -> jfxMouseEventType(canvasEventType)
+    is CanvasScrollEventType -> jfxScrollEventType(canvasEventType)
+    else -> throw IllegalArgumentException("Unsupported EventType")
+}
 
 class ImplementacaoCanvasMouseEvent(private val mouseEventJFX: MouseEvent) : CanvasMouseEvent {
     override val x: Double get() = mouseEventJFX.x
     override val y: Double get() = mouseEventJFX.y
     override val button: CanvasMouseButton get() = mouseButton(mouseEventJFX.button)
+}
+
+class ImplementacaoCanvasScrollEvent(private val scrollEventJFX: ScrollEvent) : CanvasScrollEvent {
+    override val x: Double get() = scrollEventJFX.x
+    override val y: Double get() = scrollEventJFX.y
+    override val deltaY: Double get() = scrollEventJFX.deltaY
+}
+
+private fun createJfxEventHandler(
+    eventType: CanvasEventType,
+    eventHandler: (event: CanvasEvent) -> Unit
+): EventHandler<*> {
+    return when (eventType) {
+        is CanvasMouseEventType -> EventHandler<MouseEvent> { event -> eventHandler(ImplementacaoCanvasMouseEvent(event)) }
+        is CanvasScrollEventType -> EventHandler<ScrollEvent> { event ->
+            eventHandler(ImplementacaoCanvasScrollEvent(event))
+        }
+        else -> throw IllegalArgumentException("Unsupported EventType")
+    }
 }
 
 class FXDrawingArea : DrawingArea() {
@@ -59,48 +85,66 @@ class FXDrawingArea : DrawingArea() {
 //        canvas.heightProperty().onChange { draw() }
     }
 
-    override fun addEventListener(eventType: CanvasMouseEventType, eventHandler: (event: CanvasMouseEvent) -> Unit) {
-        val jfxEventType = mouseEventType(eventType)
+    private fun addEventListenerPadrao(eventType: CanvasEventType, eventHandler: (event: CanvasEvent) -> Unit) {
         if (listenersManager.listenerJaIncluso(eventType, eventHandler)) return
-        val jfxEventHandler = EventHandler<MouseEvent> { event -> eventHandler(ImplementacaoCanvasMouseEvent(event)) }
+        val jfxEventType: EventType<*> = jfxEventType(eventType)
+        val jfxEventHandler: EventHandler<*> = createJfxEventHandler(eventType, eventHandler)
         listenersManager.add(eventType, eventHandler, jfxEventHandler)
         node.addEventHandler(jfxEventType, jfxEventHandler)
     }
 
+    override fun addEventListener(eventType: CanvasMouseEventType, eventHandler: (event: CanvasMouseEvent) -> Unit) {
+        addEventListenerPadrao(eventType, eventHandler as (CanvasEvent) -> Unit)
+    }
+
     override fun removeEventListener(eventType: CanvasMouseEventType, eventHandler: (event: CanvasMouseEvent) -> Unit) {
-        val jfxEventType = mouseEventType(eventType)
+        val jfxEventType = jfxMouseEventType(eventType)
         if (!listenersManager.listenerJaIncluso(eventType, eventHandler)) return
         val jfxEventHandler = listenersManager.getJFXEventHandler(eventType, eventHandler)
         listenersManager.remove(eventType, eventHandler)
         node.removeEventHandler(jfxEventType, jfxEventHandler as EventHandler<in MouseEvent>)
     }
 
+    override fun addEventListener(eventType: CanvasScrollEventType, eventHandler: (event: CanvasScrollEvent) -> Unit) {
+        TODO("Not yet implemented")
+    }
+
+    override fun removeEventListener(
+        eventType: CanvasScrollEventType,
+        eventHandler: (event: CanvasScrollEvent) -> Unit
+    ) {
+        TODO("Not yet implemented")
+    }
+
     private val listenersManager = object {
         private val listenersMap =
-            hashMapOf<Pair<CanvasMouseEventType, (event: CanvasMouseEvent) -> Unit>, EventHandler<*>>()
+            hashMapOf<Pair<CanvasEventType, (event: CanvasEvent) -> Unit>, EventHandler<*>>()
 
-        fun listenerJaIncluso(eventType: CanvasMouseEventType, eventHandler: (event: CanvasMouseEvent) -> Unit): Boolean {
+        fun listenerJaIncluso(
+            eventType: CanvasEventType,
+            eventHandler: (event: CanvasEvent) -> Unit
+        ): Boolean {
             return listenersMap.containsKey(key = Pair(eventType, eventHandler))
         }
 
         fun add(
-            eventType: CanvasMouseEventType,
-            eventHandler: (event: CanvasMouseEvent) -> Unit,
+            eventType: CanvasEventType,
+            eventHandler: (event: CanvasEvent) -> Unit,
             jfxEventHandler: EventHandler<*>
         ) {
             listenersMap[Pair(eventType, eventHandler)] = jfxEventHandler
         }
 
         fun remove(
-            eventType: CanvasMouseEventType,
-            eventHandler: (event: CanvasMouseEvent) -> Unit
+            eventType: CanvasEventType,
+            eventHandler: (event: CanvasEvent) -> Unit
         ) {
             listenersMap.remove(Pair(eventType, eventHandler))
         }
 
         fun getJFXEventHandler(
-            eventType: CanvasMouseEventType,
-            eventHandler: (event: CanvasMouseEvent) -> Unit
+            eventType: CanvasEventType,
+            eventHandler: (event: CanvasEvent) -> Unit
         ): EventHandler<*>? {
             return listenersMap[Pair(eventType, eventHandler)]
         }

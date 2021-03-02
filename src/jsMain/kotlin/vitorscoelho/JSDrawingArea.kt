@@ -44,27 +44,33 @@ class ImplementacaoCanvasMouseEvent(private val mouseEventJS: MouseEvent) : Canv
 class JSDrawingArea(val canvas: HTMLCanvasElement) : DrawingArea() {
     init {
         //Impedindo que abra o menu de contexto quando clicar com o botão direito do mouse no canvas
-        canvas.addEventListener("contextmenu", { event -> event.preventDefault() }, false)
+        canvas.addEventListener(type = "contextmenu", callback = { event -> event.preventDefault() })
+        //Impedindo a rolagem da página quando usar o scroll do mouse sobre o canvas
+        canvas.addEventListener(type = "wheel", callback = { ev -> ev.preventDefault() })
     }
 
     override val drawer = JSDrawer(canvas = canvas)
 
     private fun gerarCallbackParaClick(eventHandler: (event: CanvasMouseEvent) -> Unit): EventListener {
         return EventListener { eventMouseDown: Event ->
+            //Usa a ideia encontrada em https://medium.com/@MelkorNemesis/handling-javascript-mouseup-event-outside-element-b0a34090bb56
             val botaoPressionado = (eventMouseDown as MouseEvent).button
             var callbackEventMouseUp: (Event) -> Unit = {}
             callbackEventMouseUp = { eventMouseUp: Event ->
                 val botaoSolto = (eventMouseUp as MouseEvent).button
                 if (botaoSolto == botaoPressionado) {
-                    document.removeEventListener("mouseup", callbackEventMouseUp)
-                    val mouseEstaNoCanvas: Boolean = let {
+                    document.removeEventListener(
+                        "mouseup",
+                        callbackEventMouseUp
+                    )//Usa o 'document' ao invés do 'canvas' para possibilitar a captura do botão solto fora do canvas
+                    val mouseEstaNoCanvasQuandoSoltaOBotao: Boolean = let {
                         val elementoSobOMouse = document.elementFromPoint(
                             x = eventMouseUp.clientX.toDouble(),
                             y = eventMouseUp.clientY.toDouble()
                         )
                         elementoSobOMouse == canvas
                     }
-                    if (mouseEstaNoCanvas) {
+                    if (mouseEstaNoCanvasQuandoSoltaOBotao) {
                         eventHandler(ImplementacaoCanvasMouseEvent(eventMouseUp))
                     }
                 }
@@ -97,7 +103,10 @@ class JSDrawingArea(val canvas: HTMLCanvasElement) : DrawingArea() {
         private val listenersMap =
             hashMapOf<Pair<CanvasMouseEventType, (event: CanvasMouseEvent) -> Unit>, EventListener>()
 
-        fun listenerJaIncluso(eventType: CanvasMouseEventType, eventHandler: (event: CanvasMouseEvent) -> Unit): Boolean {
+        fun listenerJaIncluso(
+            eventType: CanvasMouseEventType,
+            eventHandler: (event: CanvasMouseEvent) -> Unit
+        ): Boolean {
             return listenersMap.containsKey(key = Pair(eventType, eventHandler))
         }
 

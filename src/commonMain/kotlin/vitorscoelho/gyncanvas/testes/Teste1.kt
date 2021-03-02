@@ -5,9 +5,7 @@ import vitorscoelho.gyncanvas.core.dxf.Color
 import vitorscoelho.gyncanvas.core.dxf.entities.*
 import vitorscoelho.gyncanvas.core.dxf.tables.Layer
 import vitorscoelho.gyncanvas.core.dxf.tables.TextStyle
-import vitorscoelho.gyncanvas.core.event.CanvasMouseButton
-import vitorscoelho.gyncanvas.core.event.CanvasMouseEvent
-import vitorscoelho.gyncanvas.core.event.CanvasMouseEventType
+import vitorscoelho.gyncanvas.core.event.*
 import vitorscoelho.gyncanvas.math.Vector2D
 
 fun desenhar(drawingArea: DrawingArea) {
@@ -51,6 +49,11 @@ fun desenhar(drawingArea: DrawingArea) {
             panClicked.disable()
         }
     }
+    val zoomScroll = ZoomScroll(
+        zoomFactor = 1.2,
+        drawingArea = drawingArea
+    )
+//    zoomScroll.enable()
 }
 
 class PanClicked(
@@ -117,5 +120,34 @@ class PanClicked(
             eventType = CanvasMouseEventType.MOUSE_MOVED,
             eventHandler = eventHandlerMouseMoved
         )
+    }
+}
+
+class ZoomScroll(val zoomFactor: Double, val drawingArea: DrawingArea) {
+    init {
+        require(zoomFactor > 0.0) { "|zoomFactor| must be greater than zero" }
+    }
+
+    private val eventHandlerScroll = { event: CanvasScrollEvent ->
+//        val worldCoordinates = drawingArea.camera.worldCoordinates(xCamera = event.x, yCamera = event.y)
+        val factor = when {
+            event.deltaY > 0 -> zoomFactor
+            event.deltaY < 0 -> 1.0 / zoomFactor
+            else -> 0.0
+        }
+        println(factor)
+//        if (factor != 0.0) {
+//            drawingArea.camera.appendZoom(factor = factor, xTarget = worldCoordinates.x, yTarget = worldCoordinates.y)
+//            drawingArea.draw()
+//        }
+    }
+
+    fun enable() {
+        disable()
+        drawingArea.addEventListener(CanvasScrollEventType.SCROLL, eventHandlerScroll)
+    }
+
+    fun disable() {
+        drawingArea.removeEventListener(CanvasScrollEventType.SCROLL, eventHandlerScroll)
     }
 }

@@ -1,7 +1,7 @@
 package vitorscoelho.gyncanvas.core.event
 
-interface CanvasMouseEvent : CanvasEvent {
+interface CanvasScrollEvent : CanvasEvent {
     val x: Double
     val y: Double
-    val button: CanvasMouseButton
+    val deltaY: Double
 }
