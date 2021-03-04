@@ -68,7 +68,7 @@ private class ImplementacaoCanvasMouseEvent(private val mouseEventJS: MouseEvent
 private class ImplementacaoCanvasScrollEvent(private val scrollEventJS: WheelEvent) : CanvasScrollEvent {
     override val x: Double get() = scrollEventJS.x
     override val y: Double get() = scrollEventJS.y
-    override val deltaY: Double get() = scrollEventJS.deltaY
+    override val deltaY: Double get() = -scrollEventJS.deltaY
 }
 
 private val mapMouseButton by lazy {
