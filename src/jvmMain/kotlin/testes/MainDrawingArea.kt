@@ -1,6 +1,7 @@
 package testes
 
 import tornadofx.*
+import vitorscoelho.gyncanvas.core.FXCanvasController
 import vitorscoelho.gyncanvas.core.FXDrawingArea
 import vitorscoelho.gyncanvas.testes.desenhar
 
@@ -12,6 +13,7 @@ class MeuAppDrawingArea : App(MeuViewDrawingArea::class)
 
 class MeuViewDrawingArea : View() {
     private val drawingArea = FXDrawingArea()
+    private val controller = FXCanvasController(drawingArea)
 
     override val root = hbox {
         setPrefSize(1300.0, 600.0)
@@ -20,6 +22,6 @@ class MeuViewDrawingArea : View() {
 
     override fun onDock() {
         super.onDock()
-        desenhar(drawingArea = drawingArea)
+        desenhar(controller)
     }
 }

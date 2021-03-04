@@ -1,14 +1,19 @@
 package vitorscoelho.gyncanvas.testes
 
-import vitorscoelho.gyncanvas.core.DrawingArea
+import vitorscoelho.gyncanvas.core.CanvasController
 import vitorscoelho.gyncanvas.core.dxf.Color
-import vitorscoelho.gyncanvas.core.dxf.entities.*
+import vitorscoelho.gyncanvas.core.dxf.entities.Circle
+import vitorscoelho.gyncanvas.core.dxf.entities.Entity
+import vitorscoelho.gyncanvas.core.dxf.entities.Line
 import vitorscoelho.gyncanvas.core.dxf.tables.Layer
-import vitorscoelho.gyncanvas.core.dxf.tables.TextStyle
-import vitorscoelho.gyncanvas.core.event.*
+import vitorscoelho.gyncanvas.core.event.CanvasMouseButton
+import vitorscoelho.gyncanvas.core.event.CanvasMouseEvent
+import vitorscoelho.gyncanvas.core.event.CanvasScrollEvent
 import vitorscoelho.gyncanvas.math.Vector2D
 
-fun desenhar(drawingArea: DrawingArea) {
+fun desenhar(controller: CanvasController) {
+    val drawer = controller.drawer
+    val listeners = controller.listeners
     val entitiesList = listOf<Entity>(
         Line(
             layer = Layer(name = "la", color = Color.INDEX_10),
@@ -30,17 +35,16 @@ fun desenhar(drawingArea: DrawingArea) {
 //            content = "Título"
 //        )
     )
-    val drawer = drawingArea.drawer
     var x = 600.0
     drawer.camera.setPosition(x, 100.0)
     drawer.draw(backgroundColor = Color.INDEX_250, entities = entitiesList)
     val panClicked = PanClicked(
         mouseButton = CanvasMouseButton.MIDDLE,
-        drawingArea = drawingArea,
+        controller = controller,
         drawFunction = { drawer.draw(backgroundColor = Color.INDEX_250, entities = entitiesList) }
     )
     panClicked.enable()
-    drawingArea.addEventListener(eventType = CanvasMouseEventType.MOUSE_CLICKED) { event ->
+    listeners.addMouseClicked { event ->
         if (event.button == CanvasMouseButton.PRIMARY) {
             println("Ligou")
             panClicked.enable()
@@ -49,17 +53,14 @@ fun desenhar(drawingArea: DrawingArea) {
             panClicked.disable()
         }
     }
-    val zoomScroll = ZoomScroll(
-        zoomFactor = 1.2,
-        drawingArea = drawingArea
-    )
-//    zoomScroll.enable()
+    val zoomScroll = ZoomScroll(zoomFactor = 1.2, controller = controller)
+    zoomScroll.enable()
 }
 
 class PanClicked(
     val mouseButton: CanvasMouseButton,
     /*val cursorPan: Cursor,*/
-    val drawingArea: DrawingArea,
+    val controller: CanvasController,
     val drawFunction: () -> Unit
 ) {
     private var xStartPan: Double = 0.0
@@ -82,7 +83,7 @@ class PanClicked(
 
     private val eventHandlerMouseMoved = { event: CanvasMouseEvent ->
         if (started) {
-            val camera = drawingArea.drawer.camera
+            val camera = controller.drawer.camera
 //            val worldStartPan = camera.worldCoordinates(
 //                xCamera = xStartPan, yCamera = yStartPan
 //            )
@@ -101,29 +102,17 @@ class PanClicked(
 
     fun enable() {
         disable()
-        drawingArea.addEventListener(
-            eventType = CanvasMouseEventType.MOUSE_CLICKED,
-            eventHandler = eventHandlerMouseClicked
-        )
-        drawingArea.addEventListener(
-            eventType = CanvasMouseEventType.MOUSE_MOVED,
-            eventHandler = eventHandlerMouseMoved
-        )
+        controller.listeners.addMouseClicked(eventHandler = eventHandlerMouseClicked)
+        controller.listeners.addMouseMoved(eventHandler = eventHandlerMouseMoved)
     }
 
     fun disable() {
-        drawingArea.removeEventListener(
-            eventType = CanvasMouseEventType.MOUSE_CLICKED,
-            eventHandler = eventHandlerMouseClicked
-        )
-        drawingArea.removeEventListener(
-            eventType = CanvasMouseEventType.MOUSE_MOVED,
-            eventHandler = eventHandlerMouseMoved
-        )
+        controller.listeners.removeMouseClicked(eventHandler = eventHandlerMouseClicked)
+        controller.listeners.removeMouseMoved(eventHandler = eventHandlerMouseMoved)
     }
 }
 
-class ZoomScroll(val zoomFactor: Double, val drawingArea: DrawingArea) {
+class ZoomScroll(val zoomFactor: Double, val controller: CanvasController) {
     init {
         require(zoomFactor > 0.0) { "|zoomFactor| must be greater than zero" }
     }
@@ -144,10 +133,10 @@ class ZoomScroll(val zoomFactor: Double, val drawingArea: DrawingArea) {
 
     fun enable() {
         disable()
-        drawingArea.addEventListener(CanvasScrollEventType.SCROLL, eventHandlerScroll)
+        controller.listeners.addScroll(eventHandlerScroll)
     }
 
     fun disable() {
-        drawingArea.removeEventListener(CanvasScrollEventType.SCROLL, eventHandlerScroll)
+        controller.listeners.removeScroll(eventHandlerScroll)
     }
 }

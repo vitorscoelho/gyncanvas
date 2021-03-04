@@ -25,6 +25,10 @@ class Camera {
     fun translate(deltaX: Double = 0.0, deltaY: Double = 0.0) {
         _transformationMatrix.translate(xOffset = deltaX, yOffset = deltaY)
     }
+
+    fun appendZoom(factor: Double, xTarget: Double, yTarget: Double) {
+        _transformationMatrix.scale(factor = factor, xOrigin = xTarget, yOrigin = yTarget)
+    }
 //
 //    abstract fun appendZoom(factor: Double, xTarget: Double, yTarget: Double)
 //    abstract fun zoomWindow(x1: Double, y1: Double, x2: Double, y2: Double)

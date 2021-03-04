@@ -3,11 +3,7 @@ import kotlinx.html.*
 import kotlinx.html.dom.*
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLCanvasElement
-import org.w3c.dom.RenderingContext
-import org.w3c.dom.events.Event
-import org.w3c.dom.events.MouseEvent
-import vitorscoelho.JSDrawingArea
-import vitorscoelho.gyncanvas.core.dxf.Color
+import vitorscoelho.JSCanvasController
 import vitorscoelho.gyncanvas.testes.desenhar
 
 fun main() {
@@ -42,6 +38,6 @@ fun main() {
 //        context.fillStyle = "green"
 //        context.fillRect(200.0,200.0,100.0,40.0)
 //    })
-    val drawingArea = JSDrawingArea(canvas = canvas)
-    desenhar(drawingArea = drawingArea)
+    val controller = JSCanvasController(canvas = canvas)
+    desenhar(controller = controller)
 }
