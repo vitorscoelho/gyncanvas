@@ -4,7 +4,7 @@ import vitorscoelho.gyncanvas.core.dxf.Color
 import vitorscoelho.gyncanvas.core.Drawer
 import vitorscoelho.gyncanvas.core.dxf.ShapeType
 import vitorscoelho.gyncanvas.core.dxf.tables.Layer
-import vitorscoelho.gyncanvas.core.dxf.transformation.TransformationMatrix
+import vitorscoelho.gyncanvas.math.TransformationMatrix
 
 interface Entity {
     val shapeType: ShapeType
@@ -18,5 +18,5 @@ interface Entity {
 }
 
 internal fun applyLineWidth(drawer: Drawer) {
-    drawer.lineWidht = 1.0// / drawer.camera.zoom TODO
+    drawer.lineWidht = 1.0 / drawer.camera.zoom
 }

@@ -1,7 +1,7 @@
 package vitorscoelho.gyncanvas.core.dxf.entities.path
 
 import vitorscoelho.gyncanvas.core.Drawer
-import vitorscoelho.gyncanvas.core.dxf.transformation.TransformationMatrix
+import vitorscoelho.gyncanvas.math.TransformationMatrix
 import vitorscoelho.gyncanvas.math.Vector2D
 
 sealed class PathStep {

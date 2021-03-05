@@ -7,7 +7,7 @@ import vitorscoelho.gyncanvas.core.dxf.entities.path.LwPolylineBuilder
 import vitorscoelho.gyncanvas.core.dxf.entities.path.LwPolylineBuilderStep1
 import vitorscoelho.gyncanvas.core.dxf.entities.path.PathStep
 import vitorscoelho.gyncanvas.core.dxf.tables.Layer
-import vitorscoelho.gyncanvas.core.dxf.transformation.TransformationMatrix
+import vitorscoelho.gyncanvas.math.TransformationMatrix
 import vitorscoelho.gyncanvas.math.Vector2D
 
 data class LwPolyline internal constructor(

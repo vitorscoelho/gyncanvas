@@ -5,7 +5,7 @@ import vitorscoelho.gyncanvas.core.Drawer
 import vitorscoelho.gyncanvas.core.dxf.ShapeType
 import vitorscoelho.gyncanvas.core.dxf.entities.path.PathStep
 import vitorscoelho.gyncanvas.core.dxf.tables.Layer
-import vitorscoelho.gyncanvas.core.dxf.transformation.TransformationMatrix
+import vitorscoelho.gyncanvas.math.TransformationMatrix
 
 data class Hatch internal constructor(
     override val layer: Layer,

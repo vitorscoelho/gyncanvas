@@ -3,8 +3,7 @@ package vitorscoelho.gyncanvas.core.dxf.entities
 import vitorscoelho.gyncanvas.core.dxf.Color
 import vitorscoelho.gyncanvas.core.dxf.blocks.Block
 import vitorscoelho.gyncanvas.core.dxf.tables.Layer
-import vitorscoelho.gyncanvas.core.dxf.transformation.MutableTransformationMatrix
-import vitorscoelho.gyncanvas.core.dxf.transformation.TransformationMatrix
+import vitorscoelho.gyncanvas.math.TransformationMatrix
 import vitorscoelho.gyncanvas.math.Vector2D
 
 data class Insert(
@@ -22,8 +21,8 @@ data class Insert(
         get() = scaleFactor
 
     init {
-        val transformationMatrix: TransformationMatrix = MutableTransformationMatrix()
-            .translate(xOffset = insertionPoint.x, yOffset = insertionPoint.y)
+        val transformationMatrix: TransformationMatrix = TransformationMatrix.IDENTITY
+            .translate(tx = insertionPoint.x, ty = insertionPoint.y)
             .scale(factor = scaleFactor, xOrigin = 0.0, yOrigin = 0.0)
             .rotate(angle = rotationAngle)
         this.entities = block.entities.map { it.transform(transformationMatrix) }

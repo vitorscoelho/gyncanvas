@@ -9,7 +9,7 @@ import vitorscoelho.gyncanvas.core.dxf.Color
 import vitorscoelho.gyncanvas.core.dxf.entities.AttachmentPoint
 import vitorscoelho.gyncanvas.core.dxf.entities.AttachmentPointAlign
 import vitorscoelho.gyncanvas.core.dxf.entities.AttachmentPointBaseline
-import vitorscoelho.gyncanvas.core.dxf.transformation.TransformationMatrix
+import vitorscoelho.gyncanvas.math.TransformationMatrix
 import java.lang.Math.toDegrees
 
 private val mapTextBaselineAutocadToJFX: Map<AttachmentPointBaseline, VPos> by lazy {

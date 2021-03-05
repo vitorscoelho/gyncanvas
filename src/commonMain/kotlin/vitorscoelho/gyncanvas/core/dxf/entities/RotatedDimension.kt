@@ -8,7 +8,7 @@ import vitorscoelho.gyncanvas.core.dxf.entities.dimensionutils.RotatedDimensionS
 import vitorscoelho.gyncanvas.core.dxf.entities.dimensionutils.RotatedDimensionSequenceStart
 import vitorscoelho.gyncanvas.core.dxf.tables.DimStyle
 import vitorscoelho.gyncanvas.core.dxf.tables.Layer
-import vitorscoelho.gyncanvas.core.dxf.transformation.TransformationMatrix
+import vitorscoelho.gyncanvas.math.TransformationMatrix
 import vitorscoelho.gyncanvas.math.Vector2D
 import vitorscoelho.gyncanvas.math.degreesToRadians
 

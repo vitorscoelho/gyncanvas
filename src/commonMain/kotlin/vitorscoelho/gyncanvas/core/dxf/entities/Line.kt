@@ -4,7 +4,7 @@ import vitorscoelho.gyncanvas.core.dxf.Color
 import vitorscoelho.gyncanvas.core.Drawer
 import vitorscoelho.gyncanvas.core.dxf.ShapeType
 import vitorscoelho.gyncanvas.core.dxf.tables.Layer
-import vitorscoelho.gyncanvas.core.dxf.transformation.TransformationMatrix
+import vitorscoelho.gyncanvas.math.TransformationMatrix
 import vitorscoelho.gyncanvas.math.Vector2D
 
 data class Line(

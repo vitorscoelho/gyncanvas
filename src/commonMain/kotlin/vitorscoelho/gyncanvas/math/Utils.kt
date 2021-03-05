@@ -1,6 +1,6 @@
 package vitorscoelho.gyncanvas.math
 
-import com.soywiz.korma.geom.Angle
+import kotlin.math.PI
 
 /**
  * Converts an angle measured in degrees to an approximately
@@ -9,7 +9,7 @@ import com.soywiz.korma.geom.Angle
  * @param   angdeg   an angle, in degrees
  * @return  the measurement of the angle [angdeg] in radians.
  */
-fun degreesToRadians(angdeg: Double) = Angle.degreesToRadians(angdeg)
+fun degreesToRadians(angdeg: Double) = angdeg * PI / 180.0
 
 /**
  * Converts an angle measured in radians to an approximately
@@ -20,4 +20,4 @@ fun degreesToRadians(angdeg: Double) = Angle.degreesToRadians(angdeg)
  * @param   angrad   an angle, in radians
  * @return  the measurement of the angle [angrad] in degrees.
  */
-fun radiansToDegrees(angrad: Double) = Angle.radiansToDegrees(angrad)
+fun radiansToDegrees(angrad: Double) = angrad * 180.0 / PI

@@ -1,19 +1,10 @@
 package vitorscoelho.gyncanvas.math
 
-import com.soywiz.korma.geom.Point
-import vitorscoelho.gyncanvas.core.dxf.transformation.TransformationMatrix
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.math.sqrt
 
-class Vector2D(x: Double, y: Double) {
-    private val kormaVector = Point(x, y)
-
-    val x: Double
-        get() = this.kormaVector.x
-
-    val y: Double
-        get() = this.kormaVector.y
+class Vector2D(val x: Double, val y: Double) {
 
     fun distance(otherVector: Vector2D): Double = distance(vector1 = this, vector2 = otherVector)
 
@@ -25,7 +16,6 @@ class Vector2D(x: Double, y: Double) {
             y = this.y + deltaY
         )
     }
-
 
     /**
      * @return Um novo vetor que representa 'this' rotacionada com o (0,0) sendo o pivô.

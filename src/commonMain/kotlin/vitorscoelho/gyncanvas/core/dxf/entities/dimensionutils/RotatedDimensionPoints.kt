@@ -1,7 +1,6 @@
 package vitorscoelho.gyncanvas.core.dxf.entities.dimensionutils
 
-import vitorscoelho.gyncanvas.core.dxf.transformation.MutableTransformationMatrix
-import vitorscoelho.gyncanvas.core.dxf.transformation.TransformationMatrix
+import vitorscoelho.gyncanvas.math.TransformationMatrix
 import vitorscoelho.gyncanvas.math.Vector2D
 import kotlin.math.PI
 
@@ -33,15 +32,15 @@ internal class RotatedDimensionPoints(
 
     init {
         val originPoint = xPoint1
-        val transformationMatrix: TransformationMatrix = MutableTransformationMatrix()
+        val transformationMatrix: TransformationMatrix = TransformationMatrix.IDENTITY
             .rotate(angle = -angle)
-            .translate(xOffset = -originPoint.x, yOffset = -originPoint.y)
+            .translate(tx = -originPoint.x, ty = -originPoint.y)
         val localXPoint1 = xPoint1.transform(transformationMatrix)
         val localXPoint2 = xPoint2.transform(transformationMatrix)
         val yDimensionLine = dimensionLineReferencePoint.transform(transformationMatrix).y
 
-        val reverseTransformationMatrix: TransformationMatrix = MutableTransformationMatrix()
-            .translate(xOffset = originPoint.x, yOffset = originPoint.y)
+        val reverseTransformationMatrix: TransformationMatrix = TransformationMatrix.IDENTITY
+            .translate(tx = originPoint.x, ty = originPoint.y)
             .rotate(angle = angle)
 
         this.point1DimensionLine =

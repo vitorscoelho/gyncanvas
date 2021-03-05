@@ -41,3 +41,9 @@ fun main() {
     val controller = JSCanvasController(canvas = canvas)
     desenhar(controller = controller)
 }
+
+@ExperimentalJsExport
+@JsExport
+fun desenhando(canvas: HTMLCanvasElement) {
+    desenhar(controller = JSCanvasController(canvas))
+}

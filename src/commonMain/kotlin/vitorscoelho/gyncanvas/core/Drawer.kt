@@ -4,11 +4,11 @@ import vitorscoelho.gyncanvas.core.dxf.Color
 import vitorscoelho.gyncanvas.core.dxf.entities.AttachmentPoint
 import vitorscoelho.gyncanvas.core.dxf.entities.CompositeEntity
 import vitorscoelho.gyncanvas.core.dxf.entities.Entity
-import vitorscoelho.gyncanvas.core.dxf.transformation.TransformationMatrix
+import vitorscoelho.gyncanvas.math.TransformationMatrix
 import kotlin.js.JsName
 
 abstract class Drawer {
-    val camera = Camera()
+    val camera: Camera by lazy { Camera() }
 
     protected abstract var transform: TransformationMatrix
 

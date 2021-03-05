@@ -1,12 +1,13 @@
 package vitorscoelho
 
+import kotlinx.browser.window
 import org.w3c.dom.*
 import vitorscoelho.gyncanvas.core.dxf.Color
 import vitorscoelho.gyncanvas.core.Drawer
 import vitorscoelho.gyncanvas.core.dxf.entities.AttachmentPoint
 import vitorscoelho.gyncanvas.core.dxf.entities.AttachmentPointAlign
 import vitorscoelho.gyncanvas.core.dxf.entities.AttachmentPointBaseline
-import vitorscoelho.gyncanvas.core.dxf.transformation.TransformationMatrix
+import vitorscoelho.gyncanvas.math.TransformationMatrix
 
 private val mapTextBaselineAutocadToCanvasJS: Map<AttachmentPointBaseline, CanvasTextBaseline> by lazy {
     mapOf(
@@ -34,6 +35,10 @@ private fun stringRgb(color: Color) = "rgb(${color.red},${color.green},${color.b
 
 class JSDrawer(val canvas: HTMLCanvasElement) : Drawer() {
     private val gc: CanvasRenderingContext2D = canvas.getContext("2d")!! as CanvasRenderingContext2D
+
+    init {
+        window.addEventListener("resize", { println("Mudou tamanho")})
+    }
 
     override var fill: Color = Color.INDEX_250
         set(value) {

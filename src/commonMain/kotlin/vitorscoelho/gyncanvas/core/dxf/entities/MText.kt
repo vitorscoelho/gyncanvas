@@ -5,7 +5,7 @@ import vitorscoelho.gyncanvas.core.Drawer
 import vitorscoelho.gyncanvas.core.dxf.ShapeType
 import vitorscoelho.gyncanvas.core.dxf.tables.Layer
 import vitorscoelho.gyncanvas.core.dxf.tables.TextStyle
-import vitorscoelho.gyncanvas.core.dxf.transformation.TransformationMatrix
+import vitorscoelho.gyncanvas.math.TransformationMatrix
 import vitorscoelho.gyncanvas.math.Vector2D
 import vitorscoelho.gyncanvas.core.dxf.entities.AttachmentPointBaseline.*
 import vitorscoelho.gyncanvas.core.dxf.entities.AttachmentPointAlign.*

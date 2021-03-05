@@ -38,10 +38,11 @@ fun desenhar(controller: CanvasController) {
     var x = 600.0
     drawer.camera.setPosition(x, 100.0)
     drawer.draw(backgroundColor = Color.INDEX_250, entities = entitiesList)
+    val drawFunction = { drawer.draw(backgroundColor = Color.INDEX_250, entities = entitiesList) }
     val panClicked = PanClicked(
         mouseButton = CanvasMouseButton.MIDDLE,
         controller = controller,
-        drawFunction = { drawer.draw(backgroundColor = Color.INDEX_250, entities = entitiesList) }
+        drawFunction = drawFunction
     )
     panClicked.enable()
     listeners.addMouseClicked { event ->
@@ -53,7 +54,7 @@ fun desenhar(controller: CanvasController) {
             panClicked.disable()
         }
     }
-    val zoomScroll = ZoomScroll(zoomFactor = 1.2, controller = controller)
+    val zoomScroll = ZoomScroll(zoomFactor = 1.2, controller = controller, drawFunction = drawFunction)
     zoomScroll.enable()
 }
 
@@ -112,23 +113,25 @@ class PanClicked(
     }
 }
 
-class ZoomScroll(val zoomFactor: Double, val controller: CanvasController) {
+class ZoomScroll(val zoomFactor: Double, val controller: CanvasController, val drawFunction: () -> Unit) {
     init {
         require(zoomFactor > 0.0) { "|zoomFactor| must be greater than zero" }
     }
 
     private val eventHandlerScroll = { event: CanvasScrollEvent ->
 //        val worldCoordinates = drawingArea.camera.worldCoordinates(xCamera = event.x, yCamera = event.y)
+        println("deltaY = ${event.deltaY}")
         val factor = when {
             event.deltaY > 0 -> zoomFactor
             event.deltaY < 0 -> 1.0 / zoomFactor
             else -> 0.0
         }
         println(factor)
-//        if (factor != 0.0) {
-//            drawingArea.camera.appendZoom(factor = factor, xTarget = worldCoordinates.x, yTarget = worldCoordinates.y)
-//            drawingArea.draw()
-//        }
+        if (factor != 0.0) {
+//            controller.drawer.camera.appendZoom(factor = factor, xTarget = worldCoordinates.x, yTarget = worldCoordinates.y)
+            controller.drawer.camera.appendZoom(factor = factor, xTarget = event.x, yTarget = event.y)
+            drawFunction()
+        }
     }
 
     fun enable() {

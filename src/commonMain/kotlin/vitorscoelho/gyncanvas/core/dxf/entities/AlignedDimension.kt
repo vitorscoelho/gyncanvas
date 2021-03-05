@@ -28,8 +28,8 @@ data class AlignedDimension(
     text = text,
     angle = run {
         val points = arrayOf(xPoint1, xPoint2)
-        val rightPoint: Vector2D = points.maxBy { it.x }!!
-        val leftPoint: Vector2D = points.minBy { it.x }!!
+        val rightPoint: Vector2D = points.maxByOrNull({ it.x })!!
+        val leftPoint: Vector2D = points.minByOrNull({ it.x })!!
         val delta = rightPoint - leftPoint
         if (delta.x == 0.0) return@run degreesToRadians(90.0)
         return@run atan(delta.y / delta.x)
