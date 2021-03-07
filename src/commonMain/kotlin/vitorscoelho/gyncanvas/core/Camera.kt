@@ -120,36 +120,50 @@ import vitorscoelho.gyncanvas.math.TransformationMatrix
 //    fun worldDistance(distCamera: Double) = distCamera / zoom
 //}
 
-class Camera {
-    var xCenter: Double = 0.0
+class Camera(val drawer: Drawer) {
+    var xCenter = 0.0
         private set
-    var yCenter: Double = 0.0
+    var yCenter = 0.0
         private set
-    var zoom: Double = 1.0
+    var xWorldMin = 0.0
+        private set
+    var xWorldMax = 0.0
+        private set
+    var yWordMin = 0.0
+        private set
+    var yWordMax = 0.0
+        private set
+
+    var zoom = 1.0
         private set
 
     var transformationMatrix: TransformationMatrix = TransformationMatrix.IDENTITY
         private set
+        get() = TransformationMatrix(
+            mxx = zoom, mxy = 0.0, tx = drawer.canvasWidth / 2.0 - xCenter,
+            myx = 0.0, myy = zoom, ty = drawer.canvasHeight / 2.0 - yCenter
+        )
+//            TransformationMatrix.IDENTITY
+//            .translate(
+//                tx = drawer.canvasWidth / 2.0 - xCenter,
+//                ty = drawer.canvasHeight / 2.0 - yCenter
+//            ).scale(zoom)
 
-    fun setPosition(x: Double, y: Double) {
-        this.transformationMatrix = TransformationMatrix.IDENTITY.translate(tx = x, ty = y)
+    /**
+     * Posiciona a camera
+     * @param xCenter a abcissa do mundo para onde aponta o centro da camera
+     * @param yCenter a ordenada do mundo para onde aponta o centro da camera
+     * @param zoom zoom da camera. É a proporção (unidade do mundo)/(pixel).
+     */
+    fun setPosition(xCenter: Double, yCenter: Double, zoom: Double) {
+        val deltaXWorld = drawer.canvasWidth / zoom
+        val deltaYWorld = drawer.canvasHeight / zoom
+        this.xCenter = xCenter
+        this.yCenter = yCenter
+        this.xWorldMin = xCenter - deltaXWorld / 2.0
+        this.xWorldMax = xCenter + deltaXWorld / 2.0
+        this.yWordMin = yCenter - deltaYWorld / 2.0
+        this.yWordMax = yCenter + deltaYWorld / 2.0
+        this.zoom = zoom
     }
-
-    //    abstract fun setPosition(x: Double, y: Double, zoom: Double)
-    fun translate(deltaX: Double = 0.0, deltaY: Double = 0.0) {
-        this.transformationMatrix = transformationMatrix.translate(tx = deltaX, ty = deltaY)
-    }
-
-    fun appendZoom(factor: Double, xTarget: Double, yTarget: Double) {
-        zoom *= factor
-        this.transformationMatrix = transformationMatrix.scale(factor = factor, xOrigin = xTarget, yOrigin = yTarget)
-    }
-//
-//    abstract fun appendZoom(factor: Double, xTarget: Double, yTarget: Double)
-//    abstract fun zoomWindow(x1: Double, y1: Double, x2: Double, y2: Double)
-//
-//    //    abstract fun coordinates(): Vector2D
-//    abstract fun worldCoordinates(xCamera: Double, yCamera: Double): Vector2D
-//
-//    abstract fun worldDistance(distCamera: Double): Double
 }

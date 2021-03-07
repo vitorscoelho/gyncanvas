@@ -37,6 +37,13 @@ private fun getTextAlign(attachmentPointAlign: AttachmentPointAlign): TextAlignm
 class FXDrawer(val canvas: Canvas) : Drawer() {
     private val gc = canvas.graphicsContext2D
 
+    override var canvasWidth: Double
+        get() = this.canvas.width
+        set(value) {}
+    override var canvasHeight: Double
+        get() = this.canvas.height
+        set(value) {}
+
     /**Necessário fixar um tamanho de fonte para contornar bug do JavaFX com fontes muito pequenas*/
     private val fontSize = 10.0
 
@@ -97,21 +104,15 @@ class FXDrawer(val canvas: Canvas) : Drawer() {
             gc.textBaseline = getTextBaseline(value.baseline)
         }
 
-    override fun fillBackground() = gc.fillRect(
-        0.0,
-        0.0,
-        this.canvas.width,
-        this.canvas.height
-    )//TODO corrigir, pois, desta maneira,não preenche a tela inteira, já que a matriz pode estar alterada por escalas, translações, etc...
-//        with(camera) {
-//        val deltaX = xMax - xMin
-//        val deltaY = yMax - yMin
-//        gc.fillRect(xMin, -yMax, deltaX, deltaY)
-//    }
+    override fun fillBackground() {
+        val currentTransform = transform
+        transform = TransformationMatrix.IDENTITY
+        gc.fillRect(0.0, 0.0, this.canvas.width, this.canvas.height)
+        transform = currentTransform
+    }
 
     override fun strokeLine(x1: Double, y1: Double, x2: Double, y2: Double) =
         gc.strokeLine(x1, -y1, x2, -y2)
-
 
     override fun strokeCircle(xCenter: Double, yCenter: Double, diameter: Double) {
         val radius = diameter / 2.0
@@ -141,7 +142,7 @@ class FXDrawer(val canvas: Canvas) : Drawer() {
     override fun arcTo(xTangent1: Double, yTangent1: Double, xTangent2: Double, yTangent2: Double, radius: Double) =
         gc.arcTo(xTangent1, -yTangent1, xTangent2, -yTangent2, radius)
 
-    protected override  var transform: TransformationMatrix = TransformationMatrix.IDENTITY
+    protected override var transform: TransformationMatrix = TransformationMatrix.IDENTITY
         set(value) {
             field = value
             gc.transform = with(value) {

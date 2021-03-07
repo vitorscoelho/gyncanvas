@@ -2,10 +2,6 @@ package vitorscoelho.gyncanvas.testes
 
 import vitorscoelho.gyncanvas.core.CanvasController
 import vitorscoelho.gyncanvas.core.dxf.Color
-import vitorscoelho.gyncanvas.core.dxf.entities.Circle
-import vitorscoelho.gyncanvas.core.dxf.entities.Entity
-import vitorscoelho.gyncanvas.core.dxf.entities.Line
-import vitorscoelho.gyncanvas.core.dxf.tables.Layer
 import vitorscoelho.gyncanvas.core.event.CanvasMouseButton
 import vitorscoelho.gyncanvas.core.event.CanvasMouseEvent
 import vitorscoelho.gyncanvas.core.event.CanvasScrollEvent
@@ -14,17 +10,18 @@ import vitorscoelho.gyncanvas.math.Vector2D
 fun desenhar(controller: CanvasController) {
     val drawer = controller.drawer
     val listeners = controller.listeners
-    val entitiesList = listOf<Entity>(
-        Line(
-            layer = Layer(name = "la", color = Color.INDEX_10),
-            startPoint = Vector2D(x = 0.0, y = 0.0),
-            endPoint = Vector2D(x = 600.0, y = -300.0)
-        ),
-        Circle(
-            layer = Layer(name = "ci", color = Color.INDEX_103),
-            centerPoint = Vector2D(x = 600.0, y = -300.0),
-            diameter = 200.0
-        ),
+    val entitiesList = criarBloco().listarDesenhos()
+//    val entitiesList = listOf<Entity>(
+//        Line(
+//            layer = Layer(name = "la", color = Color.INDEX_10),
+//            startPoint = Vector2D(x = 0.0, y = 0.0),
+//            endPoint = Vector2D(x = 600.0, y = -300.0)
+//        ),
+//        Circle(
+//            layer = Layer(name = "ci", color = Color.INDEX_103),
+//            centerPoint = Vector2D(x = 600.0, y = -300.0),
+//            diameter = 200.0
+//        ),
 //        MText(
 //            layer = Layer(name = "te", color = Color.INDEX_10),
 //            style = TextStyle(name = "ts", fontName = "Ubuntu Light", fontFileName = "Ubuntu Light"),
@@ -34,9 +31,10 @@ fun desenhar(controller: CanvasController) {
 //            position = Vector2D(x = 600.0, y = -300.0),
 //            content = "Título"
 //        )
-    )
+//    )
     var x = 600.0
-    drawer.camera.setPosition(x, 100.0)
+//    drawer.camera.setPosition(x, 100.0)
+//    drawer.camera.setPosition(xCenter = 3.2, yCenter = 0.0, zoom = 500.0)
     drawer.draw(backgroundColor = Color.INDEX_250, entities = entitiesList)
     val drawFunction = { drawer.draw(backgroundColor = Color.INDEX_250, entities = entitiesList) }
     val panClicked = PanClicked(
@@ -45,15 +43,15 @@ fun desenhar(controller: CanvasController) {
         drawFunction = drawFunction
     )
     panClicked.enable()
-    listeners.addMouseClicked { event ->
-        if (event.button == CanvasMouseButton.PRIMARY) {
-            println("Ligou")
-            panClicked.enable()
-        } else if (event.button == CanvasMouseButton.SECONDARY) {
-            println("Desligou")
-            panClicked.disable()
-        }
-    }
+//    listeners.addMouseClicked { event ->
+//        if (event.button == CanvasMouseButton.PRIMARY) {
+//            println("Ligou")
+//            panClicked.enable()
+//        } else if (event.button == CanvasMouseButton.SECONDARY) {
+//            println("Desligou")
+//            panClicked.disable()
+//        }
+//    }
     val zoomScroll = ZoomScroll(zoomFactor = 1.2, controller = controller, drawFunction = drawFunction)
     zoomScroll.enable()
 }
@@ -85,16 +83,11 @@ class PanClicked(
     private val eventHandlerMouseMoved = { event: CanvasMouseEvent ->
         if (started) {
             val camera = controller.drawer.camera
-//            val worldStartPan = camera.worldCoordinates(
-//                xCamera = xStartPan, yCamera = yStartPan
-//            )
-//            val worldEndPan = camera.worldCoordinates(
-//                xCamera = event.x, yCamera = event.y
-//            )
-            val worldStartPan = Vector2D(x = xStartPan, y = yStartPan)
-            val worldEndPan = Vector2D(x = event.x, y = event.y)
-            val deltaWorld = worldEndPan - worldStartPan
-            camera.translate(deltaWorld.x, deltaWorld.y)
+            camera.setPosition(
+                xCenter = camera.xCenter - (event.x - xStartPan),
+                yCenter = camera.yCenter - (event.y - yStartPan),
+                zoom = camera.zoom
+            )
             xStartPan = event.x
             yStartPan = event.y
             drawFunction()
@@ -119,17 +112,35 @@ class ZoomScroll(val zoomFactor: Double, val controller: CanvasController, val d
     }
 
     private val eventHandlerScroll = { event: CanvasScrollEvent ->
-//        val worldCoordinates = drawingArea.camera.worldCoordinates(xCamera = event.x, yCamera = event.y)
-        println("deltaY = ${event.deltaY}")
+////        val worldCoordinates = drawingArea.camera.worldCoordinates(xCamera = event.x, yCamera = event.y)
+//        println("deltaY = ${event.deltaY}")
+//        val factor = when {
+//            event.deltaY > 0 -> zoomFactor
+//            event.deltaY < 0 -> 1.0 / zoomFactor
+//            else -> 0.0
+//        }
+//        println(factor)
+//        if (factor != 0.0) {
+////            controller.drawer.camera.appendZoom(factor = factor, xTarget = worldCoordinates.x, yTarget = worldCoordinates.y)
+//            controller.drawer.camera.appendZoom(factor = factor, xTarget = event.x, yTarget = event.y)
+//            drawFunction()
+//        }
+        val drawer = controller.drawer
+        val camera = drawer.camera
         val factor = when {
             event.deltaY > 0 -> zoomFactor
             event.deltaY < 0 -> 1.0 / zoomFactor
             else -> 0.0
         }
-        println(factor)
         if (factor != 0.0) {
-//            controller.drawer.camera.appendZoom(factor = factor, xTarget = worldCoordinates.x, yTarget = worldCoordinates.y)
-            controller.drawer.camera.appendZoom(factor = factor, xTarget = event.x, yTarget = event.y)
+            val deltaX = event.x - drawer.canvasWidth / 2.0
+            val deltaY = event.y - drawer.canvasHeight / 2.0
+            println("${camera.xCenter} // ${camera.yCenter}")
+            camera.setPosition(
+                xCenter = camera.xCenter,
+                yCenter = camera.yCenter,
+                zoom = camera.zoom * factor
+            )
             drawFunction()
         }
     }

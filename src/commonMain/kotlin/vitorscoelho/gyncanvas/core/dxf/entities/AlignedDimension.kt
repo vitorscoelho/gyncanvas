@@ -6,7 +6,7 @@ import vitorscoelho.gyncanvas.core.dxf.tables.DimStyle
 import vitorscoelho.gyncanvas.core.dxf.tables.Layer
 import vitorscoelho.gyncanvas.math.Vector2D
 import kotlin.math.atan
-import vitorscoelho.gyncanvas.math.degreesToRadians
+import vitorscoelho.gyncanvas.math.toRadians
 
 data class AlignedDimension(
     override val layer: Layer,
@@ -31,7 +31,7 @@ data class AlignedDimension(
         val rightPoint: Vector2D = points.maxByOrNull({ it.x })!!
         val leftPoint: Vector2D = points.minByOrNull({ it.x })!!
         val delta = rightPoint - leftPoint
-        if (delta.x == 0.0) return@run degreesToRadians(90.0)
+        if (delta.x == 0.0) return@run toRadians(90.0)
         return@run atan(delta.y / delta.x)
     }
 ) {

@@ -9,7 +9,7 @@ import kotlin.math.PI
  * @param   angdeg   an angle, in degrees
  * @return  the measurement of the angle [angdeg] in radians.
  */
-fun degreesToRadians(angdeg: Double) = angdeg * PI / 180.0
+fun toRadians(angdeg: Double) = angdeg * PI / 180.0
 
 /**
  * Converts an angle measured in radians to an approximately
@@ -20,4 +20,4 @@ fun degreesToRadians(angdeg: Double) = angdeg * PI / 180.0
  * @param   angrad   an angle, in radians
  * @return  the measurement of the angle [angrad] in degrees.
  */
-fun radiansToDegrees(angrad: Double) = angrad * 180.0 / PI
+fun toDegrees(angrad: Double) = angrad * 180.0 / PI

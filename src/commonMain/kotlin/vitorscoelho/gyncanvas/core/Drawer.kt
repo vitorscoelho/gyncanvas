@@ -8,7 +8,12 @@ import vitorscoelho.gyncanvas.math.TransformationMatrix
 import kotlin.js.JsName
 
 abstract class Drawer {
-    val camera: Camera by lazy { Camera() }
+    val camera: Camera by lazy { Camera(this) }
+
+    abstract var canvasWidth: Double
+        protected set
+    abstract var canvasHeight: Double
+        protected set
 
     protected abstract var transform: TransformationMatrix
 

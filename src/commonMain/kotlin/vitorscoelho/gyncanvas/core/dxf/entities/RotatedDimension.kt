@@ -10,7 +10,7 @@ import vitorscoelho.gyncanvas.core.dxf.tables.DimStyle
 import vitorscoelho.gyncanvas.core.dxf.tables.Layer
 import vitorscoelho.gyncanvas.math.TransformationMatrix
 import vitorscoelho.gyncanvas.math.Vector2D
-import vitorscoelho.gyncanvas.math.degreesToRadians
+import vitorscoelho.gyncanvas.math.toRadians
 
 data class RotatedDimension(
     override val layer: Layer,
@@ -175,7 +175,7 @@ data class RotatedDimension(
         ): RotatedDimension = RotatedDimension(
             layer = layer, color = color,
             dimStyle = dimStyle, dimStyleOverrides = dimStyleOverrides,
-            xPoint1 = xPoint1, xPoint2 = xPoint2, angle = degreesToRadians(90.0),
+            xPoint1 = xPoint1, xPoint2 = xPoint2, angle = toRadians(90.0),
             text = text,
             dimensionLineReferencePoint = Vector2D(x = xDimensionLine, y = xPoint1.y)
         )
@@ -214,7 +214,7 @@ data class RotatedDimension(
             layer = layer, color = color,
             dimStyle = dimStyle, dimStyleOverrides = dimStyleOverrides,
             dimensionLineReferencePoint = Vector2D(x = xDimensionLine, y = 0.0),
-            angle = degreesToRadians(90.0), text = text
+            angle = toRadians(90.0), text = text
         )
     }
 }
