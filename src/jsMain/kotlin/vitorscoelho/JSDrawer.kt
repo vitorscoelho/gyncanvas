@@ -36,8 +36,15 @@ private fun stringRgb(color: Color) = "rgb(${color.red},${color.green},${color.b
 class JSDrawer(val canvas: HTMLCanvasElement) : Drawer() {
     private val gc: CanvasRenderingContext2D = canvas.getContext("2d")!! as CanvasRenderingContext2D
 
+    override var canvasWidth: Double
+        get() = canvas.getBoundingClientRect().width
+        set(value) {}
+    override var canvasHeight: Double
+        get() = canvas.getBoundingClientRect().width
+        set(value) {}
+
     init {
-        window.addEventListener("resize", { println("Mudou tamanho")})
+        window.addEventListener("resize", { println("Mudou tamanho") })
     }
 
     override var fill: Color = Color.INDEX_250

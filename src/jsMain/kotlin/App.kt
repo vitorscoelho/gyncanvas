@@ -1,10 +1,12 @@
 import kotlinx.browser.document
 import kotlinx.html.*
 import kotlinx.html.dom.*
-import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLCanvasElement
 import vitorscoelho.JSCanvasController
+import vitorscoelho.gyncanvas.math.TransformationMatrix
 import vitorscoelho.gyncanvas.testes.desenhar
+import vitorscoelho.gyncanvas.webgl.WebGLStaticDrawer
+import vitorscoelho.gyncanvas.webgl.primitives.COLOR_GREEN
 
 fun main() {
     document.body!!.append.div {
@@ -25,7 +27,7 @@ fun main() {
         }
     }
     val canvas = document.getElementById("canvasTeste") as HTMLCanvasElement
-    val context = canvas.getContext("2d") as CanvasRenderingContext2D
+//    val context = canvas.getContext("2d") as CanvasRenderingContext2D
 //    context.fillStyle = "blue"
 //    context.fillRect(50.0, 80.0, 50.0, 80.0)
 //    canvas.addEventListener(type = "click", callback = { ev ->
@@ -38,8 +40,11 @@ fun main() {
 //        context.fillStyle = "green"
 //        context.fillRect(200.0,200.0,100.0,40.0)
 //    })
-    val controller = JSCanvasController(canvas = canvas)
-    desenhar(controller = controller)
+//    val controller = JSCanvasController(canvas = canvas)
+//    desenhar(controller = controller)
+//    desenharTriangulo(canvas)
+    val drawer = WebGLStaticDrawer(canvas)
+    drawer.draw(COLOR_GREEN, TransformationMatrix.IDENTITY)
 }
 
 @ExperimentalJsExport
