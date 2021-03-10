@@ -1,7 +1,6 @@
 package vitorscoelho
 
 import kotlinx.browser.document
-import org.w3c.dom.DOMRect
 import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.events.Event
 import org.w3c.dom.events.EventListener
@@ -56,12 +55,12 @@ private data class EventWrapper(val canvasEventType: CanvasEventType, val handle
         }
         is CanvasMouseEventType -> {
             EventListener { event ->
-                handler(ImplementacaoCanvasMouseEvent(event as MouseEvent, canvas.getBoundingClientRect()))
+                handler(ImplementacaoCanvasMouseEvent(event as MouseEvent))
             }
         }
         is CanvasScrollEventType -> {
             EventListener { event ->
-                handler(ImplementacaoCanvasScrollEvent(event as WheelEvent, canvas.getBoundingClientRect()))
+                handler(ImplementacaoCanvasScrollEvent(event as WheelEvent))
             }
         }
         else -> {
@@ -70,23 +69,19 @@ private data class EventWrapper(val canvasEventType: CanvasEventType, val handle
     }
 }
 
-private fun MouseEvent.realX(boundingRect: DOMRect): Float = clientX - boundingRect.left.toFloat()
-private fun MouseEvent.realY(boundingRect: DOMRect): Float = clientY - boundingRect.top.toFloat()
+private val MouseEvent.realX: Float get() = offsetX.toFloat()
+private val MouseEvent.realY: Float get() = offsetY.toFloat()
 
-private class ImplementacaoCanvasMouseEvent(
-    private val mouseEventJS: MouseEvent, private val boundingRect: DOMRect
-) : CanvasMouseEvent {
-    override val x: Float get() = mouseEventJS.realX(boundingRect)
-    override val y: Float get() = mouseEventJS.realY(boundingRect)
+private class ImplementacaoCanvasMouseEvent(private val mouseEventJS: MouseEvent) : CanvasMouseEvent {
+    override val x: Float get() = mouseEventJS.realX
+    override val y: Float get() = mouseEventJS.realY
     override val button: CanvasMouseButton
         get() = mapMouseButton.getOrElse(mouseEventJS.button, { CanvasMouseButton.NONE })
 }
 
-private class ImplementacaoCanvasScrollEvent(
-    private val scrollEventJS: WheelEvent, private val boundingRect: DOMRect
-) : CanvasScrollEvent {
-    override val x: Float get() = scrollEventJS.realX(boundingRect)
-    override val y: Float get() = scrollEventJS.realY(boundingRect)
+private class ImplementacaoCanvasScrollEvent(private val scrollEventJS: WheelEvent) : CanvasScrollEvent {
+    override val x: Float get() = scrollEventJS.realX
+    override val y: Float get() = scrollEventJS.realY
     override val deltaY: Double get() = -scrollEventJS.deltaY
 }
 
@@ -114,15 +109,16 @@ private fun gerarCallbackParaClick(
                     callbackEventMouseUp
                 )//Usa o 'document' ao invés do 'canvas' para possibilitar a captura do botão solto fora do canvas
                 val mouseEstaNoCanvasQuandoSoltaOBotao: Boolean = run {
-                    val boundingRect = canvas.getBoundingClientRect()
                     val elementoSobOMouse = document.elementFromPoint(
-                        x = eventMouseUp.realX(boundingRect).toDouble(),
-                        y = eventMouseUp.realY(boundingRect).toDouble()
+                        x = eventMouseUp.clientX.toDouble(),
+                        y = eventMouseUp.clientY.toDouble()
                     )
+                    //TODO O PROBLEMA ESTÁ AQUI. A FUNÇÃO, DE VEZ EM QUANDO ENCONTRA OUTRO ELEMENTO DIFERENTE DO CANVAS SOB O MOUSE
+                    println(elementoSobOMouse)
                     elementoSobOMouse == canvas
                 }
                 if (mouseEstaNoCanvasQuandoSoltaOBotao) {
-                    eventHandler(ImplementacaoCanvasMouseEvent(eventMouseUp, canvas.getBoundingClientRect()))
+                    eventHandler(ImplementacaoCanvasMouseEvent(eventMouseUp))
                 }
             }
         }
