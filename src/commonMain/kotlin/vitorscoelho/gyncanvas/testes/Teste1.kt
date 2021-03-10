@@ -62,8 +62,8 @@ class PanClicked(
     val controller: CanvasController,
     val drawFunction: () -> Unit
 ) {
-    private var xStartPan: Double = 0.0
-    private var yStartPan: Double = 0.0
+    private var xStartPan: Float = 0f
+    private var yStartPan: Float = 0f
     private var started: Boolean = false
 
     private val eventHandlerMouseClicked = { event: CanvasMouseEvent ->
@@ -125,24 +125,24 @@ class ZoomScroll(val zoomFactor: Double, val controller: CanvasController, val d
 //            controller.drawer.camera.appendZoom(factor = factor, xTarget = event.x, yTarget = event.y)
 //            drawFunction()
 //        }
-        val drawer = controller.drawer
-        val camera = drawer.camera
-        val factor = when {
-            event.deltaY > 0 -> zoomFactor
-            event.deltaY < 0 -> 1.0 / zoomFactor
-            else -> 0.0
-        }
-        if (factor != 0.0) {
-            val deltaX = event.x - drawer.canvasWidth / 2.0
-            val deltaY = event.y - drawer.canvasHeight / 2.0
-            println("${camera.xCenter} // ${camera.yCenter}")
-            camera.setPosition(
-                xCenter = camera.xCenter,
-                yCenter = camera.yCenter,
-                zoom = camera.zoom * factor
-            )
-            drawFunction()
-        }
+//        val drawer = controller.drawer
+//        val camera = drawer.camera
+//        val factor = when {
+//            event.deltaY > 0 -> zoomFactor
+//            event.deltaY < 0 -> 1.0 / zoomFactor
+//            else -> 0.0
+//        }
+//        if (factor != 0.0) {
+//            val deltaX = event.x - drawer.canvasWidth / 2.0
+//            val deltaY = event.y - drawer.canvasHeight / 2.0
+//            println("${camera.xCenter} // ${camera.yCenter}")
+//            camera.setPosition(
+//                xCenter = camera.xCenter,
+//                yCenter = camera.yCenter,
+//                zoom = camera.zoom * factor
+//            )
+//            drawFunction()
+//        }
     }
 
     fun enable() {

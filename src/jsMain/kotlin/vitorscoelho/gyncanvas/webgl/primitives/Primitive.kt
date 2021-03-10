@@ -1,8 +1,6 @@
 package vitorscoelho.gyncanvas.webgl.primitives
 
 import org.khronos.webgl.Float32Array
-import org.khronos.webgl.WebGLBuffer
-import org.khronos.webgl.WebGLRenderingContext
 import vitorscoelho.gyncanvas.math.Vector2D
 
 interface Drawable {
@@ -10,10 +8,18 @@ interface Drawable {
 }
 
 sealed class Primitive : Drawable {
+    abstract val verticesCount: Int
     override val primitives: List<Primitive> get() = listOf(this)
 }
 
-class Line2D(val startPoint: Vector2D, val endPoint: Vector2D, val color: Color) : Primitive()
+interface Primitive2D {
+    val vertices: List<Vector2D>
+}
+
+class Line2D(val startPoint: Vector2D, val endPoint: Vector2D, val color: Color) : Primitive2D, Primitive() {
+    override val verticesCount: Int get() = 2
+    override val vertices: List<Vector2D> get() = listOf(startPoint, endPoint)
+}
 
 interface Color {
     val red: Float
@@ -21,12 +27,23 @@ interface Color {
     val blue: Float
 }
 
-val COLOR_GREEN = object : Color {
+val COLOR_BLACK = object : Color {
     override val red = 0f
-    override val green = 1f
+    override val green = 0f
     override val blue = 0f
 }
 
+val COLOR_WHITE = object : Color {
+    override val red = 1f
+    override val green = 1f
+    override val blue = 1f
+}
+
+val COLOR_RED = object : Color {
+    override val red = 1f
+    override val green = 0f
+    override val blue = 0f
+}
 
 private fun vectorsToFloat32Array(vararg vectors: Vector2D) = Float32Array(
     vectors.flatMap { listOf(it.x.toFloat(), it.y.toFloat()) }.toTypedArray()

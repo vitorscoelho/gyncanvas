@@ -2,11 +2,20 @@ import kotlinx.browser.document
 import kotlinx.html.*
 import kotlinx.html.dom.*
 import org.w3c.dom.HTMLCanvasElement
+import org.w3c.dom.events.MouseEvent
 import vitorscoelho.JSCanvasController
+import vitorscoelho.gyncanvas.core.CanvasController
+import vitorscoelho.gyncanvas.core.event.CanvasMouseButton
+import vitorscoelho.gyncanvas.core.event.CanvasMouseEvent
 import vitorscoelho.gyncanvas.math.TransformationMatrix
+import vitorscoelho.gyncanvas.math.Vector2D
 import vitorscoelho.gyncanvas.testes.desenhar
+import vitorscoelho.gyncanvas.webgl.OrthographicCamera
 import vitorscoelho.gyncanvas.webgl.WebGLStaticDrawer
-import vitorscoelho.gyncanvas.webgl.primitives.COLOR_GREEN
+import vitorscoelho.gyncanvas.webgl.primitives.COLOR_BLACK
+import vitorscoelho.gyncanvas.webgl.primitives.COLOR_RED
+import vitorscoelho.gyncanvas.webgl.primitives.COLOR_WHITE
+import vitorscoelho.gyncanvas.webgl.primitives.Line2D
 
 fun main() {
     document.body!!.append.div {
@@ -22,8 +31,8 @@ fun main() {
         }
         canvas {
             id = "canvasTeste"
-            width = "1300px"
-            height = "600px"
+            width = "600px"
+            height = "400px"
         }
     }
     val canvas = document.getElementById("canvasTeste") as HTMLCanvasElement
@@ -43,12 +52,5 @@ fun main() {
 //    val controller = JSCanvasController(canvas = canvas)
 //    desenhar(controller = controller)
 //    desenharTriangulo(canvas)
-    val drawer = WebGLStaticDrawer(canvas)
-    drawer.draw(COLOR_GREEN, TransformationMatrix.IDENTITY)
-}
-
-@ExperimentalJsExport
-@JsExport
-fun desenhando(canvas: HTMLCanvasElement) {
-    desenhar(controller = JSCanvasController(canvas))
+    testar(canvas)
 }
