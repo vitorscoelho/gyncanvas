@@ -29,7 +29,7 @@ private fun createEmptyArrayBufferStaticDraw(gl: WebGLRenderingContext): WebGLBu
     gl = gl, dataArray = Float32Array(emptyArray())
 )
 
-private fun OrthographicCamera.toWebGL() = Float32Array(
+private fun OrthographicCamera2D.toWebGL() = Float32Array(
     arrayOf(
         mxx, myx, mzx, 0f,
         mxy, myy, mzy, 0f,
@@ -81,7 +81,7 @@ class WebGLStaticDrawer(val drawingArea: JSDrawingArea) {
         this.verticesCount = positionsData.size / 3
     }
 
-    fun draw(backgroundColor: Color, camera: OrthographicCamera) {
+    fun draw(backgroundColor: Color, camera: OrthographicCamera2D) {
         //Ajustando a viewport ao tamanho do canvas
         gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight)
         //Limpar a tela com a cor do background

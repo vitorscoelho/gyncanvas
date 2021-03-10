@@ -1,12 +1,15 @@
 package vitorscoelho.gyncanvas.webgl
 
+import kotlin.math.abs
+import kotlin.math.min
+
 /**
  * mxx, mxy, mxz, tx,
  * myx, myy, myz, ty,
  * mzx, mzy, mzz, tz,
  *  0 ,  0 ,  0 ,  1
  */
-class OrthographicCamera(val drawingArea: DrawingArea) {
+class OrthographicCamera2D(val drawingArea: DrawingArea) {
     var mxx: Float = 1f
         private set
     val mxy = 0f
@@ -75,6 +78,35 @@ class OrthographicCamera(val drawingArea: DrawingArea) {
             top = yCenter + halfHeight,
             near = -1f, far = 1f//TODO mudar para possibilitar 3D no futuro
         )
+    }
+
+    fun translate(tx: Float = 0f, ty: Float = 0f) {
+        setPosition(
+            xCenter = xCenter + tx,
+            yCenter = yCenter + ty,
+            zoom = zoom
+        )
+    }
+
+    fun appendZoom(pivotX: Float, pivotY: Float, zoomFactor: Float) {
+        require(zoomFactor > 0f)
+        val deltaLeft = (pivotX - left) / zoomFactor
+        val deltaRight = (right - pivotX) / zoomFactor
+        val deltaBottom = (pivotY - bottom) / zoomFactor
+        val deltaTop = (top - pivotY) / zoomFactor
+        set(
+            left = pivotX - deltaLeft,
+            right = pivotX + deltaRight,
+            bottom = pivotY - deltaBottom,
+            top = pivotY + deltaTop,
+            near = -1f, far = 1f//TODO mudar para possibilitar 3D no futuro
+        )
+    }
+
+    fun zoomWindow(x1: Float, y1: Float, x2: Float, y2: Float) {
+        val zoomX = drawingArea.width / abs(x2 - x1)
+        val zoomY = drawingArea.height / abs(y2 - y1)
+        setPosition(xCenter = (x1 + x2) / 2f, yCenter = (y1 + y2) / 2f, zoom = min(zoomX, zoomY))
     }
 
     fun xWorld(xCanvas: Float): Float {

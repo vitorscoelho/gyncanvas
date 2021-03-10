@@ -2,20 +2,7 @@ import kotlinx.browser.document
 import kotlinx.html.*
 import kotlinx.html.dom.*
 import org.w3c.dom.HTMLCanvasElement
-import org.w3c.dom.events.MouseEvent
-import vitorscoelho.JSCanvasController
-import vitorscoelho.gyncanvas.core.CanvasController
-import vitorscoelho.gyncanvas.core.event.CanvasMouseButton
-import vitorscoelho.gyncanvas.core.event.CanvasMouseEvent
-import vitorscoelho.gyncanvas.math.TransformationMatrix
-import vitorscoelho.gyncanvas.math.Vector2D
-import vitorscoelho.gyncanvas.testes.desenhar
-import vitorscoelho.gyncanvas.webgl.OrthographicCamera
-import vitorscoelho.gyncanvas.webgl.WebGLStaticDrawer
-import vitorscoelho.gyncanvas.webgl.primitives.COLOR_BLACK
-import vitorscoelho.gyncanvas.webgl.primitives.COLOR_RED
-import vitorscoelho.gyncanvas.webgl.primitives.COLOR_WHITE
-import vitorscoelho.gyncanvas.webgl.primitives.Line2D
+import vitorscoelho.gyncanvas.webgl.testar
 
 fun main() {
     document.body!!.append.div {

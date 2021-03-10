@@ -113,8 +113,6 @@ private fun gerarCallbackParaClick(
                         x = eventMouseUp.clientX.toDouble(),
                         y = eventMouseUp.clientY.toDouble()
                     )
-                    //TODO O PROBLEMA ESTÁ AQUI. A FUNÇÃO, DE VEZ EM QUANDO ENCONTRA OUTRO ELEMENTO DIFERENTE DO CANVAS SOB O MOUSE
-                    println(elementoSobOMouse)
                     elementoSobOMouse == canvas
                 }
                 if (mouseEstaNoCanvasQuandoSoltaOBotao) {
