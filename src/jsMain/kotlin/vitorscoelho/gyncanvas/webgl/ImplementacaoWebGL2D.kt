@@ -30,7 +30,7 @@ class WebGLStaticDrawer2D(val drawingArea: JSDrawingArea) {
             positionBuffer = positionBuffer
         )
         program.setUniforms(
-            transformMatrix = camera.toWebGLMat4()
+            transformMatrix = camera.toWebGLMat3()
         )
         gl.drawArrays(
             mode = GL.TRIANGLES,

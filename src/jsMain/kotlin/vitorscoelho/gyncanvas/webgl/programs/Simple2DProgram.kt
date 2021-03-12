@@ -28,7 +28,7 @@ internal class Simple2DProgram(gl: WebGLRenderingContext) :
     }
 
     fun setUniforms(transformMatrix: Float32Array) {
-        gl.uniformMatrix4fv(transformMatrixLocation, false, transformMatrix)
+        gl.uniformMatrix3fv(transformMatrixLocation, false, transformMatrix)
     }
 
     companion object {
@@ -41,10 +41,11 @@ internal class Simple2DProgram(gl: WebGLRenderingContext) :
                     
             attribute vec2 position;
             
-            uniform mat4 transformMatrix;
+            uniform mat3 transformMatrix;
             
             void main(){
-                gl_Position = transformMatrix * vec4(position.x, position.y, 1, 1);
+                vec3 transformedVector = transformMatrix * vec3(position.x, position.y, 1);
+                gl_Position = vec4(transformedVector.x, transformedVector.y, 0, 1);
             }
         """.trimIndent()
 
