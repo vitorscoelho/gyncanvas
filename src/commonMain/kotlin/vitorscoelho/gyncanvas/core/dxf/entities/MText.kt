@@ -9,6 +9,7 @@ import vitorscoelho.gyncanvas.math.TransformationMatrix
 import vitorscoelho.gyncanvas.math.Vector2D
 import vitorscoelho.gyncanvas.core.dxf.entities.AttachmentPointBaseline.*
 import vitorscoelho.gyncanvas.core.dxf.entities.AttachmentPointAlign.*
+import vitorscoelho.gyncanvas.core.primitives.Primitive
 
 data class MText(
     override val layer: Layer,
@@ -23,20 +24,15 @@ data class MText(
     override val shapeType: ShapeType
         get() = ShapeType.FILLED
 
-    override fun draw(drawer: Drawer) {
-        applyLineWidth(drawer = drawer)
-        drawer.setFont(fontName = style.fontFileName)
-        drawer.textJustify = justify
-        drawer.fillText(text = content, size = size, x = position.x, y = position.y, angle = rotation)
-    }
+    override val primitives: List<Primitive>
+        get() = TODO("Not yet implemented")
 
-    override fun transform(transformationMatrix: TransformationMatrix): MText =
-        copy(
-            size = size * transformationMatrix.scale,
-            //justify = TODO fazer uma maneira de identificar o reflect
-            //rotation = TODO
-            position = position.transform(transformationMatrix)
-        )
+//    override fun draw(drawer: Drawer) {
+//        applyLineWidth(drawer = drawer)
+//        drawer.setFont(fontName = style.fontFileName)
+//        drawer.textJustify = justify
+//        drawer.fillText(text = content, size = size, x = position.x, y = position.y, angle = rotation)
+//    }
 }
 
 enum class AttachmentPoint(val value: Byte, val baseline: AttachmentPointBaseline, val align: AttachmentPointAlign) {

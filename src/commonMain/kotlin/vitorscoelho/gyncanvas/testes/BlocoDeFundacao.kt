@@ -76,8 +76,8 @@ class BlocoDeFundacao(
     private val layerTexto = Layer(name = "Texto", color = Color.INDEX_43)
 
     private val blocoCota: Block = run {
-        val circulo1 = Circle(layer = layerCota, centerPoint = Vector2D.ZERO, diameter = 0.5)
-        val circulo2 = Circle(layer = layerCota, centerPoint = Vector2D.ZERO, diameter = 1.0)
+        val circulo1 = Circle(layer = layerCota, centerPoint = Vector2D.ZERO, radius = 0.5 / 2.0)
+        val circulo2 = Circle(layer = layerCota, centerPoint = Vector2D.ZERO, radius = 1.0 / 2.0)
         val linha =
             Line(layer = layerCota, startPoint = Vector2D(x = -1.0, y = 0.0), endPoint = Vector2D(x = 0.0, y = 0.0))
         return@run Block(name = "_Origin2", entities = listOf(circulo1, circulo2, linha))
@@ -189,7 +189,7 @@ class BlocoDeFundacao(
             val contornoEstaca = Circle(
                 layer = layerProjecao,
                 centerPoint = Vector2D(x = xRealCentro, y = yRealCentro),
-                diameter = diametroEstacas
+                radius = diametroEstacas / 2.0
             )
             return@map contornoEstaca
         }

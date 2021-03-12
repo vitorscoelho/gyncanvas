@@ -4,29 +4,24 @@ import vitorscoelho.gyncanvas.core.dxf.Color
 import vitorscoelho.gyncanvas.core.Drawer
 import vitorscoelho.gyncanvas.core.dxf.ShapeType
 import vitorscoelho.gyncanvas.core.dxf.tables.Layer
+import vitorscoelho.gyncanvas.core.primitives.Primitive
 import vitorscoelho.gyncanvas.math.TransformationMatrix
-import vitorscoelho.gyncanvas.math.Vector2D
+import vitorscoelho.gyncanvas.math.Vector
 
-data class Line(
+class Line(
     override val layer: Layer,
     override val color: Color = Color.BY_LAYER,
-    val startPoint: Vector2D,
-    val endPoint: Vector2D
+    startPoint: Vector,
+    endPoint: Vector
 ) : Entity {
+    private val primitiveLine = vitorscoelho.gyncanvas.core.primitives.Line(
+        startPoint = startPoint, endPoint = endPoint, color = color
+    )
+    val startPoint: Vector get() = primitiveLine.startPoint
+    val endPoint: Vector get() = primitiveLine.endPoint
+
     override val shapeType: ShapeType
         get() = ShapeType.STROKED
 
-    override fun draw(drawer: Drawer) {
-        applyLineWidth(drawer = drawer)
-        drawer.strokeLine(
-            x1 = startPoint.x, y1 = startPoint.y,
-            x2 = endPoint.x, y2 = endPoint.y
-        )
-    }
-
-    override fun transform(transformationMatrix: TransformationMatrix): Line =
-        copy(
-            startPoint = startPoint.transform(transformationMatrix),
-            endPoint = endPoint.transform(transformationMatrix)
-        )
+    override val primitives: List<Primitive> get() = listOf(primitiveLine)
 }

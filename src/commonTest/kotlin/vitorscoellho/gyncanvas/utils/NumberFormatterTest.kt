@@ -1,7 +1,8 @@
-package vitorscoelho.gyncanvas.utils
+package vitorscoellho.gyncanvas.utils
 
-import org.junit.Assert.assertEquals
-import org.junit.Test
+import vitorscoelho.gyncanvas.utils.NumberFormatter
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 class NumberFormatterTest {
     @Test

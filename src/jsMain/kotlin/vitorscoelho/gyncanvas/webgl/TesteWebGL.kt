@@ -1,41 +1,81 @@
 package vitorscoelho.gyncanvas.webgl
 
 import org.w3c.dom.HTMLCanvasElement
-import org.w3c.dom.events.MouseEvent
 import vitorscoelho.gyncanvas.core.EventManager
 import vitorscoelho.gyncanvas.core.event.CanvasMouseButton
 import vitorscoelho.gyncanvas.core.event.CanvasMouseEvent
+import vitorscoelho.gyncanvas.core.primitives.Color
+import vitorscoelho.gyncanvas.core.primitives.Line
+import vitorscoelho.gyncanvas.core.primitives.Triangle
 import vitorscoelho.gyncanvas.math.Vector2D
-import vitorscoelho.gyncanvas.webgl.primitives.COLOR_BLACK
-import vitorscoelho.gyncanvas.webgl.primitives.COLOR_RED
-import vitorscoelho.gyncanvas.webgl.primitives.COLOR_WHITE
-import vitorscoelho.gyncanvas.webgl.primitives.Line2D
+
+val COLOR_BLACK = object : Color {
+    override val red = 0f
+    override val green = 0f
+    override val blue = 0f
+}
+val COLOR_WHITE = object : Color {
+    override val red = 1f
+    override val green = 1f
+    override val blue = 1f
+}
+val COLOR_RED = object : Color {
+    override val red = 1f
+    override val green = 0f
+    override val blue = 0f
+}
+val COLOR_GREEN = object : Color {
+    override val red = 0f
+    override val green = 1f
+    override val blue = 0f
+}
+val COLOR_BLUE = object : Color {
+    override val red = 0f
+    override val green = 0f
+    override val blue = 1f
+}
 
 fun testar(canvas: HTMLCanvasElement) {
+    val drawingArea = JSDrawingArea(canvas)
+    val drawer = WebGLStaticDrawer2D(drawingArea)
+    val camera = OrthographicCamera2D(drawingArea)
+    val drawFunction = { drawer.draw(COLOR_BLACK, camera) }
+    drawFunction()
+    panClicked(drawingArea.listeners, camera, drawFunction)
+    zoomScroll(drawingArea.listeners, 1.2f, camera, drawFunction)
+}
+
+fun testar2(canvas: HTMLCanvasElement) {
     val drawingArea = JSDrawingArea(canvas)
     val drawer = WebGLStaticDrawer(drawingArea)
     drawer.setElements(
         listOf(
-            Line2D(
+            Triangle(
+                p1 = Vector2D(-1.0, 0.0),
+                p2 = Vector2D(0.0, 1.0),
+                p3 = Vector2D(1.0, 0.0),
+                color = COLOR_BLUE
+            ),
+            Line(
                 startPoint = Vector2D(-1.0, -1.0),
                 endPoint = Vector2D(1.0, 1.0),
                 color = COLOR_WHITE
             ),
-            Line2D(
+            Line(
                 startPoint = Vector2D(-1.0, 1.0),
                 endPoint = Vector2D(1.0, -1.0),
                 color = COLOR_RED
             ),
-            Line2D(
+            Line(
                 startPoint = Vector2D(-1.0, 0.0),
                 endPoint = Vector2D(1.0, 0.0),
                 color = COLOR_RED
             ),
-            Line2D(
+            Line(
                 startPoint = Vector2D(0.0, -1.0),
                 endPoint = Vector2D(0.0, 1.0),
                 color = COLOR_WHITE
-            )
+            ),
         )
     )
     val camera = OrthographicCamera2D(drawingArea)

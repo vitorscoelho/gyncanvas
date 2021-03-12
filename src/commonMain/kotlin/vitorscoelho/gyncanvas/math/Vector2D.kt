@@ -4,7 +4,14 @@ import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.math.sqrt
 
-class Vector2D(val x: Double, val y: Double) {
+interface Vector {
+    val x: Double
+    val y: Double
+    val z: Double
+}
+
+class Vector2D(override val x: Double, override val y: Double) : Vector {
+    override val z: Double get() = 0.0
 
     fun distance(otherVector: Vector2D): Double = distance(vector1 = this, vector2 = otherVector)
 

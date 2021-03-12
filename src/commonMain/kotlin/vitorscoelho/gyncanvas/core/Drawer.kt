@@ -55,7 +55,7 @@ abstract class Drawer {
             entity.entities.forEach { drawEntity(it) }
         } else {
             entity.shapeType.applyColor(drawer = this, entity = entity)
-            entity.draw(drawer = this)
+//            entity.draw(drawer = this)
         }//TODO dar um jeito de remover esse 'if'
     }
 }

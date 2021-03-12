@@ -14,7 +14,7 @@ data class Insert(
     private val scaleFactor: Double = 1.0,
     val rotationAngle: Double = 0.0
 ) : CompositeEntity {
-    override val entities: List<Entity>
+    override val entities: List<Entity> = TODO("Ainda não implementou as transformações")
     val xScaleFactor: Double
         get() = scaleFactor
     val yScaleFactor: Double
@@ -25,13 +25,9 @@ data class Insert(
             .translate(tx = insertionPoint.x, ty = insertionPoint.y)
             .scale(factor = scaleFactor, xOrigin = 0.0, yOrigin = 0.0)
             .rotate(angle = rotationAngle)
-        this.entities = block.entities.map { it.transform(transformationMatrix) }
+        //TODO Tem que implementar as transformações pra tornar isso possível
+//        this.entities = block.entities.map { it.transform(transformationMatrix) }
+        this.entities = emptyList()//TODO Remover isto depois de implementar as transformações
+        TODO("Ainda não implementou as transformações")
     }
-
-    override fun transform(transformationMatrix: TransformationMatrix): Insert =
-        copy(
-            insertionPoint = insertionPoint.transform(transformationMatrix),
-            scaleFactor = scaleFactor * transformationMatrix.scale
-//            rotationAngle = rotationAngle TODO
-        )
 }

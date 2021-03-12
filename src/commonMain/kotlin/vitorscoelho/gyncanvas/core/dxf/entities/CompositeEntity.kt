@@ -1,7 +1,7 @@
 package vitorscoelho.gyncanvas.core.dxf.entities
 
-import vitorscoelho.gyncanvas.core.Drawer
 import vitorscoelho.gyncanvas.core.dxf.ShapeType
+import vitorscoelho.gyncanvas.core.primitives.Primitive
 
 interface CompositeEntity : Entity {
     override val shapeType: ShapeType
@@ -9,7 +9,5 @@ interface CompositeEntity : Entity {
 
     val entities: List<Entity>
 
-    override fun draw(drawer: Drawer) {
-        entities.forEach { it.draw(drawer = drawer) }
-    }
+    override val primitives: List<Primitive> get() = entities.flatMap { it.primitives }
 }

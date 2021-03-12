@@ -147,10 +147,6 @@ data class RotatedDimension(
         return Pair(first, second)
     }
 
-    override fun transform(transformationMatrix: TransformationMatrix): Entity {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
     companion object {
         fun horizontal(
             layer: Layer, color: Color = Color.BY_LAYER,

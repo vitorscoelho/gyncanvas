@@ -1,42 +1,21 @@
 package vitorscoelho.gyncanvas.webgl
 
 import org.khronos.webgl.*
+import vitorscoelho.gyncanvas.core.primitives.*
+import vitorscoelho.gyncanvas.webgl.programs.Simple3DProgram
 import org.khronos.webgl.WebGLRenderingContext.Companion as GL
-import org.w3c.dom.RenderingContext
-import vitorscoelho.gyncanvas.webgl.primitives.Color
-import vitorscoelho.gyncanvas.webgl.primitives.Drawable
-import vitorscoelho.gyncanvas.webgl.primitives.Line2D
 
-private val webGLContextAttributes = object : WebGLContextAttributes {
-    override var alpha: Boolean? = true
-    override var depth: Boolean? = true
-    override var stencil: Boolean? = false
-    override var antialias: Boolean? = true
-    override var premultipliedAlpha: Boolean? = true
-    override var preserveDrawingBuffer: Boolean? = true
-    override var preferLowPowerToHighPerformance: Boolean? = undefined
-    override var failIfMajorPerformanceCaveat: Boolean? = false
-}
-
-private fun createArrayBufferStaticDraw(gl: WebGLRenderingContext, dataArray: Float32Array): WebGLBuffer {
-    val buffer = gl.createBuffer()
-    gl.bindBuffer(GL.ARRAY_BUFFER, buffer)
-    gl.bufferData(GL.ARRAY_BUFFER, dataArray, GL.STATIC_DRAW)
-    return buffer ?: throw IllegalStateException()//TODO colocar mensagem na Exception
-}
-
-private fun createEmptyArrayBufferStaticDraw(gl: WebGLRenderingContext): WebGLBuffer = createArrayBufferStaticDraw(
-    gl = gl, dataArray = Float32Array(emptyArray())
+private val mapGlTypes: Map<PrimitiveType, Int> = mapOf(
+    PrimitiveType.POINTS to GL.POINTS,
+    PrimitiveType.LINES to GL.LINES,
+    PrimitiveType.LINE_STRIP to GL.LINE_STRIP,
+    PrimitiveType.LINE_LOOP to GL.LINE_LOOP,
+    PrimitiveType.TRIANGLES to GL.TRIANGLES,
+    PrimitiveType.TRIANGLE_STRIP to GL.TRIANGLE_STRIP,
+    PrimitiveType.TRIANGLE_FAN to GL.TRIANGLE_FAN,
 )
 
-private fun OrthographicCamera2D.toWebGL() = Float32Array(
-    arrayOf(
-        mxx, myx, mzx, 0f,
-        mxy, myy, mzy, 0f,
-        mxz, myz, mzz, 0f,
-        tx, ty, tz, 1f
-    )
-)
+private val Primitive.glType: Int get() = mapGlTypes[this.type]!!
 
 /**
  * Drawer com as seguintes características:
@@ -44,53 +23,70 @@ private fun OrthographicCamera2D.toWebGL() = Float32Array(
  * - Sempre que um elemento [Drawable] for adicionado ou removido, toda a lógica de criação de buffer vai acontecer para cada um dos elementos, mesmo os já existentes
  */
 class WebGLStaticDrawer(val drawingArea: JSDrawingArea) {
-    private val gl: WebGLRenderingContext = run {
-        val context: RenderingContext = drawingArea.canvas.getContext("webgl", webGLContextAttributes)
-            ?: throw IllegalStateException("WebGL is not supported")
-        context as WebGLRenderingContext
-    }
+    private val gl: WebGLRenderingContext = getWebGLContext(drawingArea = drawingArea)
 
     private val simpleProgram = Simple3DProgram(gl = gl)
 
-    private var verticesCount: Int = 0
+    private var elementsTypes: IntArray = intArrayOf()
+    private var elementsVerticesCount: IntArray = intArrayOf()
     private val positionsBuffer: WebGLBuffer = createEmptyArrayBufferStaticDraw(gl = gl)
     private val colorsBuffer: WebGLBuffer = createEmptyArrayBufferStaticDraw(gl = gl)
 
     /**Seta a lista de elementos que serão desenhados*/
-    fun setElements(elements: List<Drawable>) {
-        val positionsData: Array<Float> =
-            elements
-                .filterIsInstance<Line2D>()
-                .flatMap { it.vertices }
-                .flatMap { listOf(it.x, it.y, 0) }
-                .map { it.toFloat() }
-                .toTypedArray()
-        gl.bindBuffer(GL.ARRAY_BUFFER, positionsBuffer)
-        gl.bufferData(GL.ARRAY_BUFFER, Float32Array(positionsData), GL.STATIC_DRAW)
-        val colorsData: Array<Float> =
-            elements
-                .filterIsInstance<Line2D>()
-                .map { it.color }
-                .flatMap { listOf(it, it) }
-                .flatMap { listOf(it.red, it.green, it.blue) }
-                .toTypedArray()
-        println(positionsData)
+    fun setElements(elements: List<Primitive>) {
+//        elementsTypes = elements.map { it.glType }.toIntArray()
+//        elementsVerticesCount = elements.map { it.verticesCount }.toIntArray()
+//        val coordinatesData =
+//            elements
+//                .map { it.coordinates }
+//                .flatMap { it.toList() }
+//                .toTypedArray()
+//        val colorsData =
+//            elements
+//                .flatMap { element ->
+//                    val retorno = mutableListOf<Float>()
+//                    repeat(element.verticesCount) {
+//                        retorno += element.color.red
+//                        retorno += element.color.green
+//                        retorno += element.color.blue
+//                    }
+//                    retorno
+//                }
+//                .toTypedArray()
+        val totalVertices = elements.sumBy { it.verticesCount }
+        val coordinatesData = FloatArray(size = totalVertices * 3)//Vezes 3 porque é 3D
+        val colorsData = FloatArray(size = totalVertices * 3)//Vezes 3 porque passa o RGB sem alpha, por enquanto
+        var coordinateIndex = 0
+        var colorIndex = 0
+        elementsTypes = IntArray(size = elements.size)
+        elementsVerticesCount = IntArray(size = elements.size)
+        elements.forEachIndexed { index, element ->
+            elementsTypes[index] = element.glType
+            elementsVerticesCount[index] = element.verticesCount
+            element.forEachVertex { _, x, y, z, color ->
+                coordinatesData[coordinateIndex++] = x
+                coordinatesData[coordinateIndex++] = y
+                coordinatesData[coordinateIndex++] = z
+                colorsData[colorIndex++] = color.red
+                colorsData[colorIndex++] = color.green
+                colorsData[colorIndex++] = color.blue
+            }
+        }
+        println(elementsTypes)
+        println(coordinatesData)
         println(colorsData)
+        gl.bindBuffer(GL.ARRAY_BUFFER, positionsBuffer)
+        gl.bufferData(GL.ARRAY_BUFFER, Float32Array(coordinatesData.toTypedArray()), GL.STATIC_DRAW)
         gl.bindBuffer(GL.ARRAY_BUFFER, colorsBuffer)
-        gl.bufferData(GL.ARRAY_BUFFER, Float32Array(colorsData), GL.STATIC_DRAW)
-        this.verticesCount = positionsData.size / 3
+        gl.bufferData(GL.ARRAY_BUFFER, Float32Array(colorsData.toTypedArray()), GL.STATIC_DRAW)
     }
 
     fun draw(backgroundColor: Color, camera: OrthographicCamera2D) {
-        //Ajustando a viewport ao tamanho do canvas
-        gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight)
-        //Limpar a tela com a cor do background
-        gl.clearColor(backgroundColor.red, backgroundColor.green, backgroundColor.blue, 1f)
-        gl.clear(GL.COLOR_BUFFER_BIT)
+        gl.adjustViewportAndClear(backgroundColor=backgroundColor)
 
         //TODO Atribuir os parâmetros de cada elemento para os shaders
         simpleProgram.use()
-        simpleProgram.setUniforms(transformMatrix = camera.toWebGL())
+        simpleProgram.setUniforms(transformMatrix = camera.toWebGLMat4())
         simpleProgram.setAttributes(
             positionBuffer = positionsBuffer,
             colorBuffer = colorsBuffer
@@ -101,6 +97,10 @@ class WebGLStaticDrawer(val drawingArea: JSDrawingArea) {
         ///Criar um buffer com as informações de vértices de todos os elementos.
         ///Mapear, para cada elemento, o tipo (GL.LINES, GL.TRIANGLES,..) o índice do primeiro vértice no buffer e a qtd de vértices no buffer
         ///Assim, bastaria ficar chamando o gl.drawArrays várias vezes
-        gl.drawArrays(GL.LINES, 0, this.verticesCount)
+        var first = 0
+        for (index in 0..elementsTypes.size) {
+            gl.drawArrays(mode = elementsTypes[index], first = first, count = elementsVerticesCount[index])
+            first += elementsVerticesCount[index]
+        }
     }
 }

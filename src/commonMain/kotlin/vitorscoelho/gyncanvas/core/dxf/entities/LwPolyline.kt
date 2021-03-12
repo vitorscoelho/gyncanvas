@@ -7,6 +7,9 @@ import vitorscoelho.gyncanvas.core.dxf.entities.path.LwPolylineBuilder
 import vitorscoelho.gyncanvas.core.dxf.entities.path.LwPolylineBuilderStep1
 import vitorscoelho.gyncanvas.core.dxf.entities.path.PathStep
 import vitorscoelho.gyncanvas.core.dxf.tables.Layer
+import vitorscoelho.gyncanvas.core.primitives.ClosedPolyline
+import vitorscoelho.gyncanvas.core.primitives.Polyline
+import vitorscoelho.gyncanvas.core.primitives.Primitive
 import vitorscoelho.gyncanvas.math.TransformationMatrix
 import vitorscoelho.gyncanvas.math.Vector2D
 
@@ -16,19 +19,23 @@ data class LwPolyline internal constructor(
     val closed: Boolean,
     internal val pathSteps: List<PathStep>
 ) : Entity {
+//    private val primitivePolyline :Polyline= if (closed){
+//        ClosedPolyline()
+//    }
+
+    override val primitives: List<Primitive>
+        get() = TODO("Not yet implemented")
+
     override val shapeType: ShapeType
         get() = ShapeType.STROKED
 
-    override fun draw(drawer: Drawer) {
-        applyLineWidth(drawer = drawer)
-        drawer.beginPath()
-        pathSteps.forEach { it.draw(drawer = drawer) }
-        if (closed) drawer.closePath()
-        drawer.stroke()
-    }
-
-    override fun transform(transformationMatrix: TransformationMatrix): LwPolyline =
-        copy(pathSteps = pathSteps.map { it.transform(transformationMatrix) })
+//    override fun draw(drawer: Drawer) {
+//        applyLineWidth(drawer = drawer)
+//        drawer.beginPath()
+//        pathSteps.forEach { it.draw(drawer = drawer) }
+//        if (closed) drawer.closePath()
+//        drawer.stroke()
+//    }
 
     companion object {
         fun initBuilder(layer: Layer, color: Color = Color.BY_LAYER): LwPolylineBuilderStep1 {
