@@ -12,23 +12,29 @@ import vitorscoelho.gyncanvas.math.Vector
 interface Primitive {
     val type: PrimitiveType
     val verticesCount: Int
-    fun forEachVertex(action: (index: Int, x: Float, y: Float, z: Float, color: Color) -> Unit)
+    fun forEachVertex(action: (index: Int, x: Float, y: Float, z: Float, red: Short, green: Short, blue: Short, alpha: Float) -> Unit)
 }
 
 private fun actionOnVertex(
     index: Int,
     vector: Vector,
     color: Color,
-    action: (index: Int, x: Float, y: Float, z: Float, color: Color) -> Unit
+    action: (index: Int, x: Float, y: Float, z: Float, red: Short, green: Short, blue: Short, alpha: Float) -> Unit
 ) {
-    with(vector) { action(index, x.toFloat(), y.toFloat(), z.toFloat(), color) }
+    with(vector) {
+        action(
+            index,
+            x.toFloat(), y.toFloat(), z.toFloat(),
+            color.red, color.green, color.blue, color.alpha
+        )
+    }
 }
 
 class Line(val startPoint: Vector, val endPoint: Vector, val color: Color) : Primitive {
     override val type: PrimitiveType get() = PrimitiveType.LINES
     override val verticesCount: Int get() = 2
 
-    override fun forEachVertex(action: (index: Int, x: Float, y: Float, z: Float, color: Color) -> Unit) {
+    override fun forEachVertex(action: (index: Int, x: Float, y: Float, z: Float, red: Short, green: Short, blue: Short, alpha: Float) -> Unit) {
         actionOnVertex(0, startPoint, color, action)
         actionOnVertex(1, endPoint, color, action)
     }
@@ -37,7 +43,7 @@ class Line(val startPoint: Vector, val endPoint: Vector, val color: Color) : Pri
 class Triangle(val p1: Vector, val p2: Vector, val p3: Vector, val color: Color) : Primitive {
     override val type: PrimitiveType get() = PrimitiveType.TRIANGLES
     override val verticesCount: Int get() = 3
-    override fun forEachVertex(action: (index: Int, x: Float, y: Float, z: Float, color: Color) -> Unit) {
+    override fun forEachVertex(action: (index: Int, x: Float, y: Float, z: Float, red: Short, green: Short, blue: Short, alpha: Float) -> Unit) {
         actionOnVertex(0, p1, color, action)
         actionOnVertex(1, p2, color, action)
         actionOnVertex(2, p3, color, action)
@@ -108,7 +114,7 @@ class Dummy : Primitive {
     override val verticesCount: Int
         get() = TODO("Not yet implemented")
 
-    override fun forEachVertex(action: (index: Int, x: Float, y: Float, z: Float, color: Color) -> Unit) {
+    override fun forEachVertex(action: (index: Int, x: Float, y: Float, z: Float, red: Short, green: Short, blue: Short, alpha: Float) -> Unit) {
         TODO("Not yet implemented")
     }
 }

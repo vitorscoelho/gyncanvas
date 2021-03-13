@@ -45,65 +45,6 @@ fun testar(canvas: HTMLCanvasElement) {
     zoomScroll(drawingArea.listeners, 1.2f, camera, drawFunction)
 }
 
-fun testar2(canvas: HTMLCanvasElement) {
-    val drawingArea = JSDrawingArea(canvas)
-    val drawer = WebGLStaticDrawer(drawingArea)
-    drawer.setElements(
-        listOf(
-            Triangle(
-                p1 = Vector2D(-1.0, 0.0),
-                p2 = Vector2D(0.0, 1.0),
-                p3 = Vector2D(1.0, 0.0),
-                color = COLOR_BLUE
-            ),
-            Line(
-                startPoint = Vector2D(-1.0, -1.0),
-                endPoint = Vector2D(1.0, 1.0),
-                color = COLOR_WHITE
-            ),
-            Line(
-                startPoint = Vector2D(-1.0, 1.0),
-                endPoint = Vector2D(1.0, -1.0),
-                color = COLOR_RED
-            ),
-            Line(
-                startPoint = Vector2D(-1.0, 0.0),
-                endPoint = Vector2D(1.0, 0.0),
-                color = COLOR_RED
-            ),
-            Line(
-                startPoint = Vector2D(0.0, -1.0),
-                endPoint = Vector2D(0.0, 1.0),
-                color = COLOR_WHITE
-            ),
-        )
-    )
-    val camera = OrthographicCamera2D(drawingArea)
-    camera.setPosition(xCenter = -1f, yCenter = 0f, zoom = 200f)
-    println("Zoom=${camera.zoom}")
-//    camera.set(-1.5f,1.5f,-1f,1f,-1f,1f)
-    drawer.draw(COLOR_BLACK, camera)
-//    drawingArea.listeners.addMouseMoved { event ->
-//        val xWorld = camera.xWorld(event.x)
-//        val yWorld = camera.yWorld(event.y)
-//        println("Canvas: x=${event.x} // y=${event.y}  //// World: x=$xWorld // y=$yWorld")
-//    }
-    panClicked(drawingArea.listeners, camera) { drawer.draw(COLOR_BLACK, camera) }
-    zoomScroll(drawingArea.listeners, 1.2f, camera) { drawer.draw(COLOR_BLACK, camera) }
-//    drawingArea.listeners.addMouseClicked { event ->
-//        if (event.button == CanvasMouseButton.PRIMARY) {
-//            camera.setPosition(xCenter = camera.xWorld(event.x), yCenter = camera.yWorld(event.y), zoom = camera.zoom)
-//            println("Camera: ${camera.xWorld(event.x)}")
-//            drawer.draw(COLOR_BLACK, camera)
-//        }
-//    }
-//    canvas.addEventListener("mousemove", { event ->
-//        event as MouseEvent
-//        println("x: ${event.offsetX} /// y: ${event.offsetY}")
-//    })
-    zoomWindow(drawingArea.listeners, camera) { drawer.draw(COLOR_BLACK, camera) }
-}
-
 private fun zoomWindow(listeners: EventManager, camera: OrthographicCamera2D, drawFunction: () -> Unit) {
     var started = false
     var x1: Float = 0f

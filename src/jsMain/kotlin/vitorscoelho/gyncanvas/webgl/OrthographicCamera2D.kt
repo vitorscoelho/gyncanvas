@@ -4,29 +4,20 @@ import kotlin.math.abs
 import kotlin.math.min
 
 /**
- * mxx, mxy, mxz, tx,
- * myx, myy, myz, ty,
- * mzx, mzy, mzz, tz,
- *  0 ,  0 ,  0 ,  1
+ * mxx, mxy, tx,
+ * myx, myy, ty,
+ *  0 ,  0 ,  1
  */
 class OrthographicCamera2D(val drawingArea: DrawingArea) {
     var mxx: Float = 1f
         private set
     val mxy = 0f
-    val mxz = 0f
     var tx = 0f
         private set
     val myx = 0f
     var myy = 1f
         private set
-    val myz = 0f
     var ty = 0f
-        private set
-    val mzx = 0f
-    val mzy = 0f
-    var mzz = 1f
-        private set
-    var tz = 0f
         private set
 
     var left = -1f
@@ -52,14 +43,12 @@ class OrthographicCamera2D(val drawingArea: DrawingArea) {
         setPosition(xCenter = 0f, yCenter = 0f, zoom = 1f)
     }
 
-    private fun set(left: Float, right: Float, bottom: Float, top: Float, near: Float, far: Float) {
-        require(right > left && top > bottom && far > near)
+    private fun set(left: Float, right: Float, bottom: Float, top: Float) {
+        require(right > left && top > bottom)
         mxx = 2f / (right - left)
         myy = 2f / (top - bottom)
-        mzz = -2f / (far - near)
         tx = -(right + left) / (right - left)
         ty = -(top + bottom) / (top - bottom)
-        tz = -(far + near) / (far - near)
         zoom = -drawingArea.width / (left - right)
         this.left = left
         this.right = right
@@ -76,7 +65,6 @@ class OrthographicCamera2D(val drawingArea: DrawingArea) {
             right = xCenter + halfWidth,
             bottom = yCenter - halfHeight,
             top = yCenter + halfHeight,
-            near = -1f, far = 1f//TODO mudar para possibilitar 3D no futuro
         )
     }
 
@@ -99,7 +87,6 @@ class OrthographicCamera2D(val drawingArea: DrawingArea) {
             right = pivotX + deltaRight,
             bottom = pivotY - deltaBottom,
             top = pivotY + deltaTop,
-            near = -1f, far = 1f//TODO mudar para possibilitar 3D no futuro
         )
     }
 

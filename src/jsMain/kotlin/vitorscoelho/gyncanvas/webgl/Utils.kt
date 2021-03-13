@@ -1,9 +1,6 @@
 package vitorscoelho.gyncanvas.webgl
 
-import org.khronos.webgl.Float32Array
-import org.khronos.webgl.WebGLBuffer
-import org.khronos.webgl.WebGLContextAttributes
-import org.khronos.webgl.WebGLRenderingContext
+import org.khronos.webgl.*
 import org.khronos.webgl.WebGLRenderingContext.Companion as GL
 import org.w3c.dom.RenderingContext
 import vitorscoelho.gyncanvas.core.primitives.Color
@@ -33,34 +30,79 @@ internal fun WebGLRenderingContext.adjustViewportAndClear(backgroundColor: Color
     //Ajustando a viewport ao tamanho do canvas
     viewport(0, 0, drawingBufferWidth, drawingBufferHeight)
     //Limpar a tela com a cor do background
-    clearColor(backgroundColor.red, backgroundColor.green, backgroundColor.blue, 1f)
+    with(backgroundColor) {
+        fun toWebGL(color: Short) = color.toFloat() / 255f
+        clearColor(toWebGL(red), toWebGL(green), toWebGL(blue), alpha)
+    }
     clear(GL.COLOR_BUFFER_BIT)
 }
 
-internal fun createArrayBufferStaticDraw(gl: WebGLRenderingContext, dataArray: Float32Array): WebGLBuffer {
-    val buffer = gl.createBuffer()
-    gl.bindBuffer(GL.ARRAY_BUFFER, buffer)
-    gl.bufferData(GL.ARRAY_BUFFER, dataArray, GL.STATIC_DRAW)
-    return buffer ?: throw IllegalStateException()//TODO colocar mensagem na Exception
+internal fun WebGLRenderingContext.createEmptyBuffer(): WebGLBuffer =
+    createBuffer() ?: throw IllegalStateException()//TODO colocar mensagem na Exception
+
+internal fun WebGLRenderingContext.createArrayBufferData(data: BufferDataSource, usage: Int): WebGLBuffer {
+    val buffer = createEmptyBuffer()
+    changeArrayBufferData(buffer, data, usage)
+    return buffer
 }
 
-internal fun createEmptyArrayBufferStaticDraw(gl: WebGLRenderingContext): WebGLBuffer = createArrayBufferStaticDraw(
-    gl = gl, dataArray = Float32Array(emptyArray())
-)
+internal fun WebGLRenderingContext.createArrayBufferStaticData(data: BufferDataSource): WebGLBuffer =
+    createArrayBufferData(data, GL.STATIC_DRAW)
+
+internal fun WebGLRenderingContext.createArrayBufferDynamicData(data: BufferDataSource): WebGLBuffer =
+    createArrayBufferData(data, GL.DYNAMIC_DRAW)
+
+internal fun WebGLRenderingContext.createArrayBufferStaticData(data: Array<Short>): WebGLBuffer =
+    createArrayBufferStaticData(Int16Array(data))
+
+internal fun WebGLRenderingContext.createArrayBufferDynamicData(data: ShortArray): WebGLBuffer =
+    createArrayBufferDynamicData(Int16Array(data.toTypedArray()))
+
+internal fun WebGLRenderingContext.createArrayBufferStaticData(data: Array<Int>): WebGLBuffer =
+    createArrayBufferStaticData(Int32Array(data))
+
+internal fun WebGLRenderingContext.createArrayBufferDynamicData(data: IntArray): WebGLBuffer =
+    createArrayBufferDynamicData(Int32Array(data.toTypedArray()))
+
+internal fun WebGLRenderingContext.createArrayBufferStaticData(data: Array<Float>): WebGLBuffer =
+    createArrayBufferStaticData(Float32Array(data))
+
+internal fun WebGLRenderingContext.createArrayBufferDynamicData(data: FloatArray): WebGLBuffer =
+    createArrayBufferDynamicData(Float32Array(data.toTypedArray()))
+
+internal fun WebGLRenderingContext.changeArrayBufferData(buffer: WebGLBuffer, newData: BufferDataSource, usage: Int) {
+    bindBuffer(GL.ARRAY_BUFFER, buffer)
+    bufferData(GL.ARRAY_BUFFER, newData, usage)
+}
+
+internal fun WebGLRenderingContext.changeArrayBufferStaticData(buffer: WebGLBuffer, newData: BufferDataSource) =
+    changeArrayBufferData(buffer, newData, GL.STATIC_DRAW)
+
+internal fun WebGLRenderingContext.changeArrayBufferDynamicData(buffer: WebGLBuffer, newData: BufferDataSource) =
+    changeArrayBufferData(buffer, newData, GL.DYNAMIC_DRAW)
+
+internal fun WebGLRenderingContext.changeArrayBufferStaticData(buffer: WebGLBuffer, newData: Array<Short>) =
+    changeArrayBufferStaticData(buffer, Int16Array(newData))
+
+internal fun WebGLRenderingContext.changeArrayBufferDynamicData(buffer: WebGLBuffer, newData: ShortArray) =
+    changeArrayBufferData(buffer, Int16Array(newData.toTypedArray()), GL.DYNAMIC_DRAW)
+
+internal fun WebGLRenderingContext.changeArrayBufferStaticData(buffer: WebGLBuffer, newData: Array<Int>) =
+    changeArrayBufferStaticData(buffer, Int32Array(newData))
+
+internal fun WebGLRenderingContext.changeArrayBufferDynamicData(buffer: WebGLBuffer, newData: IntArray) =
+    changeArrayBufferDynamicData(buffer, Int32Array(newData.toTypedArray()))
+
+internal fun WebGLRenderingContext.changeArrayBufferStaticData(buffer: WebGLBuffer, newData: Array<Float>) =
+    changeArrayBufferStaticData(buffer, Float32Array(newData))
+
+internal fun WebGLRenderingContext.changeArrayBufferDynamicData(buffer: WebGLBuffer, newData: FloatArray) =
+    changeArrayBufferDynamicData(buffer, Float32Array(newData.toTypedArray()))
 
 internal fun OrthographicCamera2D.toWebGLMat3() = Float32Array(
     arrayOf(
         mxx, myx, 0f,
         mxy, myy, 0f,
         tx, ty, 1f
-    )
-)
-
-internal fun OrthographicCamera2D.toWebGLMat4() = Float32Array(
-    arrayOf(
-        mxx, myx, mzx, 0f,
-        mxy, myy, mzy, 0f,
-        mxz, myz, mzz, 0f,
-        tx, ty, tz, 1f
     )
 )

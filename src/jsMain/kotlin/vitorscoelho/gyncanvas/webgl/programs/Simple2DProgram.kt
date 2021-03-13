@@ -10,6 +10,7 @@ internal class Simple2DProgram(gl: WebGLRenderingContext) :
     AbstractProgram(gl = gl, vertexShaderSource = vertexShaderSource, fragmentShaderSource = fragmentShaderSource) {
     /**Localização do attribute position do shader*/
     private val positionLocation: Int = gl.getAttribLocation(webGLProgram, "position")
+
     /**Localização do uniform transformMatrix do shader*/
     private val transformMatrixLocation: WebGLUniformLocation =
         gl.getUniformLocation(webGLProgram, "transformMatrix")
@@ -20,15 +21,20 @@ internal class Simple2DProgram(gl: WebGLRenderingContext) :
         gl.enableVertexAttribArray(positionLocation)//TODO conferir se fica aqui msm ou na função use()
     }
 
-    fun setAttributes(positionBuffer: WebGLBuffer) {
+    fun setAttributes(positionBuffer: WebGLBuffer, indexColorBuffer: WebGLBuffer?=null) {
         //TODO ver se tem como passar o positionBuffer e o colorBuffer em um único buffer. Como a ideia do SimpleProgram é renderizar elemento com uma cor só, o índice da cor pode ser o primeiro elemento do buffer
         //Position buffer
         gl.bindBuffer(GL.ARRAY_BUFFER, positionBuffer)
         gl.vertexAttribPointer(positionLocation, positionVertexSize, GL.FLOAT, false, 0, 0)
     }
 
-    fun setUniforms(transformMatrix: Float32Array) {
+    fun setCamera(transformMatrix: Float32Array) {
         gl.uniformMatrix3fv(transformMatrixLocation, false, transformMatrix)
+    }
+
+    /**Array com cores que serão indexadas*/
+    fun setColors(rgba: Array<Float>) {
+//        gl.uniform
     }
 
     companion object {
