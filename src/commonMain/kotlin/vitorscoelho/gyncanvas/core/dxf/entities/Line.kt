@@ -1,11 +1,9 @@
 package vitorscoelho.gyncanvas.core.dxf.entities
 
 import vitorscoelho.gyncanvas.core.dxf.Color
-import vitorscoelho.gyncanvas.core.Drawer
 import vitorscoelho.gyncanvas.core.dxf.ShapeType
 import vitorscoelho.gyncanvas.core.dxf.tables.Layer
 import vitorscoelho.gyncanvas.core.primitives.Primitive
-import vitorscoelho.gyncanvas.math.TransformationMatrix
 import vitorscoelho.gyncanvas.math.Vector
 
 class Line(
@@ -15,7 +13,7 @@ class Line(
     endPoint: Vector
 ) : Entity {
     private val primitiveLine = vitorscoelho.gyncanvas.core.primitives.Line(
-        startPoint = startPoint, endPoint = endPoint, color = color
+        startPoint = startPoint, endPoint = endPoint, color = color.effectiveColor(entity = this)
     )
     val startPoint: Vector get() = primitiveLine.startPoint
     val endPoint: Vector get() = primitiveLine.endPoint
@@ -24,4 +22,10 @@ class Line(
         get() = ShapeType.STROKED
 
     override val primitives: List<Primitive> get() = listOf(primitiveLine)
+
+    override val primitivesCount: Int get() = 1
+
+    override fun forEachPrimitive(action: (Primitive) -> Unit) {
+        action(primitiveLine)
+    }
 }

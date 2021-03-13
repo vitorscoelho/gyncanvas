@@ -1,9 +1,9 @@
 package vitorscoelho.gyncanvas.webgl
 
-import org.khronos.webgl.Float32Array
 import org.khronos.webgl.WebGLBuffer
 import org.khronos.webgl.WebGLRenderingContext.Companion as GL
 import vitorscoelho.gyncanvas.core.primitives.Color
+import vitorscoelho.gyncanvas.core.primitives.Drawable
 import vitorscoelho.gyncanvas.core.primitives.Primitive
 import vitorscoelho.gyncanvas.core.primitives.PrimitiveType
 import vitorscoelho.gyncanvas.webgl.programs.Simple2DProgram
@@ -33,8 +33,17 @@ class WebGLStaticDrawer2D(drawingArea: JSDrawingArea) {
     private val positionBuffer: WebGLBuffer = gl.createEmptyBuffer()
     private val colorBuffer: WebGLBuffer = gl.createEmptyBuffer()
 
+    fun setElements(elements: List<Drawable>) {
+        val lista = mutableListOf<Primitive>()
+        elements.forEach { element ->
+            element.forEachPrimitive { primitive ->
+                lista += primitive
+            }
+        }
+        setElements(lista)
+    }
 
-    fun setElements(elements: List<Primitive>) {
+    private fun setElements(elements: List<Primitive>) {
         elementsTypes = IntArray(size = elements.size)
         elementsVerticesCount = IntArray(size = elements.size)
 
@@ -43,19 +52,22 @@ class WebGLStaticDrawer2D(drawingArea: JSDrawingArea) {
         val vertexPosition = Array<Float>(size = vertexCount * 2) { 0f }
         val vertexColor = Array<Float>(size = vertexCount * 3) { 0f }
 
-        var currentVertex = 0
+        var positionIndex = 0
+        var colorIndex = 0
         elements.forEachIndexed { elementIndex, element ->
             elementsTypes[elementIndex] = element.glType
             elementsVerticesCount[elementIndex] = element.verticesCount
             element.forEachVertex { _, x, y, _, red, green, blue, _ ->
-                vertexPosition[currentVertex * 2] = x
-                vertexPosition[currentVertex * 2 + 1] = y
-                vertexColor[currentVertex * 3] = rgbToFloat(red)
-                vertexColor[currentVertex * 3 + 1] = rgbToFloat(green)
-                vertexColor[currentVertex * 3 + 2] = rgbToFloat(blue)
-                currentVertex++
+                vertexPosition[positionIndex++] = x
+                vertexPosition[positionIndex++] = y
+                vertexColor[colorIndex++] = rgbToFloat(red)
+                vertexColor[colorIndex++] = rgbToFloat(green)
+                vertexColor[colorIndex++] = rgbToFloat(blue)
             }
         }
+
+        println(vertexPosition)
+        println(vertexColor)
 
         gl.changeArrayBufferStaticData(positionBuffer, vertexPosition)
         gl.changeArrayBufferStaticData(colorBuffer, vertexColor)

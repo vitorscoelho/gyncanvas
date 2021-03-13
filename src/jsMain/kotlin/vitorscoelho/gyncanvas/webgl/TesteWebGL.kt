@@ -2,10 +2,13 @@ package vitorscoelho.gyncanvas.webgl
 
 import org.w3c.dom.HTMLCanvasElement
 import vitorscoelho.gyncanvas.core.EventManager
+import vitorscoelho.gyncanvas.core.dxf.entities.Circle
+import vitorscoelho.gyncanvas.core.dxf.tables.Layer
 import vitorscoelho.gyncanvas.core.event.CanvasMouseButton
 import vitorscoelho.gyncanvas.core.event.CanvasMouseEvent
 import vitorscoelho.gyncanvas.core.primitives.Color
 import vitorscoelho.gyncanvas.core.primitives.Line
+import vitorscoelho.gyncanvas.core.primitives.StrokedCircle
 import vitorscoelho.gyncanvas.core.primitives.Triangle
 import vitorscoelho.gyncanvas.math.Vector2D
 
@@ -35,11 +38,24 @@ val COLOR_BLUE = object : Color {
     override val blue: Short = 255
 }
 
+val linhaDXF = vitorscoelho.gyncanvas.core.dxf.entities.Line(
+    layer = Layer(name = "layer qualquer", color = vitorscoelho.gyncanvas.core.dxf.Color.INDEX_100),
+    startPoint = Vector2D(-10.0, -10.0),
+    endPoint = Vector2D(10.0, 10.0),
+)
+
+val circleDXF = Circle(
+    layer = Layer(name = "layer circle", color = vitorscoelho.gyncanvas.core.dxf.Color.INDEX_181),
+    centerPoint = Vector2D(x = 2.0, y = 0.0),
+    radius = 1.5
+)
+
 fun testar(canvas: HTMLCanvasElement) {
     val drawingArea = JSDrawingArea(canvas)
     val drawer = WebGLStaticDrawer2D(drawingArea)
     drawer.setElements(
         listOf(
+            linhaDXF,
             Triangle(
                 p1 = Vector2D(-1.0, 0.0),
                 p2 = Vector2D(0.0, 1.0),
@@ -58,7 +74,7 @@ fun testar(canvas: HTMLCanvasElement) {
             ),
             Line(
                 startPoint = Vector2D(-1.0, 0.0),
-                endPoint = Vector2D(1.0, 0.0),
+                endPoint = Vector2D(2.0, 0.0),
                 color = COLOR_RED
             ),
             Line(
@@ -66,6 +82,12 @@ fun testar(canvas: HTMLCanvasElement) {
                 endPoint = Vector2D(0.0, 1.0),
                 color = COLOR_WHITE
             ),
+            StrokedCircle(
+                centerPoint = Vector2D(0.0, 0.0),
+                radius = 1.0,
+                color = COLOR_GREEN
+            ),
+            circleDXF
         )
     )
     val camera = OrthographicCamera2D(drawingArea)

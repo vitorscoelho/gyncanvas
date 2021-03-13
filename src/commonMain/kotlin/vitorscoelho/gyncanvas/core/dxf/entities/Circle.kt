@@ -4,6 +4,7 @@ import vitorscoelho.gyncanvas.core.dxf.Color
 import vitorscoelho.gyncanvas.core.dxf.ShapeType
 import vitorscoelho.gyncanvas.core.dxf.tables.Layer
 import vitorscoelho.gyncanvas.core.primitives.Primitive
+import vitorscoelho.gyncanvas.core.primitives.StrokedCircle
 import vitorscoelho.gyncanvas.math.Vector
 
 class Circle(
@@ -12,8 +13,8 @@ class Circle(
     centerPoint: Vector,
     radius: Double
 ) : Entity {
-    private val primitiveCircle = vitorscoelho.gyncanvas.core.primitives.StrokedCircle(
-        centerPoint = centerPoint, radius = radius, color = color
+    private val primitiveCircle = StrokedCircle(
+        centerPoint = centerPoint, radius = radius, color = color.effectiveColor(this)
     )
 
     val centerPoint: Vector get() = primitiveCircle.centerPoint
@@ -24,4 +25,10 @@ class Circle(
         get() = ShapeType.STROKED
 
     override val primitives: List<Primitive> get() = listOf(primitiveCircle)
+
+    override val primitivesCount: Int get() = 1
+
+    override fun forEachPrimitive(action: (Primitive) -> Unit) {
+        action(primitiveCircle)
+    }
 }

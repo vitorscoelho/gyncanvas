@@ -4,10 +4,11 @@ import vitorscoelho.gyncanvas.core.dxf.Color
 import vitorscoelho.gyncanvas.core.Drawer
 import vitorscoelho.gyncanvas.core.dxf.ShapeType
 import vitorscoelho.gyncanvas.core.dxf.tables.Layer
+import vitorscoelho.gyncanvas.core.primitives.Drawable
 import vitorscoelho.gyncanvas.core.primitives.Primitive
 import vitorscoelho.gyncanvas.math.TransformationMatrix
 
-interface Entity {
+interface Entity : Drawable {
     val primitives: List<Primitive>
     val shapeType: ShapeType
 
