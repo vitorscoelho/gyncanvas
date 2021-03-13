@@ -10,34 +10,64 @@ import vitorscoelho.gyncanvas.core.primitives.Triangle
 import vitorscoelho.gyncanvas.math.Vector2D
 
 val COLOR_BLACK = object : Color {
-    override val red = 0f
-    override val green = 0f
-    override val blue = 0f
+    override val red: Short = 0
+    override val green: Short = 0
+    override val blue: Short = 0
 }
 val COLOR_WHITE = object : Color {
-    override val red = 1f
-    override val green = 1f
-    override val blue = 1f
+    override val red: Short = 255
+    override val green: Short = 255
+    override val blue: Short = 255
 }
 val COLOR_RED = object : Color {
-    override val red = 1f
-    override val green = 0f
-    override val blue = 0f
+    override val red: Short = 255
+    override val green: Short = 0
+    override val blue: Short = 0
 }
 val COLOR_GREEN = object : Color {
-    override val red = 0f
-    override val green = 1f
-    override val blue = 0f
+    override val red: Short = 0
+    override val green: Short = 255
+    override val blue: Short = 0
 }
 val COLOR_BLUE = object : Color {
-    override val red = 0f
-    override val green = 0f
-    override val blue = 1f
+    override val red: Short = 0
+    override val green: Short = 0
+    override val blue: Short = 255
 }
 
 fun testar(canvas: HTMLCanvasElement) {
     val drawingArea = JSDrawingArea(canvas)
     val drawer = WebGLStaticDrawer2D(drawingArea)
+    drawer.setElements(
+        listOf(
+            Triangle(
+                p1 = Vector2D(-1.0, 0.0),
+                p2 = Vector2D(0.0, 1.0),
+                p3 = Vector2D(1.0, 0.0),
+                color = COLOR_BLUE
+            ),
+            Line(
+                startPoint = Vector2D(-1.0, -1.0),
+                endPoint = Vector2D(1.0, 1.0),
+                color = COLOR_WHITE
+            ),
+            Line(
+                startPoint = Vector2D(-1.0, 1.0),
+                endPoint = Vector2D(1.0, -1.0),
+                color = COLOR_RED
+            ),
+            Line(
+                startPoint = Vector2D(-1.0, 0.0),
+                endPoint = Vector2D(1.0, 0.0),
+                color = COLOR_RED
+            ),
+            Line(
+                startPoint = Vector2D(0.0, -1.0),
+                endPoint = Vector2D(0.0, 1.0),
+                color = COLOR_WHITE
+            ),
+        )
+    )
     val camera = OrthographicCamera2D(drawingArea)
     val drawFunction = { drawer.draw(COLOR_BLACK, camera) }
     drawFunction()

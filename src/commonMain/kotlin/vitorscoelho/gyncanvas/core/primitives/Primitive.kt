@@ -27,6 +27,7 @@ private fun actionOnVertex(
             x.toFloat(), y.toFloat(), z.toFloat(),
             color.red, color.green, color.blue, color.alpha
         )
+        println("${x.toFloat()} ${y.toFloat()} ${z.toFloat()} ${color.red} ${color.green} ${color.blue}")
     }
 }
 

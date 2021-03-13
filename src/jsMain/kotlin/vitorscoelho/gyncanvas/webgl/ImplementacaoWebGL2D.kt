@@ -20,82 +20,57 @@ private val mapGlTypes: Map<PrimitiveType, Int> = mapOf(
 
 private val Primitive.glType: Int get() = mapGlTypes[this.type]!!
 
-private class RGBA(val red: Short, val green: Short, val blue: Short, val alpha: Float) {
-    val redWebGL: Float get() = toFloatColor(red)
-    val greenWebGL: Float get() = toFloatColor(green)
-    val blueWebGL: Float get() = toFloatColor(blue)
-
-    private fun toFloatColor(intValue: Short) = intValue.toFloat() / 255f
-}
+private fun rgbToFloat(decimal: Short) = decimal.toFloat() / 255f
 
 class WebGLStaticDrawer2D(drawingArea: JSDrawingArea) {
     private val gl = getWebGLContext(drawingArea = drawingArea)
 
     private val program = Simple2DProgram(gl = gl)
 
+    private var elementsTypes: IntArray = intArrayOf()
+    private var elementsVerticesCount: IntArray = intArrayOf()
+
     private val positionBuffer: WebGLBuffer = gl.createEmptyBuffer()
-    private val colorIndexBuffer: WebGLBuffer = gl.createEmptyBuffer()
+    private val colorBuffer: WebGLBuffer = gl.createEmptyBuffer()
 
 
     fun setElements(elements: List<Primitive>) {
+        elementsTypes = IntArray(size = elements.size)
+        elementsVerticesCount = IntArray(size = elements.size)
+
         val vertexCount = elements.sumBy { it.verticesCount }
 
         val vertexPosition = Array<Float>(size = vertexCount * 2) { 0f }
-        val vertexColorIndex = Array<Short>(size = vertexCount) { 0 }
+        val vertexColor = Array<Float>(size = vertexCount * 3) { 0f }
 
-        val indexedColorsMap = hashMapOf<RGBA, Short>()
-
-        var currentIndexColor: Short = 0
         var currentVertex = 0
-        elements.forEachIndexed { _, element ->
-            element.forEachVertex { _, x, y, _, red, green, blue, alpha ->
+        elements.forEachIndexed { elementIndex, element ->
+            elementsTypes[elementIndex] = element.glType
+            elementsVerticesCount[elementIndex] = element.verticesCount
+            element.forEachVertex { _, x, y, _, red, green, blue, _ ->
                 vertexPosition[currentVertex * 2] = x
                 vertexPosition[currentVertex * 2 + 1] = y
-
-                val color = RGBA(red, green, blue, alpha)
-                if (indexedColorsMap.contains(color)) indexedColorsMap[color] = currentIndexColor++
-                vertexColorIndex[currentVertex] = indexedColorsMap[color]!!
-
+                vertexColor[currentVertex * 3] = rgbToFloat(red)
+                vertexColor[currentVertex * 3 + 1] = rgbToFloat(green)
+                vertexColor[currentVertex * 3 + 2] = rgbToFloat(blue)
                 currentVertex++
             }
         }
 
-        val colors = indexedColorsMap
-            .toList()
-            .sortedBy { (_, index) -> index }
-            .flatMap { (rgba, _) -> listOf(rgba.redWebGL, rgba.greenWebGL, rgba.blueWebGL, rgba.alpha) }
-            .toTypedArray()
-
         gl.changeArrayBufferStaticData(positionBuffer, vertexPosition)
-        gl.changeArrayBufferStaticData(colorIndexBuffer, vertexColorIndex)
-        program.setColors(colors)
+        gl.changeArrayBufferStaticData(colorBuffer, vertexColor)
     }
 
     fun draw(backgroundColor: Color, camera: OrthographicCamera2D) {
         gl.adjustViewportAndClear(backgroundColor = backgroundColor)
-
         program.use()
-
-        val positionBuffer: WebGLBuffer = gl.createArrayBufferStaticData(
-            data = Float32Array(
-                arrayOf(
-                    -1f, 0f,
-                    0f, 1f,
-                    1f, 0f
-                )
-            )
-        )
-        program.setAttributes(
-            positionBuffer = positionBuffer
-        )
-        program.setCamera(
-            transformMatrix = camera.toWebGLMat3()
-        )
-        gl.drawArrays(
-            mode = GL.TRIANGLES,
-            first = 0,
-            count = 3
-        )
+        program.setAttributes(positionBuffer = positionBuffer, colorBuffer = colorBuffer)
+        program.setCamera(transformMatrix = camera.toWebGLMat3())
+        var first = 0
+        for (index in 0..elementsTypes.size) {
+            gl.drawArrays(mode = elementsTypes[index], first = first, count = elementsVerticesCount[index])
+            first += elementsVerticesCount[index]
+        }
     }
 }
 
