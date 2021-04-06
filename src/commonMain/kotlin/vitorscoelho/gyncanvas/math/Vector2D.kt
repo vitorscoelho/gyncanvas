@@ -1,5 +1,6 @@
 package vitorscoelho.gyncanvas.math
 
+import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.math.sqrt
@@ -12,6 +13,21 @@ interface Vector {
 
 class Vector2D(override val x: Double, override val y: Double) : Vector {
     override val z: Double get() = 0.0
+
+    fun angle(other: Vector2D): Double {
+        val dot = x * other.x + y * other.y
+        val det = x * other.y - y * other.x
+        return atan2(det, dot)
+    }
+
+    val norm: Double get() = sqrt(x * x + y * y)
+
+    fun normalized(length: Double): Vector2D {
+        val invLength = length / sqrt(x * x + y * y)
+        return Vector2D(x = x * invLength, y = y * invLength)
+    }
+
+    fun normalized(): Vector2D = normalized(length = 1.0)
 
     fun distance(otherVector: Vector2D): Double = distance(vector1 = this, vector2 = otherVector)
 
@@ -45,6 +61,7 @@ class Vector2D(override val x: Double, override val y: Double) : Vector {
 
     operator fun plus(otherVector: Vector2D) = plus(deltaX = otherVector.x, deltaY = otherVector.y)
     operator fun minus(otherVector: Vector2D) = plus(deltaX = -otherVector.x, deltaY = -otherVector.y)
+    operator fun times(factor: Double) = Vector2D(x = factor * x, y = factor * y)
 
     fun transform(transformationMatrix: TransformationMatrix): Vector2D =
         transformationMatrix.transform(vector = this)
@@ -67,7 +84,9 @@ class Vector2D(override val x: Double, override val y: Double) : Vector {
     override fun toString(): String = "{x: $x, y: $y}"
 
     companion object {
-        val ZERO = Vector2D(x = 0.0, y = 0.0)
+        val ZERO: Vector2D get() = Vector2D(x = 0.0, y = 0.0)
+        val X_AXIS: Vector2D get() = Vector2D(x = 1.0, y = 0.0)
+        val Y_AXIS: Vector2D get() = Vector2D(x = 0.0, y = 1.0)
 
         fun distance(x1: Double, y1: Double, x2: Double, y2: Double): Double {
             val deltaX = x1 - x2

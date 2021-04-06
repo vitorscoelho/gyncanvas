@@ -1,11 +1,8 @@
 package vitorscoelho.gyncanvas.core.dxf.entities
 
 import vitorscoelho.gyncanvas.core.dxf.Color
-import vitorscoelho.gyncanvas.core.Drawer
-import vitorscoelho.gyncanvas.core.dxf.ShapeType
 import vitorscoelho.gyncanvas.core.dxf.tables.Layer
 import vitorscoelho.gyncanvas.core.dxf.tables.TextStyle
-import vitorscoelho.gyncanvas.math.TransformationMatrix
 import vitorscoelho.gyncanvas.math.Vector2D
 import vitorscoelho.gyncanvas.core.dxf.entities.AttachmentPointBaseline.*
 import vitorscoelho.gyncanvas.core.dxf.entities.AttachmentPointAlign.*
@@ -21,11 +18,12 @@ data class MText(
     val position: Vector2D,
     val content: String
 ) : Entity {
-    override val shapeType: ShapeType
-        get() = ShapeType.FILLED
+//    override val primitives: List<Primitive>
+//        get() = TODO("Not yet implemented")
 
-    override val primitives: List<Primitive>
-        get() = TODO("Not yet implemented")
+    override fun forEachPrimitive(action: (Primitive) -> Unit) {
+        TODO("Not yet implemented")
+    }
 
 //    override fun draw(drawer: Drawer) {
 //        applyLineWidth(drawer = drawer)

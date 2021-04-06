@@ -1,21 +1,15 @@
 package vitorscoelho.gyncanvas.core.dxf.entities
 
 import vitorscoelho.gyncanvas.core.dxf.Color
-import vitorscoelho.gyncanvas.core.Drawer
-import vitorscoelho.gyncanvas.core.dxf.ShapeType
 import vitorscoelho.gyncanvas.core.dxf.entities.path.PathStep
 import vitorscoelho.gyncanvas.core.dxf.tables.Layer
 import vitorscoelho.gyncanvas.core.primitives.Primitive
-import vitorscoelho.gyncanvas.math.TransformationMatrix
 
 data class Hatch internal constructor(
     override val layer: Layer,
     override val color: Color = Color.BY_LAYER,
     internal val pathSteps: List<PathStep>
 ) : Entity {
-    override val shapeType: ShapeType
-        get() = ShapeType.STROKED_AND_FILLED
-
 //    override fun draw(drawer: Drawer) {
 //        drawer.beginPath()
 //        pathSteps.forEach { it.draw(drawer = drawer) }
@@ -23,8 +17,9 @@ data class Hatch internal constructor(
 //        drawer.fill()
 //    }
 
-    override val primitives: List<Primitive>
-        get() = TODO("Not yet implemented")
+    override fun forEachPrimitive(action: (Primitive) -> Unit) {
+        TODO("Not yet implemented")
+    }
 
     companion object {
         fun fromLwPolyline(layer: Layer, color: Color = Color.BY_LAYER, lwPolyline: LwPolyline): Hatch =

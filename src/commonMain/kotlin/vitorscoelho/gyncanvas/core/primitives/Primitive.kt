@@ -2,9 +2,15 @@ package vitorscoelho.gyncanvas.core.primitives
 
 import vitorscoelho.gyncanvas.math.Vector
 import vitorscoelho.gyncanvas.math.Vector2D
-import kotlin.math.PI
-import kotlin.math.cos
-import kotlin.math.sin
+import kotlin.math.*
+
+/*
+Entities que falta fazer:
+Hatch
+Insert
+LwPolyline
+MText
+ */
 
 /**
  * Para descrição, acessar o site:
@@ -37,7 +43,7 @@ interface Drawable {
             return count
         }
 
-    fun forEachPrimitive(action: (Primitive) -> Unit) {}
+    fun forEachPrimitive(action: (Primitive) -> Unit)
 }
 
 private fun actionOnVertex(
@@ -76,27 +82,34 @@ class Triangle(val p1: Vector, val p2: Vector, val p3: Vector, val color: Color)
     }
 }
 
-class Dummy : Primitive {
-    override val type: PrimitiveType
-        get() = TODO("Not yet implemented")
-    override val verticesCount: Int
-        get() = TODO("Not yet implemented")
+private const val FLOAT_PI = PI.toFloat()
+private const val MIN_DELTA_ANGLE_ARC = 2f * FLOAT_PI / 50f
+private const val MIN_SEGMENTS_FOR_CURVE = 10
+
+/*
+Acessar o site abaixo para fazer um algoritmo que aplica fillet na polyline (já calculando o bulge):
+https://forums.autodesk.com/t5/net/how-to-apply-fillet-to-lwpolyline-with-c/td-p/8962322
+Para calcular o comprimento e a posição do centro da circunferência descrita pelo bulge:
+https://www.afralisp.net/archive/lisp/Bulges1.htm
+https://forums.autodesk.com/t5/autocad-lt-forum/bulge-center-dxf-net/td-p/8883298
+ */
+/**Polilinha com espessura fixa de 1px*/
+class Polyline(val path: Path, val color: Color) : Primitive {
+    override val type: PrimitiveType get() = if (path.closed) PrimitiveType.LINE_LOOP else PrimitiveType.LINE_STRIP
+    override val verticesCount: Int get() = points.size
+
+    private val points: List<Vector>
+        get() = path.linearPoints(
+            minAngleDiscretization = MIN_DELTA_ANGLE_ARC.toDouble(), minNSegments = MIN_SEGMENTS_FOR_CURVE
+        )
 
     override fun forEachVertex(action: (index: Int, x: Float, y: Float, z: Float, red: Short, green: Short, blue: Short, alpha: Float) -> Unit) {
-        TODO("Not yet implemented")
+        points.forEachIndexed { index, vector -> actionOnVertex(index, vector, color, action) }
     }
 }
 
-interface Polyline
-
-/**Polilinha aberta com espessura fixa de 1px*/
-class OpenedPolyline(val points: List<Vector>, val color: Color) : Primitive by Dummy()
-
 /**Polilinha aberta com espessura*/
 //class OpenedThickPolyline(val points: List<Vector>, val width: Double, override val color: Color) : Primitive
-
-/**Polilinha fechada com espessura fixa de 1px*/
-class ClosedPolyline(val points: List<Vector>, val color: Color) : Primitive by Dummy()
 
 /**Polilinha fechada com espessura*/
 //class ClosedThickPolyline(val points: List<Vector>, val width: Double, override val color: Color) : Primitive

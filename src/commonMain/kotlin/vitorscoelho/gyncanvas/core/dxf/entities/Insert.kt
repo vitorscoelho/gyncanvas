@@ -14,7 +14,7 @@ data class Insert(
     private val scaleFactor: Double = 1.0,
     val rotationAngle: Double = 0.0
 ) : CompositeEntity {
-    override val entities: List<Entity> = TODO("Ainda não implementou as transformações")
+    override val entities: List<Entity> = TODO()
     val xScaleFactor: Double
         get() = scaleFactor
     val yScaleFactor: Double

@@ -1,7 +1,6 @@
 package vitorscoelho.gyncanvas.core.dxf.entities
 
 import vitorscoelho.gyncanvas.core.dxf.Color
-import vitorscoelho.gyncanvas.core.dxf.ShapeType
 import vitorscoelho.gyncanvas.core.dxf.tables.Layer
 import vitorscoelho.gyncanvas.core.primitives.Primitive
 import vitorscoelho.gyncanvas.math.Vector
@@ -17,11 +16,6 @@ class Line(
     )
     val startPoint: Vector get() = primitiveLine.startPoint
     val endPoint: Vector get() = primitiveLine.endPoint
-
-    override val shapeType: ShapeType
-        get() = ShapeType.STROKED
-
-    override val primitives: List<Primitive> get() = listOf(primitiveLine)
 
     override val primitivesCount: Int get() = 1
 

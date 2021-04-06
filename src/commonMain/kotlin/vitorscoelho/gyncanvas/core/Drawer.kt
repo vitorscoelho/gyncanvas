@@ -54,7 +54,7 @@ abstract class Drawer {
         if (entity is CompositeEntity) {
             entity.entities.forEach { drawEntity(it) }
         } else {
-            entity.shapeType.applyColor(drawer = this, entity = entity)
+//            entity.shapeType.applyColor(drawer = this, entity = entity)
 //            entity.draw(drawer = this)
         }//TODO dar um jeito de remover esse 'if'
     }

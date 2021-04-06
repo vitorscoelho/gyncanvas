@@ -6,11 +6,10 @@ import vitorscoelho.gyncanvas.core.dxf.entities.Circle
 import vitorscoelho.gyncanvas.core.dxf.tables.Layer
 import vitorscoelho.gyncanvas.core.event.CanvasMouseButton
 import vitorscoelho.gyncanvas.core.event.CanvasMouseEvent
-import vitorscoelho.gyncanvas.core.primitives.Color
-import vitorscoelho.gyncanvas.core.primitives.Line
-import vitorscoelho.gyncanvas.core.primitives.StrokedCircle
-import vitorscoelho.gyncanvas.core.primitives.Triangle
+import vitorscoelho.gyncanvas.core.primitives.*
 import vitorscoelho.gyncanvas.math.Vector2D
+import vitorscoelho.gyncanvas.math.toRadians
+import kotlin.math.tan
 
 val COLOR_BLACK = object : Color {
     override val red: Short = 0
@@ -85,6 +84,14 @@ fun testar(canvas: HTMLCanvasElement) {
             StrokedCircle(
                 centerPoint = Vector2D(0.0, 0.0),
                 radius = 1.0,
+                color = COLOR_GREEN
+            ),
+            Polyline(
+                path = Path
+                    .initBuilder(x = 0.0, y = -5.0)
+                    .deltaLineTo(deltaX = 5.0)
+                    .deltaArcTo(deltaX = 5.0, deltaY = 5.0, bulge = tan(toRadians(90.0)/4.0))
+                    .build(),
                 color = COLOR_GREEN
             ),
             circleDXF
