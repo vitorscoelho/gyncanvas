@@ -108,11 +108,8 @@ class Polyline(val path: Path, val color: Color) : Primitive {
     }
 }
 
-/**Polilinha aberta com espessura*/
-//class OpenedThickPolyline(val points: List<Vector>, val width: Double, override val color: Color) : Primitive
-
-/**Polilinha fechada com espessura*/
-//class ClosedThickPolyline(val points: List<Vector>, val width: Double, override val color: Color) : Primitive
+/**Polilinha com espessura*/
+//class ThickPolyline(val points: List<Vector>, val width: Double, override val color: Color) : Primitive
 
 /*
 class Triangle(val p1: Vector, val p2: Vector, val p3: Vector, val color: Color) : Primitive {

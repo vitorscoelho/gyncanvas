@@ -9,7 +9,51 @@ interface Vector {
     val x: Double
     val y: Double
     val z: Double
+
+    fun distance(otherVector: Vector): Double = distance(vector1 = this, vector2 = otherVector)
+
+    fun distance(x: Double, y: Double): Double = distance(vector = this, x = x, y = y)
+
+    companion object {
+        val ZERO: Vector get() = Vector2D(x = 0.0, y = 0.0)
+        val X_AXIS: Vector get() = Vector2D(x = 1.0, y = 0.0)
+        val Y_AXIS: Vector get() = Vector2D(x = 0.0, y = 1.0)
+        val Z_AXIS: Vector get() = Vector3D(x = 0.0, y = 0.0, z = 1.0)
+
+        fun distance(x1: Double, y1: Double, z1: Double = 0.0, x2: Double, y2: Double, z2: Double = 0.0): Double {
+            val deltaX = x1 - x2
+            val deltaY = y1 - y2
+            val deltaZ = z1 - z2
+            return sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ)
+        }
+
+        fun distance(vector1: Vector, vector2: Vector): Double = distance(
+            x1 = vector1.x, y1 = vector1.y, z1 = vector1.z,
+            x2 = vector2.x, y2 = vector2.y, z2 = vector2.z
+        )
+
+        fun distance(vector: Vector, x: Double, y: Double, z: Double = 0.0): Double = distance(
+            x1 = vector.x, y1 = vector.y, z1 = vector.z,
+            x2 = x, y2 = y, z2 = z
+        )
+
+        fun mid(x1: Double, y1: Double, z1: Double = 0.0, x2: Double, y2: Double, z2: Double = 0.0): Vector {
+            val x = (x1 + x2) / 2.0
+            val y = (y1 + y2) / 2.0
+            if (z1 == 0.0 && z2 == 0.0) return Vector2D(x = x, y = y)
+            val z = (z1 + z2) / 2.0
+            return Vector3D(x = x, y = y, z = z)
+        }
+
+        fun mid(vector1: Vector, vector2: Vector): Vector =
+            mid(x1 = vector1.x, y1 = vector1.y, z1 = vector1.z, x2 = vector2.x, y2 = vector2.y, z2 = vector2.z)
+
+        fun mid(vector: Vector, x: Double, y: Double, z: Double): Vector =
+            mid(x1 = vector.x, y1 = vector.y, z1 = vector.z, x2 = x, y2 = y, z2 = z)
+    }
 }
+
+class Vector3D(override val x: Double, override val y: Double, override val z: Double) : Vector
 
 class Vector2D(override val x: Double, override val y: Double) : Vector {
     override val z: Double get() = 0.0
@@ -28,10 +72,6 @@ class Vector2D(override val x: Double, override val y: Double) : Vector {
     }
 
     fun normalized(): Vector2D = normalized(length = 1.0)
-
-    fun distance(otherVector: Vector2D): Double = distance(vector1 = this, vector2 = otherVector)
-
-    fun distance(x: Double, y: Double): Double = distance(vector = this, x = x, y = y)
 
     fun createNewWithOffset(deltaX: Double = 0.0, deltaY: Double = 0.0): Vector2D {
         return Vector2D(
@@ -84,35 +124,6 @@ class Vector2D(override val x: Double, override val y: Double) : Vector {
     override fun toString(): String = "{x: $x, y: $y}"
 
     companion object {
-        val ZERO: Vector2D get() = Vector2D(x = 0.0, y = 0.0)
-        val X_AXIS: Vector2D get() = Vector2D(x = 1.0, y = 0.0)
-        val Y_AXIS: Vector2D get() = Vector2D(x = 0.0, y = 1.0)
-
-        fun distance(x1: Double, y1: Double, x2: Double, y2: Double): Double {
-            val deltaX = x1 - x2
-            val deltaY = y1 - y2
-            return sqrt(deltaX * deltaX + deltaY * deltaY)
-        }
-
-        fun distance(vector1: Vector2D, vector2: Vector2D): Double = distance(
-            x1 = vector1.x, y1 = vector1.y,
-            x2 = vector2.x, y2 = vector2.y
-        )
-
-        fun distance(vector: Vector2D, x: Double, y: Double): Double = distance(
-            x1 = vector.x, y1 = vector.y,
-            x2 = x, y2 = y
-        )
-
-        fun mid(x1: Double, y1: Double, x2: Double, y2: Double) =
-            Vector2D(x = (x1 + x2) / 2.0, y = (y1 + y2) / 2.0)
-
-        fun mid(vector1: Vector2D, vector2: Vector2D): Vector2D =
-            mid(x1 = vector1.x, y1 = vector1.y, x2 = vector2.x, y2 = vector2.y)
-
-        fun mid(vector: Vector2D, x: Double, y: Double): Vector2D =
-            mid(x1 = vector.x, y1 = vector.y, x2 = x, y2 = y)
-
         fun withRotation(x: Double, y: Double, angulo: Double): Vector2D {
             return Vector2D(
                 x = x * cos(angulo) - y * sin(angulo),

@@ -26,6 +26,23 @@ private fun linearPointsArc(
 }
 
 class Path internal constructor(val steps: List<PathStep>, val closed: Boolean) {
+    val length: Double by lazy {
+        var value = 0.0
+        for (index in 1..steps.lastIndex) {
+            val currentStep = steps[index]
+            val previousPoint = steps[index - 1].endPoint
+            if (currentStep is ArcTo) {
+                val arc = Arc.create(
+                    startPoint = previousPoint as Vector2D, endPoint = currentStep.endPoint as Vector2D,
+                    bulge = currentStep.bulge
+                )
+                value += arc.length
+            } else {
+                value += Vector.distance(vector1 = currentStep.endPoint, vector2 = previousPoint)
+            }
+        }
+        value
+    }
 
     /**
      * Retorna uma lista com pontos que formam o [Path] a partir de segmentos de reta
