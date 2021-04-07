@@ -89,7 +89,7 @@ class Arc private constructor(
          */
         fun create(startPoint: Vector2D, endPoint: Vector2D, bulge: Double): Arc {
             //1
-            val startToChordMiddleVec: Vector2D = endPoint - startPoint
+            val startToChordMiddleVec: Vector2D = (endPoint - startPoint) as Vector2D
             val chordLength: Double = startToChordMiddleVec.norm
             //2
             val sagittaLength: Double = bulge.absoluteValue * chordLength / 2.0
@@ -100,18 +100,18 @@ class Arc private constructor(
             val chordMiddleToArcMiddleVec = startToChordMiddleVec.rotate(bulge.sign * PI / 2.0)
             //4
             val centerPoint =
-                Vector2D.mid(startPoint, endPoint) - chordMiddleToArcMiddleVec.normalized(deltaLengthRadiusSagitta)
+                Vector.mid(startPoint, endPoint) - chordMiddleToArcMiddleVec.normalized(deltaLengthRadiusSagitta)
 
             /**Posições dos pontos em relação ao centro*/
-            val deltaStartPoint = startPoint - centerPoint
-            val deltaEndPoint = endPoint - centerPoint
-            val xAxis = Vector2D.X_AXIS
+            val deltaStartPoint = (startPoint - centerPoint) as Vector2D
+            val deltaEndPoint = (endPoint - centerPoint) as Vector2D
+            val xAxis = Vector.X_AXIS as Vector2D
             val startAngle = xAxis.angle(deltaStartPoint)
             val endAngle = xAxis.angle(deltaEndPoint)
             return Arc(
                 startPoint = startPoint, endPoint = endPoint,
                 bulge = bulge,
-                centerPoint = centerPoint,
+                centerPoint = centerPoint as Vector2D,
                 radius = radius,
                 startAngle = startAngle, endAngle = endAngle
             )

@@ -8,7 +8,7 @@ import vitorscoelho.gyncanvas.core.dxf.entities.dimensionutils.RotatedDimensionS
 import vitorscoelho.gyncanvas.core.dxf.entities.dimensionutils.RotatedDimensionSequenceStart
 import vitorscoelho.gyncanvas.core.dxf.tables.DimStyle
 import vitorscoelho.gyncanvas.core.dxf.tables.Layer
-import vitorscoelho.gyncanvas.math.TransformationMatrix
+import vitorscoelho.gyncanvas.math.Vector
 import vitorscoelho.gyncanvas.math.Vector2D
 import vitorscoelho.gyncanvas.math.toRadians
 
@@ -17,9 +17,9 @@ data class RotatedDimension(
     override val color: Color = Color.BY_LAYER,
     override val dimStyle: DimStyle,
     override val dimStyleOverrides: DimStyleOverrides = DimStyleOverrides.NONE,
-    override val xPoint1: Vector2D,
-    override val xPoint2: Vector2D,
-    private val dimensionLineReferencePoint: Vector2D,
+    override val xPoint1: Vector,
+    override val xPoint2: Vector,
+    private val dimensionLineReferencePoint: Vector,
     override val angle: Double,
     override val text: String = "<>"
 ) : LinearDimension {
@@ -47,7 +47,7 @@ data class RotatedDimension(
             dimensionPoint1 = points.point1ExtensionLine2,
             dimensionPoint2 = points.point2ExtensionLine2
         )
-        this.measurement = Vector2D.distance(points.point1DimensionLine, points.point2DimensionLine)
+        this.measurement = Vector.distance(points.point1DimensionLine, points.point2DimensionLine)
         val mText: MText? = createMText(
             content = text,
             dimensionPoint = points.mTextPosition,
@@ -62,17 +62,17 @@ data class RotatedDimension(
         )
     }
 
-    override fun dimContinue(point: Vector2D): RotatedDimension = dimContinueXPoint2(point)
+    override fun dimContinue(point: Vector): RotatedDimension = dimContinueXPoint2(point)
 
-    override fun dimContinueXPoint1(point: Vector2D): RotatedDimension {
+    override fun dimContinueXPoint1(point: Vector): RotatedDimension {
         return copy(xPoint1 = this.xPoint1, xPoint2 = point)
     }
 
-    override fun dimContinueXPoint2(point: Vector2D): RotatedDimension {
+    override fun dimContinueXPoint2(point: Vector): RotatedDimension {
         return copy(xPoint1 = this.xPoint2, xPoint2 = point)
     }
 
-    override fun createSequence(points: List<Vector2D>): List<RotatedDimension> {
+    override fun createSequence(points: List<Vector>): List<RotatedDimension> {
         val dimensions = mutableListOf(this)
         points.forEach { dimensions.add(dimensions.last().dimContinue(it)) }
         return dimensions
@@ -85,8 +85,8 @@ data class RotatedDimension(
     ).firstPoint(xPoint1).next(xPoint2)
 
     private fun createDimensionLine(points: RotatedDimensionPoints): Line? {
-        val point1: Vector2D
-        val point2: Vector2D
+        val point1: Vector
+        val point2: Vector
         if (this.dimensionLinesSuppressDimLine1 && this.dimensionLinesSuppressDimLine2) return null
         if (!this.dimensionLinesSuppressDimLine1 && !this.dimensionLinesSuppressDimLine2) {
             point1 = points.point1DimensionLine
@@ -101,7 +101,7 @@ data class RotatedDimension(
         return Line(layer = layer, color = dimensionLinesColor, startPoint = point1, endPoint = point2)
     }
 
-    private fun createExtensionLine(suppress: Boolean, dimensionPoint1: Vector2D, dimensionPoint2: Vector2D): Line? {
+    private fun createExtensionLine(suppress: Boolean, dimensionPoint1: Vector, dimensionPoint2: Vector): Line? {
         if (suppress) return null
         return Line(
             layer = layer,
@@ -111,7 +111,7 @@ data class RotatedDimension(
         )
     }
 
-    private fun createMText(content: String, dimensionPoint: Vector2D, measurement: Double): MText? {
+    private fun createMText(content: String, dimensionPoint: Vector, measurement: Double): MText? {
         return MText(
             layer = layer,
             color = textColor,
@@ -125,7 +125,7 @@ data class RotatedDimension(
     }
 
     private fun createArrowHeads(
-        dimensionLinePoint1: Vector2D, dimensionLinePoint2: Vector2D, rotationPoint1: Double, rotationPoint2: Double
+        dimensionLinePoint1: Vector, dimensionLinePoint2: Vector, rotationPoint1: Double, rotationPoint2: Double
     ): Pair<Insert?, Insert?> {
         val size: Double = arrowSize * overallScale
         var first: Insert? = null
@@ -151,7 +151,7 @@ data class RotatedDimension(
         fun horizontal(
             layer: Layer, color: Color = Color.BY_LAYER,
             dimStyle: DimStyle, dimStyleOverrides: DimStyleOverrides = DimStyleOverrides.NONE,
-            xPoint1: Vector2D, xPoint2: Vector2D,
+            xPoint1: Vector, xPoint2: Vector,
             yDimensionLine: Double,
             text: String = "<>"
         ): RotatedDimension = RotatedDimension(
@@ -165,7 +165,7 @@ data class RotatedDimension(
         fun vertical(
             layer: Layer, color: Color = Color.BY_LAYER,
             dimStyle: DimStyle, dimStyleOverrides: DimStyleOverrides = DimStyleOverrides.NONE,
-            xPoint1: Vector2D, xPoint2: Vector2D,
+            xPoint1: Vector, xPoint2: Vector,
             xDimensionLine: Double,
             text: String = "<>"
         ): RotatedDimension = RotatedDimension(
@@ -179,7 +179,7 @@ data class RotatedDimension(
         fun sequence(
             layer: Layer, color: Color = Color.BY_LAYER,
             dimStyle: DimStyle, dimStyleOverrides: DimStyleOverrides = DimStyleOverrides.NONE,
-            dimensionLineReferencePoint: Vector2D,
+            dimensionLineReferencePoint: Vector,
             angle: Double,
             text: String = "<>"
         ): RotatedDimensionSequenceStart = RotatedDimensionSequence.init(

@@ -10,9 +10,24 @@ interface Vector {
     val y: Double
     val z: Double
 
+    fun transform(transformationMatrix: TransformationMatrix): Vector
+
     fun distance(otherVector: Vector): Double = distance(vector1 = this, vector2 = otherVector)
 
     fun distance(x: Double, y: Double): Double = distance(vector = this, x = x, y = y)
+
+    fun plus(deltaX: Double = 0.0, deltaY: Double = 0.0, deltaZ: Double = 0.0): Vector {
+        if (this.z + deltaZ == 0.0) return Vector2D(x = x + deltaX, y = y + deltaY)
+        return Vector3D(x = x + deltaX, y = y + deltaY, z = z + deltaZ)
+    }
+
+    operator fun plus(otherVector: Vector) =
+        plus(deltaX = otherVector.x, deltaY = otherVector.y, deltaZ = otherVector.z)
+
+    operator fun minus(otherVector: Vector) =
+        plus(deltaX = -otherVector.x, deltaY = -otherVector.y, deltaZ = -otherVector.z)
+
+    operator fun times(factor: Double): Vector
 
     companion object {
         val ZERO: Vector get() = Vector2D(x = 0.0, y = 0.0)
@@ -53,7 +68,12 @@ interface Vector {
     }
 }
 
-class Vector3D(override val x: Double, override val y: Double, override val z: Double) : Vector
+class Vector3D(override val x: Double, override val y: Double, override val z: Double) : Vector {
+    override fun times(factor: Double): Vector = Vector3D(x = factor * x, y = factor * y, z = factor * z)
+    override fun transform(transformationMatrix: TransformationMatrix): Vector {
+        TODO("Not yet implemented")
+    }
+}
 
 class Vector2D(override val x: Double, override val y: Double) : Vector {
     override val z: Double get() = 0.0
@@ -73,13 +93,6 @@ class Vector2D(override val x: Double, override val y: Double) : Vector {
 
     fun normalized(): Vector2D = normalized(length = 1.0)
 
-    fun createNewWithOffset(deltaX: Double = 0.0, deltaY: Double = 0.0): Vector2D {
-        return Vector2D(
-            x = this.x + deltaX,
-            y = this.y + deltaY
-        )
-    }
-
     /**
      * @return Um novo vetor que representa 'this' rotacionada com o (0,0) sendo o pivô.
      */
@@ -90,20 +103,9 @@ class Vector2D(override val x: Double, override val y: Double) : Vector {
         )
     }
 
-    /**
-     * Retorna uma instância de um vetor com as coordenadas com os valores:
-     * * x = this.x + deltaX
-     * * y = this.y + deltaY
-     * @param deltaX a variação aplicada à abscissa
-     * @param deltaY a variação aplicada à ordenada
-     */
-    fun plus(deltaX: Double = 0.0, deltaY: Double = 0.0) = Vector2D(x = x + deltaX, y = y + deltaY)
+    override operator fun times(factor: Double) = Vector2D(x = factor * x, y = factor * y)
 
-    operator fun plus(otherVector: Vector2D) = plus(deltaX = otherVector.x, deltaY = otherVector.y)
-    operator fun minus(otherVector: Vector2D) = plus(deltaX = -otherVector.x, deltaY = -otherVector.y)
-    operator fun times(factor: Double) = Vector2D(x = factor * x, y = factor * y)
-
-    fun transform(transformationMatrix: TransformationMatrix): Vector2D =
+    override fun transform(transformationMatrix: TransformationMatrix): Vector =
         transformationMatrix.transform(vector = this)
 
     override fun equals(other: Any?): Boolean {

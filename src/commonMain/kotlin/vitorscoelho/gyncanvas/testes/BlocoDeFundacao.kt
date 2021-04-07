@@ -6,6 +6,7 @@ import vitorscoelho.gyncanvas.core.dxf.entities.*
 import vitorscoelho.gyncanvas.core.dxf.tables.DimStyle
 import vitorscoelho.gyncanvas.core.dxf.tables.Layer
 import vitorscoelho.gyncanvas.core.dxf.tables.TextStyle
+import vitorscoelho.gyncanvas.math.Vector
 import vitorscoelho.gyncanvas.math.Vector2D
 import vitorscoelho.gyncanvas.math.toRadians
 
@@ -76,8 +77,8 @@ class BlocoDeFundacao(
     private val layerTexto = Layer(name = "Texto", color = Color.INDEX_43)
 
     private val blocoCota: Block = run {
-        val circulo1 = Circle(layer = layerCota, centerPoint = Vector2D.ZERO, radius = 0.5 / 2.0)
-        val circulo2 = Circle(layer = layerCota, centerPoint = Vector2D.ZERO, radius = 1.0 / 2.0)
+        val circulo1 = Circle(layer = layerCota, centerPoint = Vector.ZERO, radius = 0.5 / 2.0)
+        val circulo2 = Circle(layer = layerCota, centerPoint = Vector.ZERO, radius = 1.0 / 2.0)
         val linha =
             Line(layer = layerCota, startPoint = Vector2D(x = -1.0, y = 0.0), endPoint = Vector2D(x = 0.0, y = 0.0))
         return@run Block(name = "_Origin2", entities = listOf(circulo1, circulo2, linha))
@@ -151,17 +152,14 @@ class BlocoDeFundacao(
             layer = layerPilarContorno, startPoint = pontoInicial,
             deltaX = hxPilar, deltaY = hyPilar
         )
-        val hachura = Hatch.fromLwPolyline(
-            layer = layerLinhaClara,
-            lwPolyline = contorno
-        )
+        val hachura = Hatch(layer = layerLinhaClara, path = contorno.path)
         return listOf(hachura, contorno)
     }
 
     private fun contornoBloco(): List<Entity> {
         val contorno = LwPolyline.rectangle(
             layer = layerFormaContorno,
-            startPoint = Vector2D.ZERO,
+            startPoint = Vector.ZERO,
             deltaX = lxBloco,
             deltaY = lyBloco
         )
@@ -217,7 +215,7 @@ class BlocoDeFundacao(
         val xPonto = 0.0
         val sequencia = RotatedDimension.verticalSequence(
             layer = layerCota, dimStyle = dimStyle, xDimensionLine = -distanciaCota
-        ).firstPoint(Vector2D.ZERO)
+        ).firstPoint(Vector.ZERO)
         ordenadasEixosHorizontais.forEach { y -> sequencia.next(x = xPonto, y = y) }
         sequencia.next(x = xPonto, y = lyBloco)
         return sequencia.toList()
@@ -227,7 +225,7 @@ class BlocoDeFundacao(
         val yPonto = 0.0
         val sequencia = RotatedDimension.horizontalSequence(
             layer = layerCota, dimStyle = dimStyle, yDimensionLine = -distanciaCota
-        ).firstPoint(Vector2D.ZERO)
+        ).firstPoint(Vector.ZERO)
         abscissasEixosVerticais.forEach { x -> sequencia.next(x = x, y = yPonto) }
         sequencia.next(x = lxBloco, y = yPonto)
         return sequencia.toList()
@@ -236,7 +234,7 @@ class BlocoDeFundacao(
     private fun cotaVerticalComprimentoDoBloco(): List<Entity> {
         val cota = RotatedDimension.vertical(
             layer = layerCota, dimStyle = dimStyle,
-            xPoint1 = Vector2D.ZERO, xPoint2 = Vector2D(x = 0.0, y = lyBloco),
+            xPoint1 = Vector.ZERO, xPoint2 = Vector2D(x = 0.0, y = lyBloco),
             xDimensionLine = -2.0 * distanciaCota
         )
         return listOf(cota)
@@ -245,7 +243,7 @@ class BlocoDeFundacao(
     private fun cotaHorizontalComprimentoDoBloco(): List<Entity> {
         val cota = RotatedDimension.horizontal(
             layer = layerCota, dimStyle = dimStyle,
-            xPoint1 = Vector2D.ZERO, xPoint2 = Vector2D(x = lxBloco, y = 0.0),
+            xPoint1 = Vector.ZERO, xPoint2 = Vector2D(x = lxBloco, y = 0.0),
             yDimensionLine = -2.0 * distanciaCota
         )
         return listOf(cota)
@@ -294,7 +292,7 @@ class BlocoDeFundacao(
     }
 
     private fun testeCotaInclinada(): List<Entity> {
-        val ponto1 = Vector2D.ZERO
+        val ponto1 = Vector.ZERO
         val ponto2 = Vector2D(lxBloco, lyBloco)
         val cota = RotatedDimension(
             layer = layerCota, dimStyle = dimStyle,

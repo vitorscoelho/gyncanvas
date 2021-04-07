@@ -5,10 +5,11 @@ import vitorscoelho.gyncanvas.core.dxf.DimStyleOverrides
 import vitorscoelho.gyncanvas.core.dxf.entities.RotatedDimension
 import vitorscoelho.gyncanvas.core.dxf.tables.DimStyle
 import vitorscoelho.gyncanvas.core.dxf.tables.Layer
+import vitorscoelho.gyncanvas.math.Vector
 import vitorscoelho.gyncanvas.math.Vector2D
 
 interface RotatedDimensionSequenceStart {
-    fun firstPoint(point: Vector2D): RotatedDimensionSequence
+    fun firstPoint(point: Vector): RotatedDimensionSequence
     fun firstPoint(x: Double, y: Double): RotatedDimensionSequence
 }
 
@@ -17,16 +18,16 @@ class RotatedDimensionSequence private constructor(
     val color: Color,
     val dimStyle: DimStyle,
     val dimStyleOverrides: DimStyleOverrides,
-    val dimensionLineReferencePoint: Vector2D,
+    val dimensionLineReferencePoint: Vector,
     val angle: Double,
     val text: String = "<>"
 ) : RotatedDimensionSequenceStart {
-    private val points = mutableListOf<Vector2D>()
+    private val points = mutableListOf<Vector>()
 
-    override fun firstPoint(point: Vector2D) = next(point)
+    override fun firstPoint(point: Vector) = next(point)
     override fun firstPoint(x: Double, y: Double) = next(x = x, y = y)
 
-    fun next(point: Vector2D): RotatedDimensionSequence {
+    fun next(point: Vector): RotatedDimensionSequence {
         points.add(point)
         return this
     }
@@ -54,7 +55,7 @@ class RotatedDimensionSequence private constructor(
         fun init(
             layer: Layer, color: Color,
             dimStyle: DimStyle, dimStyleOverrides: DimStyleOverrides,
-            dimensionLineReferencePoint: Vector2D,
+            dimensionLineReferencePoint: Vector,
             angle: Double, text: String = "<>"
         ): RotatedDimensionSequenceStart = RotatedDimensionSequence(
             layer = layer, color = color,

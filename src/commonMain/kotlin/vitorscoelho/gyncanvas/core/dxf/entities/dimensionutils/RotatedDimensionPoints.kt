@@ -1,13 +1,14 @@
 package vitorscoelho.gyncanvas.core.dxf.entities.dimensionutils
 
 import vitorscoelho.gyncanvas.math.TransformationMatrix
+import vitorscoelho.gyncanvas.math.Vector
 import vitorscoelho.gyncanvas.math.Vector2D
 import kotlin.math.PI
 
 internal class RotatedDimensionPoints(
-    val xPoint1: Vector2D,
-    val xPoint2: Vector2D,
-    val dimensionLineReferencePoint: Vector2D,
+    val xPoint1: Vector,
+    val xPoint2: Vector,
+    val dimensionLineReferencePoint: Vector,
     val angle: Double,
     extensionLinesOffsetFromOrigin: Double,
     extensionLinesExtendBeyondDimLines: Double,
@@ -18,14 +19,14 @@ internal class RotatedDimensionPoints(
     val extensionLinesExtendBeyondDimLines = extensionLinesExtendBeyondDimLines * overallScale
     val textOffsetFromDimLine = textOffsetFromDimLine * overallScale
 
-    val point1DimensionLine: Vector2D
-    val point2DimensionLine: Vector2D
-    val midPointDimensionLine: Vector2D
-    val point1ExtensionLine1: Vector2D
-    val point2ExtensionLine1: Vector2D
-    val point1ExtensionLine2: Vector2D
-    val point2ExtensionLine2: Vector2D
-    val mTextPosition: Vector2D
+    val point1DimensionLine: Vector
+    val point2DimensionLine: Vector
+    val midPointDimensionLine: Vector
+    val point1ExtensionLine1: Vector
+    val point2ExtensionLine1: Vector
+    val point1ExtensionLine2: Vector
+    val point2ExtensionLine2: Vector
+    val mTextPosition: Vector
 
     val rotationArrowHead1: Double
     val rotationArrowHead2: Double
@@ -47,7 +48,7 @@ internal class RotatedDimensionPoints(
             Vector2D(x = localXPoint1.x, y = yDimensionLine).transform(reverseTransformationMatrix)
         this.point2DimensionLine =
             Vector2D(x = localXPoint2.x, y = yDimensionLine).transform(reverseTransformationMatrix)
-        this.midPointDimensionLine = Vector2D.mid(point1DimensionLine, point2DimensionLine)
+        this.midPointDimensionLine = Vector.mid(point1DimensionLine, point2DimensionLine)
 
         val extensionLine1Points = extensionLinePoints(xPoint = localXPoint1, yDimensionLine = yDimensionLine)
         this.point1ExtensionLine1 = extensionLine1Points.first.transform(reverseTransformationMatrix)
@@ -70,7 +71,7 @@ internal class RotatedDimensionPoints(
         }
     }
 
-    private fun extensionLinePoints(xPoint: Vector2D, yDimensionLine: Double): Pair<Vector2D, Vector2D> {
+    private fun extensionLinePoints(xPoint: Vector, yDimensionLine: Double): Pair<Vector, Vector> {
         val yPoint1: Double
         val yPoint2: Double
         if (yDimensionLine > xPoint.y) {

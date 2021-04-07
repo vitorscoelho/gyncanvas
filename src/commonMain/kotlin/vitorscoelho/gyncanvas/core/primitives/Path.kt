@@ -26,6 +26,10 @@ private fun linearPointsArc(
 }
 
 class Path internal constructor(val steps: List<PathStep>, val closed: Boolean) {
+    init {
+        require(steps.first() is MoveTo) { "O primeiro elemento de |steps| deve ser do tipo MoveTo" }
+    }
+
     val length: Double by lazy {
         var value = 0.0
         for (index in 1..steps.lastIndex) {
@@ -75,9 +79,16 @@ class Path internal constructor(val steps: List<PathStep>, val closed: Boolean) 
             return Path(steps = steps, closed = closed)
         }
 
-        fun initBuilder(startPoint: Vector2D): PathBuilder = PathBuilder(startPoint = startPoint)
+        fun initBuilder(startPoint: Vector): PathBuilder = PathBuilder(startPoint = startPoint)
 
         fun initBuilder(x: Double, y: Double) = initBuilder(Vector2D(x = x, y = y))
+
+        fun rectangle(startPoint: Vector, deltaX: Double, deltaY: Double): Path =
+            initBuilder(startPoint = startPoint)
+                .deltaLineTo(deltaX = deltaX)
+                .deltaLineTo(deltaY = deltaY)
+                .deltaLineTo(deltaX = -deltaX)
+                .closeAndBuild()
     }
 }
 
@@ -85,25 +96,25 @@ sealed class PathStep {
     abstract val endPoint: Vector
 }
 
-class MoveTo(val point: Vector2D) : PathStep() {
+class MoveTo(val point: Vector) : PathStep() {
     override val endPoint: Vector get() = point
 }
 
-class LineTo(val point: Vector2D) : PathStep() {
+class LineTo(val point: Vector) : PathStep() {
     override val endPoint: Vector get() = point
 }
 
-class ArcTo(val point: Vector2D, val bulge: Double) : PathStep() {
+class ArcTo(val point: Vector, val bulge: Double) : PathStep() {
     override val endPoint: Vector get() = point
 }
 
-class PathBuilder internal constructor(startPoint: Vector2D) {
+class PathBuilder internal constructor(startPoint: Vector) {
     private val pathSteps = mutableListOf<PathStep>(
         MoveTo(point = startPoint)
     )
-    private var lastPoint: Vector2D = startPoint
+    private var lastPoint: Vector = startPoint
 
-    fun lineTo(point: Vector2D): PathBuilder {
+    fun lineTo(point: Vector): PathBuilder {
         lastPoint = point
         pathSteps += LineTo(point = point)
         return this
@@ -122,7 +133,7 @@ class PathBuilder internal constructor(startPoint: Vector2D) {
 
     fun arcTo(x: Double, y: Double, bulge: Double): PathBuilder = arcTo(point = Vector2D(x = x, y = y), bulge = bulge)
     fun deltaArcTo(deltaX: Double = 0.0, deltaY: Double = 0.0, bulge: Double): PathBuilder =
-        arcTo(point = lastPoint.plus(deltaX = deltaX, deltaY = deltaY), bulge = bulge)
+        arcTo(point = lastPoint.plus(deltaX = deltaX, deltaY = deltaY) as Vector2D, bulge = bulge)
 
     fun build(): Path = Path(steps = pathSteps, closed = false)
     fun closeAndBuild(): Path = Path(steps = pathSteps, closed = true)

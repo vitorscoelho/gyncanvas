@@ -3,10 +3,10 @@ package vitorscoelho.gyncanvas.core.dxf.entities
 import vitorscoelho.gyncanvas.core.dxf.Color
 import vitorscoelho.gyncanvas.core.dxf.tables.Layer
 import vitorscoelho.gyncanvas.core.dxf.tables.TextStyle
-import vitorscoelho.gyncanvas.math.Vector2D
 import vitorscoelho.gyncanvas.core.dxf.entities.AttachmentPointBaseline.*
 import vitorscoelho.gyncanvas.core.dxf.entities.AttachmentPointAlign.*
 import vitorscoelho.gyncanvas.core.primitives.Primitive
+import vitorscoelho.gyncanvas.math.Vector
 
 data class MText(
     override val layer: Layer,
@@ -15,7 +15,7 @@ data class MText(
     val size: Double,
     val justify: AttachmentPoint = AttachmentPoint.BOTTOM_LEFT,
     val rotation: Double = 0.0,
-    val position: Vector2D,
+    val position: Vector,
     val content: String
 ) : Entity {
 //    override val primitives: List<Primitive>

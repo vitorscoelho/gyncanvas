@@ -1,19 +1,19 @@
 package vitorscoelho.gyncanvas.core.dxf.entities
 
 import vitorscoelho.gyncanvas.core.dxf.entities.dimensionutils.RotatedDimensionSequence
-import vitorscoelho.gyncanvas.math.Vector2D
+import vitorscoelho.gyncanvas.math.Vector
 
 interface LinearDimension : Dimension {
     val angle: Double
-    val xPoint1: Vector2D
-    val xPoint2: Vector2D
+    val xPoint1: Vector
+    val xPoint2: Vector
 
-    fun dimContinue(point: Vector2D): LinearDimension = dimContinueXPoint2(point)
-    fun dimContinueXPoint1(point: Vector2D): LinearDimension
-    fun dimContinueXPoint2(point: Vector2D): LinearDimension
+    fun dimContinue(point: Vector): LinearDimension = dimContinueXPoint2(point)
+    fun dimContinueXPoint1(point: Vector): LinearDimension
+    fun dimContinueXPoint2(point: Vector): LinearDimension
 
     fun initSequence(): RotatedDimensionSequence
-    fun createSequence(points: List<Vector2D>): List<LinearDimension>
+    fun createSequence(points: List<Vector>): List<LinearDimension>
 
     //PRIMARY UNITS PROP
     //Propriedade: LinearDimensions
