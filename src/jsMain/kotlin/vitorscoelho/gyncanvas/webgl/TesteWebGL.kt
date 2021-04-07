@@ -3,6 +3,7 @@ package vitorscoelho.gyncanvas.webgl
 import org.w3c.dom.HTMLCanvasElement
 import vitorscoelho.gyncanvas.core.EventManager
 import vitorscoelho.gyncanvas.core.dxf.entities.Circle
+import vitorscoelho.gyncanvas.core.dxf.entities.LwPolyline
 import vitorscoelho.gyncanvas.core.dxf.tables.Layer
 import vitorscoelho.gyncanvas.core.event.CanvasMouseButton
 import vitorscoelho.gyncanvas.core.event.CanvasMouseEvent
@@ -49,6 +50,15 @@ val circleDXF = Circle(
     radius = 1.5
 )
 
+val polylineDXF = LwPolyline(
+    layer = Layer(name = "layer polyline", color = vitorscoelho.gyncanvas.core.dxf.Color.INDEX_111),
+    path = Path
+        .initBuilder(x = -10.0, y = -5.0)
+        .lineTo(x = 2.0, y = 0.0)
+        .arcTo(x = -10.0, y = 3.0, bulge = 0.2)
+        .closeAndBuild()
+)
+
 fun testar(canvas: HTMLCanvasElement) {
     val drawingArea = JSDrawingArea(canvas)
     val drawer = WebGLStaticDrawer2D(drawingArea)
@@ -90,11 +100,12 @@ fun testar(canvas: HTMLCanvasElement) {
                 path = Path
                     .initBuilder(x = 0.0, y = -5.0)
                     .deltaLineTo(deltaX = 5.0)
-                    .deltaArcTo(deltaX = 5.0, deltaY = 5.0, bulge = tan(toRadians(90.0)/4.0))
+                    .deltaArcTo(deltaX = 5.0, deltaY = 5.0, bulge = tan(toRadians(90.0) / 4.0))
                     .build(),
                 color = COLOR_GREEN
             ),
-            circleDXF
+            polylineDXF,
+            circleDXF,
         )
     )
     val camera = OrthographicCamera2D(drawingArea)

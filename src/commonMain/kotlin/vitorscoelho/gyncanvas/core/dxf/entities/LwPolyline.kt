@@ -5,29 +5,21 @@ import vitorscoelho.gyncanvas.core.dxf.tables.Layer
 import vitorscoelho.gyncanvas.core.primitives.Path
 import vitorscoelho.gyncanvas.core.primitives.Primitive
 import vitorscoelho.gyncanvas.math.Vector
-import vitorscoelho.gyncanvas.math.Vector2D
 
-data class LwPolyline internal constructor(
+class LwPolyline internal constructor(
     override val layer: Layer,
     override val color: Color = Color.BY_LAYER,
-    internal val path: Path
+    path: Path
 ) : Entity {
-    //    private val primitivePolyline :Polyline= if (closed){
-//        ClosedPolyline()
-//    }
-    val closed: Boolean get() = path.closed
+    private val primitivePolyline = vitorscoelho.gyncanvas.core.primitives.Polyline(
+        path = path, color = color.effectiveColor(entity = this)
+    )
+    val path: Path get() = primitivePolyline.path
+    val closed: Boolean get() = primitivePolyline.path.closed
 
     override fun forEachPrimitive(action: (Primitive) -> Unit) {
-        TODO("Not yet implemented")
+        action(primitivePolyline)
     }
-
-    //    override fun draw(drawer: Drawer) {
-//        applyLineWidth(drawer = drawer)
-//        drawer.beginPath()
-//        pathSteps.forEach { it.draw(drawer = drawer) }
-//        if (closed) drawer.closePath()
-//        drawer.stroke()
-//    }
 
     companion object {
         fun rectangle(
