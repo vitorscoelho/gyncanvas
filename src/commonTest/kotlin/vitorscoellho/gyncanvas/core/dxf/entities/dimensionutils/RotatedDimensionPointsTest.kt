@@ -1,10 +1,11 @@
 package vitorscoellho.gyncanvas.core.dxf.entities.dimensionutils
 
 import vitorscoelho.gyncanvas.core.dxf.entities.dimensionutils.RotatedDimensionPoints
+import vitorscoelho.gyncanvas.math.Vector
 import vitorscoelho.gyncanvas.math.Vector2D
 import vitorscoelho.gyncanvas.math.toRadians
-import vitorscoellho.doubleAssertEquals
 import kotlin.test.Test
+import kotlin.test.assertEquals
 
 class RotatedDimensionPointsTest {
     private val DELTA = 0.0000001
@@ -35,8 +36,8 @@ class RotatedDimensionPointsTest {
         }
     }
 
-    private fun assertVector(vector: Vector2D, x: Double, y: Double) {
-        doubleAssertEquals(x, vector.x, DELTA)
-        doubleAssertEquals(y, vector.y, DELTA)
+    private fun assertVector(vector: Vector, x: Double, y: Double) {
+        assertEquals(x, vector.x, DELTA)
+        assertEquals(y, vector.y, DELTA)
     }
 }
