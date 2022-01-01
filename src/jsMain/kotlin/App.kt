@@ -18,8 +18,8 @@ fun main() {
         }
         canvas {
             id = "canvasTeste"
-            width = "600px"
-            height = "400px"
+            width = "1800px"
+            height = "750px"
         }
     }
     val canvas = document.getElementById("canvasTeste") as HTMLCanvasElement

@@ -27,8 +27,8 @@ class NumberFormatterTest {
         assertEquals("valor= -5.75cm", f.format(-5.77))
         assertEquals("valor= 57506.5cm", f.format(57506.5987))
         assertEquals("valor= 57506.5cm", f.format(57506.5487))
-        assertEquals("valor= 0.5cm", f.format(0.5))
-        assertEquals("valor= -0.5cm", f.format(-0.5))
+        assertEquals("valor= .5cm", f.format(0.5))
+        assertEquals("valor= -.5cm", f.format(-0.5))
         assertEquals("valor= 0cm", f.format(0.0))
     }
 

@@ -58,7 +58,7 @@ private fun actionOnVertex(
             x.toFloat(), y.toFloat(), z.toFloat(),
             color.red, color.green, color.blue, color.alpha
         )
-        println("${x.toFloat()} ${y.toFloat()} ${z.toFloat()} ${color.red} ${color.green} ${color.blue}")
+//        println("${x.toFloat()} ${y.toFloat()} ${z.toFloat()} ${color.red} ${color.green} ${color.blue}")
     }
 }
 
@@ -85,6 +85,21 @@ class Triangle(val p1: Vector, val p2: Vector, val p3: Vector, val color: Color)
 private const val FLOAT_PI = PI.toFloat()
 private const val MIN_DELTA_ANGLE_ARC = 2f * FLOAT_PI / 50f
 private const val MIN_SEGMENTS_FOR_CURVE = 10
+
+class StrokedCircle(val centerPoint: Vector, val radius: Double, val color: Color) : Primitive {
+    override val type: PrimitiveType get() = PrimitiveType.LINE_LOOP
+    override val verticesCount: Int get() = 40 //TODO Estudar maneiras de poder usar o mínimo de vértices possível
+
+    override fun forEachVertex(action: (index: Int, x: Float, y: Float, z: Float, red: Short, green: Short, blue: Short, alpha: Float) -> Unit) {
+        val deltaAngle = 2f * PI.toFloat() / verticesCount.toFloat()
+        (0 until verticesCount).forEach { index ->
+            val angle = index * deltaAngle
+            //TODO Mudar para possibilitar 3D, no futuro
+            val vector = Vector2D(x = centerPoint.x + radius * cos(angle), y = centerPoint.y + radius * sin(angle))
+            actionOnVertex(index, vector, color, action)
+        }
+    }
+}
 
 /*
 Acessar o site abaixo para fazer um algoritmo que aplica fillet na polyline (já calculando o bulge):
@@ -122,20 +137,5 @@ class Triangle(val p1: Vector, val p2: Vector, val p3: Vector, val color: Color)
     }
 }
  */
-
-class StrokedCircle(val centerPoint: Vector, val radius: Double, val color: Color) : Primitive {
-    override val type: PrimitiveType get() = PrimitiveType.LINE_LOOP
-    override val verticesCount: Int get() = 40 //TODO Estudar maneiras de poder usar o mínimo de vértices possível
-
-    override fun forEachVertex(action: (index: Int, x: Float, y: Float, z: Float, red: Short, green: Short, blue: Short, alpha: Float) -> Unit) {
-        val deltaAngle = 2f * PI.toFloat() / verticesCount.toFloat()
-        (0 until verticesCount).forEach { index ->
-            val angle = index * deltaAngle
-            //TODO Mudar para possibilitar 3D, no futuro
-            val vector = Vector2D(x = centerPoint.x + radius * cos(angle), y = centerPoint.y + radius * sin(angle))
-            actionOnVertex(index, vector, color, action)
-        }
-    }
-}
 
 //class SolidTriangle(val p1: Vector, val p2: Vector, val p3: Double, override val color: Color) : Primitive
