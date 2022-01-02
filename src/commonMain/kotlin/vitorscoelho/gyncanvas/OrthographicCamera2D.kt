@@ -1,4 +1,4 @@
-package vitorscoelho.gyncanvas.webgl
+package vitorscoelho.gyncanvas
 
 import kotlin.math.abs
 import kotlin.math.min

@@ -1,9 +1,10 @@
 package vitorscoelho.gyncanvas.webgl
 
 import kotlinx.browser.document
-import kotlinx.browser.window
 import org.khronos.webgl.*
 import org.w3c.dom.*
+import vitorscoelho.gyncanvas.Drawer
+import vitorscoelho.gyncanvas.OrthographicCamera2D
 import org.khronos.webgl.WebGLRenderingContext.Companion as GL
 import vitorscoelho.gyncanvas.core.primitives.Color
 import vitorscoelho.gyncanvas.core.primitives.Drawable
@@ -135,7 +136,7 @@ private val Primitive.glType: Int get() = mapGlTypes[this.type]!!
 
 private fun rgbToFloat(decimal: Short) = decimal.toFloat() / 255f
 
-class WebGLStaticDrawer2D(drawingArea: JSDrawingArea) {
+class WebGLStaticDrawer2D internal constructor(drawingArea: JSDrawingArea) : Drawer() {
     private val gl = getWebGLContext(drawingArea = drawingArea)
 
     private val program = Simple2DProgram(gl = gl)
@@ -241,7 +242,7 @@ class WebGLStaticDrawer2D(drawingArea: JSDrawingArea) {
     private val positionBuffer: WebGLBuffer = gl.createEmptyBuffer()
     private val colorBuffer: WebGLBuffer = gl.createEmptyBuffer()
 
-    fun setElements(elements: List<Drawable>) {
+    override fun setElements(elements: List<Drawable>) {
         val lista = mutableListOf<Primitive>()
         elements.forEach { element ->
             element.forEachPrimitive { primitive ->
@@ -277,7 +278,7 @@ class WebGLStaticDrawer2D(drawingArea: JSDrawingArea) {
         gl.changeArrayBufferStaticData(colorBuffer, vertexColor)
     }
 
-    fun draw(backgroundColor: Color, camera: OrthographicCamera2D) {
+    override fun draw(backgroundColor: Color, camera: OrthographicCamera2D) {
         gl.adjustViewportAndClear(backgroundColor = backgroundColor)
         program.use()
         program.setAttributes(positionBuffer = positionBuffer, colorBuffer = colorBuffer)

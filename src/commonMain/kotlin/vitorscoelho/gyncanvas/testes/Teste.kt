@@ -1,17 +1,14 @@
-package vitorscoelho.gyncanvas.webgl
+package vitorscoelho.gyncanvas.testes
 
-import org.w3c.dom.HTMLCanvasElement
+import vitorscoelho.gyncanvas.DrawingArea
+import vitorscoelho.gyncanvas.OrthographicCamera2D
 import vitorscoelho.gyncanvas.core.EventManager
 import vitorscoelho.gyncanvas.core.dxf.entities.Circle
 import vitorscoelho.gyncanvas.core.dxf.entities.LwPolyline
-import vitorscoelho.gyncanvas.core.dxf.entities.RotatedDimension
-import vitorscoelho.gyncanvas.core.dxf.tables.DimStyle
 import vitorscoelho.gyncanvas.core.dxf.tables.Layer
-import vitorscoelho.gyncanvas.core.dxf.tables.TextStyle
 import vitorscoelho.gyncanvas.core.event.CanvasMouseButton
 import vitorscoelho.gyncanvas.core.event.CanvasMouseEvent
 import vitorscoelho.gyncanvas.core.primitives.*
-import vitorscoelho.gyncanvas.math.Vector
 import vitorscoelho.gyncanvas.math.Vector2D
 import vitorscoelho.gyncanvas.math.toRadians
 import kotlin.math.tan
@@ -85,9 +82,8 @@ val polylineDXF = LwPolyline(
 //    return lista
 //}
 
-fun testar(canvas: HTMLCanvasElement) {
-    val drawingArea = JSDrawingArea(canvas)
-    val drawer = WebGLStaticDrawer2D(drawingArea)
+fun testarDesenho(drawingArea: DrawingArea) {
+    val drawer = drawingArea.drawer
     drawer.setElements(
         listOf(
             linhaDXF,

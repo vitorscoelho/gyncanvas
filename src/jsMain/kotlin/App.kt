@@ -2,7 +2,9 @@ import kotlinx.browser.document
 import kotlinx.html.*
 import kotlinx.html.dom.*
 import org.w3c.dom.HTMLCanvasElement
-import vitorscoelho.gyncanvas.webgl.testar
+import vitorscoelho.gyncanvas.testes.testarDesenho
+import vitorscoelho.gyncanvas.webgl.JSDrawingArea
+import vitorscoelho.gyncanvas.webgl.JSDrawingAreaType
 
 fun main() {
     document.body!!.append.div {
@@ -39,5 +41,10 @@ fun main() {
 //    val controller = JSCanvasController(canvas = canvas)
 //    desenhar(controller = controller)
 //    desenharTriangulo(canvas)
-    testar(canvas)
+    testarDesenho(
+        drawingArea = JSDrawingArea(
+            canvas = canvas,
+            type = JSDrawingAreaType.WEBGL
+        )
+    )
 }

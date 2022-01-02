@@ -3,6 +3,7 @@ package vitorscoelho.gyncanvas.webgl
 import org.khronos.webgl.*
 import org.khronos.webgl.WebGLRenderingContext.Companion as GL
 import org.w3c.dom.RenderingContext
+import vitorscoelho.gyncanvas.OrthographicCamera2D
 import vitorscoelho.gyncanvas.core.primitives.Color
 
 internal val DEFAULT_WEBGL_CONTEXT_ATTRIBUTES: WebGLContextAttributes
