@@ -8,7 +8,6 @@ version '1.0-SNAPSHOT'
 repositories {
     mavenCentral()
     maven { url "https://maven.pkg.jetbrains.space/public/p/kotlinx-html/maven" }
-    maven { url = uri("https://maven.pkg.jetbrains.space/data2viz/p/maven/public") }
 }
 
 kotlin {
@@ -31,7 +30,7 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation "io.data2viz.d2v:format:0.8.17"
+                implementation "com.ionspin.kotlin:bignum:0.3.3"
             }
         }
         commonTest {

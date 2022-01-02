@@ -1,49 +1,73 @@
 package vitorscoelho.gyncanvas.utils
 
-import kotlin.math.round
-import kotlin.math.absoluteValue
-import kotlin.math.sign
-
-internal enum class Notation {
-    DECIMAL,
-    SCIENTIFIC,
-    ENGINEERING,
-    ;
-}
-
-internal expect class DecimalFormat(
-    notation: Notation,
-    suppressLeadingZeros: Boolean,
-    suppressTrailingZeros: Boolean,
-    precision: Int,
-    decimalSeparator: Char,
-) {
-    fun format(valor: Double): String
-}
-
-internal class DecimalFormatSymbols(val decimalSeparator: Char)
+import com.ionspin.kotlin.bignum.decimal.BigDecimal
+import com.ionspin.kotlin.bignum.decimal.RoundingMode
 
 class NumberFormatter(
-    suppressLeadingZeros: Boolean,
-    suppressTrailingZeros: Boolean,
-    precision: Int,
-    decimalSeparator: Char,
+    private val suppressLeadingZeros: Boolean,
+    private val suppressTrailingZeros: Boolean,
+    private val precision: Int,
+    private val decimalSeparator: Char,
     private val prefix: String,
     private val suffix: String,
     private val roundoff: Double
 ) {
-    private val dc: DecimalFormat = DecimalFormat(
-        notation = Notation.DECIMAL,//TODO mudar para permitir outras formas
-        suppressLeadingZeros = suppressLeadingZeros,
-        suppressTrailingZeros = suppressTrailingZeros,
-        precision = precision,
-        decimalSeparator = decimalSeparator
-    )
 
-    private fun roundoff(valor: Double): Double {
-        if (roundoff == 0.0) return valor
-        return roundoff * round(valor.absoluteValue / roundoff) * valor.sign
+    init {
+        require(precision >= 0)
+        require(roundoff >= 0.0)
     }
 
-    fun format(valor: Double): String = "$prefix${dc.format(roundoff(valor))}$suffix"
+    private fun BigDecimal.arredondar(casas: Int): BigDecimal {
+        return this.roundToDigitPositionAfterDecimalPoint(
+            digitPosition = casas.toLong(),
+            roundingMode = RoundingMode.ROUND_HALF_AWAY_FROM_ZERO
+        )
+    }
+
+    private fun roundoff(value: Double, roundoff: Double, precision: Int): String {
+        val bdValue = BigDecimal.fromDouble(value)
+        val bdRoundoff = BigDecimal.fromDouble(roundoff)
+
+        val retorno: BigDecimal =
+            if (roundoff == 0.0) {
+                var valor = bdValue
+                valor = valor.arredondar(casas = precision)
+                valor
+            } else {
+                var valor = bdValue
+                valor = valor.divide(bdRoundoff)
+                valor = valor.arredondar(casas = 0)
+                valor = valor.multiply(bdRoundoff)
+                valor = valor.arredondar(casas = precision)
+                valor
+            }
+        return retorno.toPlainString()
+    }
+
+    fun format(valor: Double): String {
+        val arredondado = roundoff(
+            value = valor,
+            roundoff = roundoff,
+            precision = precision
+        ).replace(oldChar = '.', newChar = decimalSeparator)
+
+        val numeroFormatado = buildString {
+            append(arredondado)
+            if (arredondado.first() == '0' && suppressLeadingZeros) deleteAt(index = 0)
+            if (arredondado.startsWith("-0") && suppressLeadingZeros) deleteAt(index = 1)
+            if (!suppressTrailingZeros) {
+                if (!contains(char = decimalSeparator)) append(decimalSeparator)
+                val stringDepoisDaVirgula = arredondado.substringAfterLast(
+                    delimiter = decimalSeparator,
+                    missingDelimiterValue = ""
+                )
+                val zerosADireitaQueFaltam = (precision - stringDepoisDaVirgula.length)
+                if (zerosADireitaQueFaltam > 0) repeat(zerosADireitaQueFaltam) { append("0") }
+            }
+            if (isEmpty()) append("0")
+        }
+
+        return "$prefix$numeroFormatado$suffix"
+    }
 }
