@@ -44,7 +44,7 @@ fun main() {
     testarDesenho(
         drawingArea = JSDrawingArea(
             canvas = canvas,
-            type = JSDrawingAreaType.WEBGL
+            type = JSDrawingAreaType.CANVAS_2D
         )
     )
 }

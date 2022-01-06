@@ -20,9 +20,7 @@ enum class JSDrawingAreaType {
         override fun criarDrawer(drawingArea: JSDrawingArea) = WebGLStaticDrawer2D(drawingArea = drawingArea)
     },
     CANVAS_2D {
-        override fun criarDrawer(drawingArea: JSDrawingArea): Drawer {
-            TODO("Not yet implemented")
-        }
+        override fun criarDrawer(drawingArea: JSDrawingArea) = ImplementacaoCanvas2D(drawingArea = drawingArea)
     },
     ;
 
